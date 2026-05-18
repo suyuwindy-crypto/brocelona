@@ -120,10 +120,10 @@
 
 
   /* 팀 미네랄 합계 바 */
-  .team-mineral-row{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(94,200,230,0.1);}
-  .tm-label{font-size:7px;font-weight:700;color:var(--text-dimmer);letter-spacing:2px;flex-shrink:0;}
+  .team-mineral-row{display:flex;flex-direction:column;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(94,200,230,0.15);}
+  .tm-label{font-size:8px;font-weight:700;color:var(--text-dim);letter-spacing:2px;}
   .tm-value{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--cyan-bright);text-shadow:0 0 6px rgba(94,200,230,0.5);}
-  .tm-goal{font-size:9px;font-weight:600;color:var(--text-dimmer);letter-spacing:1px;flex-shrink:0;}
+  .tm-goal{font-size:9px;font-weight:600;color:var(--text-dimmer);letter-spacing:0.5px;}
   .tm-badge{font-size:7px;font-weight:700;letter-spacing:1px;padding:3px 8px;border:1px solid;border-radius:8px;flex-shrink:0;}
   .tm-badge.ok{color:var(--ok);border-color:rgba(95,217,122,0.45);background:rgba(95,217,122,0.08);}
   .tm-badge.warn{color:var(--amber);border-color:rgba(255,140,66,0.45);background:rgba(255,140,66,0.08);}
@@ -224,6 +224,47 @@
   .btn-accept{padding:4px 10px;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:1px;color:var(--ok);border:1px solid rgba(95,217,122,0.5);border-radius:8px;background:rgba(95,217,122,0.1);cursor:pointer;transition:all 0.15s;}
   .btn-cancel{padding:4px 10px;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:1px;color:var(--danger);border:1px solid rgba(255,77,98,0.5);border-radius:8px;background:rgba(255,77,98,0.1);cursor:pointer;transition:all 0.15s;}
   .btn-accept:active,.btn-cancel:active{transform:scale(0.95);}
+
+  .tm-top-row{display:flex;align-items:center;justify-content:space-between;}
+  .tm-main-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .tm-range{display:flex;align-items:center;gap:6px;}
+  .tm-range-item{display:flex;flex-direction:column;align-items:center;gap:1px;}
+  .tm-range-item.min{font-size:7px;font-weight:600;color:var(--text-dimmer);letter-spacing:1px;}
+  .tm-range-item.max{font-size:7px;font-weight:600;color:var(--text-dimmer);letter-spacing:1px;}
+  .tm-range-item span{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--text);}
+  .tm-range-item.min span{color:var(--amber);}
+  .tm-range-item.max span{color:var(--danger);}
+  .tm-range-sep{font-size:10px;color:var(--text-dimmer);}
+  .tm-desc{font-size:8px;font-weight:600;color:var(--text-dimmer);letter-spacing:0.5px;line-height:1.4;}
+
+  /* 유의사항 공지 박스 */
+  .notice-box{
+    background:rgba(0,0,0,0.4);
+    border:1px solid rgba(255,140,66,0.3);
+    border-radius:8px;
+    padding:14px;
+    margin-bottom:14px;
+  }
+  .notice-title{
+    font-size:10px;font-weight:700;color:var(--amber);
+    letter-spacing:2px;margin-bottom:10px;
+    display:flex;align-items:center;gap:6px;
+  }
+  .notice-title::before{content:'⚠';font-size:12px;}
+  .notice-list{display:flex;flex-direction:column;gap:8px;}
+  .notice-item{
+    display:flex;gap:8px;align-items:flex-start;
+    font-size:10px;font-weight:600;color:var(--text-dim);
+    line-height:1.5;letter-spacing:0.3px;
+  }
+  .notice-num{
+    font-size:8px;font-weight:700;color:var(--amber);
+    background:rgba(255,140,66,0.15);border:1px solid rgba(255,140,66,0.3);
+    border-radius:50%;width:16px;height:16px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;
+  }
+  .notice-item strong{color:var(--text-bright);}
 </style>
 </head>
 <body>
@@ -303,10 +344,46 @@
           <div class="room-progress-bar"><div class="room-progress-fill" id="ri-fill-protoss" style="width:0%"></div></div>
         </div>
         <div class="team-mineral-row">
-          <div class="tm-label">팀 미네랄 합계</div>
-          <div class="tm-value" id="tm-protoss">0 M</div>
-          <div class="tm-goal">15,000 ~ 22,000 M</div>
-          <div class="tm-badge" id="tm-badge-protoss"></div>
+          <div class="tm-top-row">
+            <div class="tm-label">▸ 팀 미네랄 합계</div>
+            <div class="tm-badge" id="tm-badge-protoss"></div>
+          </div>
+          <div class="tm-main-row">
+            <div class="tm-value" id="tm-protoss">0 M</div>
+            <div class="tm-range">
+              <div class="tm-range-item min">최소 <span>15,000 M</span></div>
+              <div class="tm-range-sep">~</div>
+              <div class="tm-range-item max">최대 <span>22,000 M</span></div>
+            </div>
+          </div>
+          <div class="tm-desc">확정 팀원의 프리시즌 미네랄 합산 · 범위 내 팀 구성 필요</div>
+        </div>
+      </div>
+      <div class="notice-box">
+        <div class="notice-title">팀 구성 유의사항</div>
+        <div class="notice-list">
+          <div class="notice-item"><div class="notice-num">1</div><div><strong>미네랄 범위</strong> — 팀 전체 미네랄 합계가 15,000 ~ 22,000 M 범위 내에 있어야 팀 구성이 인정됩니다.</div></div>
+          <div class="notice-item"><div class="notice-num">2</div><div><strong>출석률</strong> — 본 리그는 팀원 출석 기반으로 운영되므로, 경기에 꾸준히 참여 가능한 선수를 선택하세요.</div></div>
+          <div class="notice-item"><div class="notice-num">3</div><div><strong>용병 불가</strong> — 타 팀 선수 또는 미등록 선수는 경기 참여가 불가합니다. 반드시 신청 확정된 팀원으로만 경기에 임해야 합니다.</div></div>
+          <div class="notice-item"><div class="notice-num">4</div><div><strong>신청 유효기간</strong> — 신청 후 24시간 내 방장 수락이 없으면 자동 취소됩니다.</div></div>
+        </div>
+      </div>
+      <div class="notice-box">
+        <div class="notice-title">팀 구성 유의사항</div>
+        <div class="notice-list">
+          <div class="notice-item"><div class="notice-num">1</div><div><strong>미네랄 범위</strong> — 팀 전체 미네랄 합계가 15,000 ~ 22,000 M 범위 내에 있어야 팀 구성이 인정됩니다.</div></div>
+          <div class="notice-item"><div class="notice-num">2</div><div><strong>출석률</strong> — 본 리그는 팀원 출석 기반으로 운영되므로, 경기에 꾸준히 참여 가능한 선수를 선택하세요.</div></div>
+          <div class="notice-item"><div class="notice-num">3</div><div><strong>용병 불가</strong> — 타 팀 선수 또는 미등록 선수는 경기 참여가 불가합니다. 반드시 신청 확정된 팀원으로만 경기에 임해야 합니다.</div></div>
+          <div class="notice-item"><div class="notice-num">4</div><div><strong>신청 유효기간</strong> — 신청 후 24시간 내 방장 수락이 없으면 자동 취소됩니다.</div></div>
+        </div>
+      </div>
+      <div class="notice-box">
+        <div class="notice-title">팀 구성 유의사항</div>
+        <div class="notice-list">
+          <div class="notice-item"><div class="notice-num">1</div><div><strong>미네랄 범위</strong> — 팀 전체 미네랄 합계가 15,000 ~ 22,000 M 범위 내에 있어야 팀 구성이 인정됩니다.</div></div>
+          <div class="notice-item"><div class="notice-num">2</div><div><strong>출석률</strong> — 본 리그는 팀원 출석 기반으로 운영되므로, 경기에 꾸준히 참여 가능한 선수를 선택하세요.</div></div>
+          <div class="notice-item"><div class="notice-num">3</div><div><strong>용병 불가</strong> — 타 팀 선수 또는 미등록 선수는 경기 참여가 불가합니다. 반드시 신청 확정된 팀원으로만 경기에 임해야 합니다.</div></div>
+          <div class="notice-item"><div class="notice-num">4</div><div><strong>신청 유효기간</strong> — 신청 후 24시간 내 방장 수락이 없으면 자동 취소됩니다.</div></div>
         </div>
       </div>
       <div class="list-header"><div>NO</div><div>이름</div><div>미네랄</div><div style="text-align:right">상태</div></div>
@@ -346,10 +423,19 @@
           <div class="room-progress-bar"><div class="room-progress-fill" id="ri-fill-terran" style="width:0%"></div></div>
         </div>
         <div class="team-mineral-row">
-          <div class="tm-label">팀 미네랄 합계</div>
-          <div class="tm-value" id="tm-terran">0 M</div>
-          <div class="tm-goal">15,000 ~ 22,000 M</div>
-          <div class="tm-badge" id="tm-badge-terran"></div>
+          <div class="tm-top-row">
+            <div class="tm-label">▸ 팀 미네랄 합계</div>
+            <div class="tm-badge" id="tm-badge-terran"></div>
+          </div>
+          <div class="tm-main-row">
+            <div class="tm-value" id="tm-terran">0 M</div>
+            <div class="tm-range">
+              <div class="tm-range-item min">최소 <span>15,000 M</span></div>
+              <div class="tm-range-sep">~</div>
+              <div class="tm-range-item max">최대 <span>22,000 M</span></div>
+            </div>
+          </div>
+          <div class="tm-desc">확정 팀원의 프리시즌 미네랄 합산 · 범위 내 팀 구성 필요</div>
         </div>
       </div>
       <div class="list-header"><div>NO</div><div>이름</div><div>미네랄</div><div style="text-align:right">상태</div></div>
@@ -389,10 +475,19 @@
           <div class="room-progress-bar"><div class="room-progress-fill" id="ri-fill-zerg" style="width:0%"></div></div>
         </div>
         <div class="team-mineral-row">
-          <div class="tm-label">팀 미네랄 합계</div>
-          <div class="tm-value" id="tm-zerg">0 M</div>
-          <div class="tm-goal">15,000 ~ 22,000 M</div>
-          <div class="tm-badge" id="tm-badge-zerg"></div>
+          <div class="tm-top-row">
+            <div class="tm-label">▸ 팀 미네랄 합계</div>
+            <div class="tm-badge" id="tm-badge-zerg"></div>
+          </div>
+          <div class="tm-main-row">
+            <div class="tm-value" id="tm-zerg">0 M</div>
+            <div class="tm-range">
+              <div class="tm-range-item min">최소 <span>15,000 M</span></div>
+              <div class="tm-range-sep">~</div>
+              <div class="tm-range-item max">최대 <span>22,000 M</span></div>
+            </div>
+          </div>
+          <div class="tm-desc">확정 팀원의 프리시즌 미네랄 합산 · 범위 내 팀 구성 필요</div>
         </div>
       </div>
       <div class="list-header"><div>NO</div><div>이름</div><div>미네랄</div><div style="text-align:right">상태</div></div>
