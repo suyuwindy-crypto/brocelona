@@ -118,9 +118,20 @@
   .terran-panel .room-progress-fill{background:linear-gradient(90deg,var(--terran),var(--terran-glow));box-shadow:0 0 6px rgba(94,200,230,0.4);}
   .zerg-panel .room-progress-fill{background:linear-gradient(90deg,var(--zerg),var(--zerg-glow));box-shadow:0 0 6px rgba(200,116,240,0.4);}
 
+
+  /* 팀 미네랄 합계 바 */
+  .team-mineral-row{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(94,200,230,0.1);}
+  .tm-label{font-size:7px;font-weight:700;color:var(--text-dimmer);letter-spacing:2px;flex-shrink:0;}
+  .tm-value{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--cyan-bright);text-shadow:0 0 6px rgba(94,200,230,0.5);}
+  .tm-goal{font-size:9px;font-weight:600;color:var(--text-dimmer);letter-spacing:1px;flex-shrink:0;}
+  .tm-badge{font-size:7px;font-weight:700;letter-spacing:1px;padding:3px 8px;border:1px solid;border-radius:8px;flex-shrink:0;}
+  .tm-badge.ok{color:var(--ok);border-color:rgba(95,217,122,0.45);background:rgba(95,217,122,0.08);}
+  .tm-badge.warn{color:var(--amber);border-color:rgba(255,140,66,0.45);background:rgba(255,140,66,0.08);}
+  .tm-badge.over{color:var(--danger);border-color:rgba(255,77,98,0.45);background:rgba(255,77,98,0.08);}
   /* 기존 room-info-bar 제거 */
   .room-info-bar{display:none;}
   .list-header{display:grid;grid-template-columns:28px 1fr 90px 58px;gap:8px;padding:5px 10px;margin-bottom:4px;font-size:7px;font-weight:700;color:var(--text-dimmer);letter-spacing:2px;}
+  .list-header.host{grid-template-columns:28px 1fr 90px 58px 80px;}
   .list-rows{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;}
   .member-row{display:grid;grid-template-columns:28px 1fr 90px 58px;gap:8px;align-items:center;padding:10px 10px;background:rgba(13,31,58,0.6);border:1px solid rgba(94,200,230,0.14);border-radius:6px;position:relative;overflow:hidden;transition:all 0.2s;animation:rowIn 0.35s ease-out backwards;}
   .member-row::before{content:'';position:absolute;left:0;top:10%;bottom:10%;width:2px;border-radius:0 2px 2px 0;}
@@ -154,18 +165,6 @@
   .apply-btn:disabled{opacity:0.35;cursor:not-allowed;}
   .divider{display:flex;align-items:center;gap:8px;margin:12px 0;font-size:7px;font-weight:600;color:var(--text-dimmer);letter-spacing:2px;}
   .divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(94,200,230,0.1);}
-  .code-box{background:rgba(0,0,0,0.3);border:1px solid rgba(94,200,230,0.12);border-radius:8px;padding:12px;}
-  .code-title{font-size:11px;font-weight:700;color:var(--ok);letter-spacing:2px;margin-bottom:4px;display:flex;align-items:center;gap:6px;}
-  .code-desc{font-size:9px;font-weight:600;color:var(--text-dimmer);letter-spacing:0.5px;margin-bottom:10px;line-height:1.6;}
-  .code-row{display:flex;gap:6px;}
-  .code-name-input{width:85px;flex-shrink:0;padding:10px 10px;background:rgba(0,0,0,0.5);border:1px solid rgba(94,200,230,0.2);border-radius:18px;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:600;color:var(--text-bright);letter-spacing:1px;outline:none;transition:all 0.2s;}
-  .code-name-input::placeholder{color:var(--text-dimmer);font-size:9px;}
-  .code-name-input:focus{border-color:var(--cyan);}
-  .code-input{flex:1;padding:10px 12px;background:rgba(0,0,0,0.5);border:1px solid rgba(94,200,230,0.2);border-radius:18px;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;color:var(--text-bright);letter-spacing:3px;outline:none;transition:all 0.2s;text-transform:uppercase;}
-  .code-input::placeholder{color:var(--text-dimmer);font-size:9px;letter-spacing:1px;text-transform:none;}
-  .code-input:focus{border-color:var(--cyan);box-shadow:0 0 10px rgba(94,200,230,0.18);}
-  .code-btn{padding:10px 12px;font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;color:var(--text-bright);border:1px solid var(--ok);border-radius:18px;cursor:pointer;flex-shrink:0;background:rgba(95,217,122,0.2);transition:all 0.15s;}
-  .code-btn:active{transform:scale(0.97);}
   .feed{background:rgba(0,0,0,0.45);border:1px solid rgba(94,200,230,0.1);border-radius:6px;padding:10px 12px;min-height:60px;max-height:100px;overflow-y:auto;scrollbar-width:none;}
   .feed::-webkit-scrollbar{display:none;}
   .feed-msg{font-size:10px;font-weight:600;color:var(--text-dim);padding:3px 0;border-bottom:1px solid rgba(94,200,230,0.05);display:flex;align-items:baseline;gap:7px;line-height:1.3;animation:rowIn 0.3s ease-out;}
@@ -195,9 +194,55 @@
   @keyframes rowIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
   @keyframes glow{0%,100%{text-shadow:0 0 10px var(--cyan)}50%{text-shadow:0 0 30px var(--cyan),0 0 60px var(--cyan)}}
   @keyframes load{0%{width:0%}40%{width:50%}80%{width:85%}100%{width:100%}}
+
+  /* 방장 버튼 */
+  .h-host-btn{padding:5px 10px;font-size:13px;background:rgba(0,0,0,0.4);border:1px solid rgba(94,200,230,0.2);border-radius:12px;cursor:pointer;transition:all 0.15s;}
+  .h-host-btn:hover{border-color:var(--cyan);}
+  .h-host-btn.active{border-color:var(--amber);background:rgba(255,140,66,0.15);box-shadow:0 0 8px rgba(255,140,66,0.3);}
+
+  /* 방장 모달 */
+  .host-modal{position:fixed;inset:0;background:rgba(3,8,18,0.85);display:flex;align-items:center;justify-content:center;z-index:800;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+  .host-modal.show{opacity:1;pointer-events:all;}
+  .host-modal-inner{background:linear-gradient(180deg,#0d1f3a,#081428);border:1px solid var(--cyan-border);border-radius:12px;padding:24px 20px;width:300px;display:flex;flex-direction:column;gap:14px;}
+  .host-modal-title{font-size:14px;font-weight:800;color:var(--text-bright);letter-spacing:2px;text-align:center;}
+  .host-modal-desc{font-size:9px;font-weight:600;color:var(--text-dimmer);letter-spacing:2px;text-align:center;}
+  .host-race-tabs{display:flex;gap:6px;}
+  .host-race-tab{flex:1;padding:8px 4px;font-size:9px;font-weight:700;letter-spacing:1px;border:1px solid rgba(94,200,230,0.2);border-radius:14px;color:var(--text-dim);background:rgba(0,0,0,0.3);cursor:pointer;text-align:center;transition:all 0.15s;}
+  .host-race-tab.active[data-race="protoss"]{color:var(--protoss-glow);border-color:var(--protoss);background:rgba(242,199,68,0.12);}
+  .host-race-tab.active[data-race="terran"]{color:var(--terran-glow);border-color:var(--terran);background:rgba(94,200,230,0.12);}
+  .host-race-tab.active[data-race="zerg"]{color:var(--zerg-glow);border-color:var(--zerg);background:rgba(200,116,240,0.12);}
+  .host-input-row{display:flex;gap:8px;}
+  .host-pw-input{flex:1;padding:10px 14px;background:rgba(0,0,0,0.5);border:1px solid rgba(94,200,230,0.22);border-radius:18px;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:600;color:var(--text-bright);letter-spacing:2px;outline:none;transition:all 0.2s;}
+  .host-pw-input:focus{border-color:var(--cyan);}
+  .host-login-btn{padding:10px 16px;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text-bright);border:1px solid var(--cyan);border-radius:18px;background:rgba(94,200,230,0.2);cursor:pointer;transition:all 0.15s;}
+  .host-login-btn:active{transform:scale(0.97);}
+  .host-modal-close{font-size:9px;font-weight:600;color:var(--text-dimmer);letter-spacing:2px;text-align:center;cursor:pointer;padding:4px;}
+  .host-modal-close:hover{color:var(--text);}
+
+  /* 방장 모드 수락/취소 버튼 */
+  .host-actions{display:flex;gap:4px;justify-content:flex-end;}
+  .btn-accept{padding:4px 10px;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:1px;color:var(--ok);border:1px solid rgba(95,217,122,0.5);border-radius:8px;background:rgba(95,217,122,0.1);cursor:pointer;transition:all 0.15s;}
+  .btn-cancel{padding:4px 10px;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:1px;color:var(--danger);border:1px solid rgba(255,77,98,0.5);border-radius:8px;background:rgba(255,77,98,0.1);cursor:pointer;transition:all 0.15s;}
+  .btn-accept:active,.btn-cancel:active{transform:scale(0.95);}
 </style>
 </head>
 <body>
+<div class="host-modal" id="host-modal">
+  <div class="host-modal-inner">
+    <div class="host-modal-title">🔑 방장 로그인</div>
+    <div class="host-modal-desc">팀을 선택하고 비밀번호를 입력하세요</div>
+    <div class="host-race-tabs">
+      <div class="host-race-tab active" data-race="protoss" onclick="selectHostRace('protoss')">PROTOSS</div>
+      <div class="host-race-tab" data-race="terran" onclick="selectHostRace('terran')">TERRAN</div>
+      <div class="host-race-tab" data-race="zerg" onclick="selectHostRace('zerg')">ZERG</div>
+    </div>
+    <div class="host-input-row">
+      <input class="host-pw-input" id="host-pw-input" type="password" placeholder="비밀번호" maxlength="20" autocomplete="off">
+      <button class="host-login-btn" onclick="hostLogin()">입장</button>
+    </div>
+    <div class="host-modal-close" onclick="closeHostModal()">✕ 닫기</div>
+  </div>
+</div>
 <div class="overlay" id="overlay">
   <div class="ov-logo">STARLEAGUE</div>
   <div class="ov-sub">LIGHT WAR</div>
@@ -212,6 +257,7 @@
     </div>
     <div class="h-right">
       <div class="live-dot">OPEN</div>
+      <div class="h-host-btn" id="host-btn" onclick="toggleHostLogin()">🔑</div>
       <div class="h-back" onclick="goBack()">← DASHBOARD</div>
     </div>
   </div>
@@ -256,6 +302,12 @@
           <div class="room-progress-lbl">RECRUITMENT PROGRESS</div>
           <div class="room-progress-bar"><div class="room-progress-fill" id="ri-fill-protoss" style="width:0%"></div></div>
         </div>
+        <div class="team-mineral-row">
+          <div class="tm-label">팀 미네랄 합계</div>
+          <div class="tm-value" id="tm-protoss">0 M</div>
+          <div class="tm-goal">15,000 ~ 22,000 M</div>
+          <div class="tm-badge" id="tm-badge-protoss"></div>
+        </div>
       </div>
       <div class="list-header"><div>NO</div><div>이름</div><div>미네랄</div><div style="text-align:right">상태</div></div>
       <div class="list-rows" id="list-protoss"></div>
@@ -265,16 +317,7 @@
           <input class="apply-input" id="apply-name-protoss" placeholder="이름 (2~6자)" maxlength="6" autocomplete="off">
           <button class="apply-btn" id="apply-btn-protoss" onclick="applyTeam('protoss')">신청</button>
         </div>
-        <div class="divider">수락 코드가 있으신가요?</div>
-        <div class="code-box">
-          <div class="code-title">▶ 수락 코드 입력</div>
-          <div class="code-desc">방장에게 수락 코드를 받으셨다면<br>이름과 코드를 함께 입력하세요.</div>
-          <div class="code-row">
-            <input class="code-name-input" id="code-name-protoss" placeholder="이름" maxlength="6" autocomplete="off">
-            <input class="code-input" id="code-input-protoss" placeholder="수락코드" maxlength="20" autocomplete="off">
-            <button class="code-btn" onclick="submitCode('protoss')">확인</button>
-          </div>
-        </div>
+
       </div>
     </div>
 
@@ -302,6 +345,12 @@
           <div class="room-progress-lbl">RECRUITMENT PROGRESS</div>
           <div class="room-progress-bar"><div class="room-progress-fill" id="ri-fill-terran" style="width:0%"></div></div>
         </div>
+        <div class="team-mineral-row">
+          <div class="tm-label">팀 미네랄 합계</div>
+          <div class="tm-value" id="tm-terran">0 M</div>
+          <div class="tm-goal">15,000 ~ 22,000 M</div>
+          <div class="tm-badge" id="tm-badge-terran"></div>
+        </div>
       </div>
       <div class="list-header"><div>NO</div><div>이름</div><div>미네랄</div><div style="text-align:right">상태</div></div>
       <div class="list-rows" id="list-terran"></div>
@@ -311,16 +360,7 @@
           <input class="apply-input" id="apply-name-terran" placeholder="이름 (2~6자)" maxlength="6" autocomplete="off">
           <button class="apply-btn" id="apply-btn-terran" onclick="applyTeam('terran')">신청</button>
         </div>
-        <div class="divider">수락 코드가 있으신가요?</div>
-        <div class="code-box">
-          <div class="code-title">▶ 수락 코드 입력</div>
-          <div class="code-desc">방장에게 수락 코드를 받으셨다면<br>이름과 코드를 함께 입력하세요.</div>
-          <div class="code-row">
-            <input class="code-name-input" id="code-name-terran" placeholder="이름" maxlength="6" autocomplete="off">
-            <input class="code-input" id="code-input-terran" placeholder="수락코드" maxlength="20" autocomplete="off">
-            <button class="code-btn" onclick="submitCode('terran')">확인</button>
-          </div>
-        </div>
+
       </div>
     </div>
 
@@ -348,6 +388,12 @@
           <div class="room-progress-lbl">RECRUITMENT PROGRESS</div>
           <div class="room-progress-bar"><div class="room-progress-fill" id="ri-fill-zerg" style="width:0%"></div></div>
         </div>
+        <div class="team-mineral-row">
+          <div class="tm-label">팀 미네랄 합계</div>
+          <div class="tm-value" id="tm-zerg">0 M</div>
+          <div class="tm-goal">15,000 ~ 22,000 M</div>
+          <div class="tm-badge" id="tm-badge-zerg"></div>
+        </div>
       </div>
       <div class="list-header"><div>NO</div><div>이름</div><div>미네랄</div><div style="text-align:right">상태</div></div>
       <div class="list-rows" id="list-zerg"></div>
@@ -357,16 +403,7 @@
           <input class="apply-input" id="apply-name-zerg" placeholder="이름 (2~6자)" maxlength="6" autocomplete="off">
           <button class="apply-btn" id="apply-btn-zerg" onclick="applyTeam('zerg')">신청</button>
         </div>
-        <div class="divider">수락 코드가 있으신가요?</div>
-        <div class="code-box">
-          <div class="code-title">▶ 수락 코드 입력</div>
-          <div class="code-desc">방장에게 수락 코드를 받으셨다면<br>이름과 코드를 함께 입력하세요.</div>
-          <div class="code-row">
-            <input class="code-name-input" id="code-name-zerg" placeholder="이름" maxlength="6" autocomplete="off">
-            <input class="code-input" id="code-input-zerg" placeholder="수락코드" maxlength="20" autocomplete="off">
-            <button class="code-btn" onclick="submitCode('zerg')">확인</button>
-          </div>
-        </div>
+
       </div>
     </div>
 
@@ -382,7 +419,10 @@
 <div class="toast" id="toast"></div>
 <script>
   const MAX = 12;
-  const ACCEPT_CODES = { protoss:'NEXUS2025', terran:'MARINE77', zerg:'ZERGLING' };
+  const HOST_PW = { protoss:'PROTOSS77', terran:'TERRAN77', zerg:'ZERG77' };
+  let hostMode = null; // 현재 로그인된 방장 종족
+  const TEAM_MIN_MINERAL = 15000;
+  const TEAM_MAX_MINERAL = 22000;
   const state = { protoss:[], terran:[], zerg:[] };
 
   // ── Google Sheets 연동 ──
@@ -497,11 +537,85 @@
     try { await loadMinerals(); } catch(e) { console.error(e); }
     document.getElementById('overlay').classList.add('hidden');
     feed('BROCELONA 채널에 접속했습니다.','');
-    feed('신청 후 방장 수락 코드를 받아야 팀 확정됩니다.','warn');
+    feed('신청 후 방장이 수락하면 팀원으로 확정됩니다.','warn');
     renderAll();
   }
 
   setTimeout(()=>{ init(); }, 300);
+
+  // ── 방장 모드 ──
+  let selectedHostRace = 'protoss';
+
+  function toggleHostLogin(){
+    if(hostMode){
+      hostMode = null;
+      document.getElementById('host-btn').classList.remove('active');
+      document.getElementById('host-btn').textContent = '🔑';
+      feed('방장 모드 종료','');
+      renderAll();
+    } else {
+      document.getElementById('host-modal').classList.add('show');
+    }
+  }
+
+  function selectHostRace(race){
+    selectedHostRace = race;
+    document.querySelectorAll('.host-race-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelector(`.host-race-tab[data-race="${race}"]`).classList.add('active');
+  }
+
+  function hostLogin(){
+    const pw = document.getElementById('host-pw-input').value.trim();
+    if(pw !== HOST_PW[selectedHostRace]){ toast('비밀번호가 틀렸습니다','err'); return; }
+    hostMode = selectedHostRace;
+    document.getElementById('host-modal').classList.remove('show');
+    document.getElementById('host-pw-input').value = '';
+    document.getElementById('host-btn').classList.add('active');
+    document.getElementById('host-btn').textContent = '🔑 '+selectedHostRace.toUpperCase();
+    switchRoom(hostMode);
+    feed('🔑 '+hostMode.toUpperCase()+' 방장 모드 활성화','warn');
+    renderAll();
+  }
+
+  function closeHostModal(){
+    document.getElementById('host-modal').classList.remove('show');
+    document.getElementById('host-pw-input').value = '';
+  }
+
+  function hostAccept(race, name){
+    const member = state[race].find(m=>m.name===name && m.status==='pending');
+    if(!member) return;
+    member.status = 'active';
+    renderAll();
+    feed('✅ '+name+' 님을 '+race.toUpperCase()+' 팀원으로 수락했습니다.',race);
+    toast(name+' 수락 완료!','ok');
+  }
+
+  function hostCancel(race, name){
+    const idx = state[race].findIndex(m=>m.name===name);
+    if(idx===-1) return;
+    state[race].splice(idx,1);
+    renderAll();
+    feed('❌ '+name+' 님의 신청이 취소되었습니다.',race);
+    toast(name+' 취소 완료','');
+  }
+
+  // 24시간 자동 취소 체크
+  function checkExpired(){
+    const now = Date.now();
+    ['protoss','terran','zerg'].forEach(race=>{
+      const before = state[race].length;
+      state[race] = state[race].filter(m=>{
+        if(m.status==='pending' && m.appliedAt && (now - m.appliedAt) > 24*60*60*1000){
+          feed('⏰ '+m.name+' 님의 신청이 24시간 만료로 자동 취소됐습니다.',race);
+          return false;
+        }
+        return true;
+      });
+      if(state[race].length !== before) renderRoom(race);
+    });
+  }
+  setInterval(checkExpired, 60*1000); // 1분마다 체크
 
   function switchRoom(race){
     document.querySelectorAll('.room-tab').forEach(t=>t.classList.remove('active'));
@@ -538,6 +652,27 @@
     members.filter(m=>m.status==='pending').forEach(m=>{list.appendChild(makeRow(slot++,m,race));});
     for(let i=members.length;i<MAX;i++){list.appendChild(makeEmptyRow(slot++));}
 
+    // 팀 미네랄 합계
+    const teamTotal = members
+      .filter(m=>m.status==='active' && m.mineral)
+      .reduce((sum,m)=>sum+(m.mineral||0),0);
+    const tmEl = document.getElementById('tm-'+race);
+    const tmBadge = document.getElementById('tm-badge-'+race);
+    if(tmEl) tmEl.textContent = teamTotal.toLocaleString()+' M';
+    if(tmBadge){
+      if(teamTotal > TEAM_MAX_MINERAL){
+        const over = (teamTotal - TEAM_MAX_MINERAL).toLocaleString();
+        tmBadge.textContent='🚫 '+over+' M 초과';
+        tmBadge.className='tm-badge over';
+      } else if(teamTotal >= TEAM_MIN_MINERAL){
+        tmBadge.textContent='✅ 목표 달성';
+        tmBadge.className='tm-badge ok';
+      } else {
+        const remain = (TEAM_MIN_MINERAL - teamTotal).toLocaleString();
+        tmBadge.textContent='⚠ '+remain+' M 부족';
+        tmBadge.className='tm-badge warn';
+      }
+    }
     // 신청 버튼
     const btn=document.getElementById('apply-btn-'+race);
     if(btn){btn.disabled=full;btn.textContent=full?'FULL':'신청';}
@@ -551,11 +686,19 @@
     const mineralTxt=member.mineral
       ?'<div class="mineral-gem"></div>'+member.mineral.toLocaleString()+' M'
       :'<div class="mineral-gem" style="opacity:0.2"></div><span style="color:var(--text-dimmer)">집계 전</span>';
+    const isHostRace = hostMode === race;
+    const hostBtns = isHostRace
+      ? isPending
+        ? `<div class="host-actions"><button class="btn-accept" onclick="hostAccept('${race}','${member.name}')">수락</button><button class="btn-cancel" onclick="hostCancel('${race}','${member.name}')">취소</button></div>`
+        : `<div class="host-actions"><button class="btn-cancel" onclick="hostCancel('${race}','${member.name}')">취소</button></div>`
+      : '';
+    row.style.gridTemplateColumns = isHostRace ? '28px 1fr 90px 58px 84px' : '28px 1fr 90px 58px';
     row.innerHTML=`
       <div class="row-num">${String(num).padStart(2,'0')}</div>
       <div class="row-name">${member.name}</div>
       <div class="row-mineral">${mineralTxt}</div>
-      <div class="row-status"><span class="status-badge ${isPending?'pending':'active'}">${isPending?'⏳ 대기':'✅ 확정'}</span></div>`;
+      <div class="row-status"><span class="status-badge ${isPending?'pending':'active'}">${isPending?'⏳ 대기':'✅ 확정'}</span></div>
+      ${isHostRace ? hostBtns : ''}`;
     return row;
   }
 
@@ -581,33 +724,20 @@
     const activeCount=state[race].filter(m=>m.status==='active').length;
     if(activeCount>=MAX){toast('팀이 가득 찼습니다','err');return;}
     const mineral = mineralMap[name] || 0;
-    state[race].push({name, mineral: mineral||null, status:'pending'});
+    state[race].push({name, mineral: mineral||null, status:'pending', appliedAt: Date.now()});
     input.value='';
     renderAll();
+    const m = mineralMap[name]||0;
+    if(m > 0 && m < TEAM_MIN_MINERAL){
+      feed('⚠ '+name+' 님 미네랄 '+m.toLocaleString()+' M — 팀 목표(15,000M) 달성에 참고하세요.',race);
+    }
     feed('📋 '+name+' 님이 '+race.toUpperCase()+' 팀에 신청했습니다. (대기 중)',race);
-    toast('신청 완료! 방장 수락 코드를 기다려주세요','ok');
+    toast('신청 완료! 방장 수락을 기다려주세요','ok');
   }
 
-  function submitCode(race){
-    const nameEl=document.getElementById('code-name-'+race);
-    const codeEl=document.getElementById('code-input-'+race);
-    const name=nameEl.value.trim();
-    const code=codeEl.value.trim().toUpperCase();
-    if(!name){toast('이름을 입력하세요','err');return;}
-    if(!code){toast('수락 코드를 입력하세요','err');return;}
-    if(code!==ACCEPT_CODES[race]){toast('코드가 올바르지 않습니다','err');codeEl.value='';return;}
-    const member=state[race].find(m=>m.name===name&&m.status==='pending');
-    if(!member){toast(name+' — 신청 내역 없음 또는 이미 확정','err');return;}
-    member.status='active';
-    nameEl.value='';codeEl.value='';
-    renderAll();
-    feed('🎉 '+name+' 님이 '+race.toUpperCase()+' 팀원으로 확정되었습니다!',race);
-    toast(name+' — 팀 합류 확정!','ok');
-  }
 
   ['protoss','terran','zerg'].forEach(race=>{
     document.getElementById('apply-name-'+race)?.addEventListener('keydown',e=>{if(e.key==='Enter')applyTeam(race);});
-    document.getElementById('code-input-'+race)?.addEventListener('keydown',e=>{if(e.key==='Enter')submitCode(race);});
   });
 
   function updateFooter(){
@@ -636,6 +766,7 @@
     setTimeout(()=>t.classList.remove('show'),2200);
   }
 
+  document.getElementById('host-pw-input')?.addEventListener('keydown',e=>{if(e.key==='Enter')hostLogin();});
   function goBack(){window.location.href='index.html';}
   renderAll();
 </script>
