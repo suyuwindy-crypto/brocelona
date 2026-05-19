@@ -649,36 +649,26 @@
   }
 
   // ── 신청 저장 ──
+  async function postToSheet(body){
+    try {
+      await fetch(API_URL, {
+        method:'POST',
+        mode:'no-cors',
+        body: JSON.stringify(body),
+      });
+    } catch(e){ console.error('postToSheet error', e); }
+  }
+
   async function saveApply(name, race, mineral){
-    try {
-      await fetch(API_URL, {
-        method:'POST',
-        body: JSON.stringify({action:'apply', name, race, mineral: mineral||''}),
-        headers:{'Content-Type':'application/json'}
-      });
-    } catch(e){ console.error('saveApply error', e); }
+    await postToSheet({action:'apply', name, race, mineral: mineral||''});
   }
 
-  // ── 수락 저장 ──
   async function saveAccept(name, race){
-    try {
-      await fetch(API_URL, {
-        method:'POST',
-        body: JSON.stringify({action:'accept', name, race}),
-        headers:{'Content-Type':'application/json'}
-      });
-    } catch(e){ console.error('saveAccept error', e); }
+    await postToSheet({action:'accept', name, race});
   }
 
-  // ── 취소 저장 ──
   async function saveCancel(name, race){
-    try {
-      await fetch(API_URL, {
-        method:'POST',
-        body: JSON.stringify({action:'cancel', name, race}),
-        headers:{'Content-Type':'application/json'}
-      });
-    } catch(e){ console.error('saveCancel error', e); }
+    await postToSheet({action:'cancel', name, race});
   }
 
   async function init(){
