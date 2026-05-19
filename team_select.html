@@ -510,6 +510,7 @@
 <div class="toast" id="toast"></div>
 <script>
   const MAX = 12;
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwvSxvAaH5A3f98iu2Z0S_D97ZlU2MUT8Z_UB9FZwKc16-Vvn8N4uEEHKDTi_9om-03/exec';
   const HOST_PW = { protoss:'1111', terran:'2222', zerg:'3333' };
   let hostMode = null;
   const hostNames = { protoss:'조광민', terran:'박병훈', zerg:'박상우' };
@@ -625,8 +626,64 @@
     }
   }
 
-    async function init(){
+    // ── 신청명단 로드 ──
+  async function loadApplications(){
+    try {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      ['protoss','terran','zerg'].forEach(race=>{
+        if(data[race]){
+          state[race] = data[race].map(m=>({
+            name: m.name,
+            status: m.status,
+            mineral: m.mineral || null,
+            appliedAt: m.appliedAt ? new Date(m.appliedAt).getTime() : Date.now()
+          }));
+        }
+      });
+      feed('✅ 신청명단 로드 완료','ok');
+    } catch(e){
+      feed('⚠ 신청명단 로드 실패','warn');
+      console.error(e);
+    }
+  }
+
+  // ── 신청 저장 ──
+  async function saveApply(name, race, mineral){
+    try {
+      await fetch(API_URL, {
+        method:'POST',
+        body: JSON.stringify({action:'apply', name, race, mineral: mineral||''}),
+        headers:{'Content-Type':'application/json'}
+      });
+    } catch(e){ console.error('saveApply error', e); }
+  }
+
+  // ── 수락 저장 ──
+  async function saveAccept(name, race){
+    try {
+      await fetch(API_URL, {
+        method:'POST',
+        body: JSON.stringify({action:'accept', name, race}),
+        headers:{'Content-Type':'application/json'}
+      });
+    } catch(e){ console.error('saveAccept error', e); }
+  }
+
+  // ── 취소 저장 ──
+  async function saveCancel(name, race){
+    try {
+      await fetch(API_URL, {
+        method:'POST',
+        body: JSON.stringify({action:'cancel', name, race}),
+        headers:{'Content-Type':'application/json'}
+      });
+    } catch(e){ console.error('saveCancel error', e); }
+  }
+
+  async function init(){
     try { await loadMinerals(); } catch(e) { console.error(e); }
+    try { await loadApplications(); } catch(e) { console.error(e); }
     document.getElementById('overlay').classList.add('hidden');
     feed('BROCELONA 채널에 접속했습니다.','');
     feed('신청 후 방장이 수락하면 팀원으로 확정됩니다.','warn');
@@ -678,6 +735,7 @@
     const member = state[race].find(m=>m.name===name && m.status==='pending');
     if(!member) return;
     member.status = 'active';
+    saveAccept(name, race);
     renderAll();
     feed('✅ '+name+' 님을 '+race.toUpperCase()+' 팀원으로 수락했습니다.',race);
     toast(name+' 수락 완료!','ok');
@@ -687,6 +745,7 @@
     const idx = state[race].findIndex(m=>m.name===name);
     if(idx===-1) return;
     state[race].splice(idx,1);
+    saveCancel(name, race);
     renderAll();
     feed('❌ '+name+' 님의 신청이 취소되었습니다.',race);
     toast(name+' 취소 완료','');
@@ -830,6 +889,7 @@
     if(m > 0 && m < TEAM_MIN_MINERAL){
       feed('⚠ '+name+' 님 미네랄 '+m.toLocaleString()+' M — 팀 목표(15,000M) 달성에 참고하세요.',race);
     }
+    saveApply(name, race, mineralMap[name]||null);
     feed('📋 '+name+' 님이 '+race.toUpperCase()+' 팀에 신청했습니다. (대기 중)',race);
     toast('신청 완료! 방장 수락을 기다려주세요','ok');
   }
