@@ -15,7 +15,7 @@
     --text-dim:#7a8ca3;--text-dimmer:#4d5d72;
     --protoss:#f2c744;--protoss-glow:#ffe066;
     --terran:#5ec8e6;--terran-glow:#7fdef0;
-    --zerg:#c874f0;--zerg-glow:#e0a0ff;
+    --zerg:#e03030;--zerg-glow:#ff6060;
     --danger:#ff4d62;--ok:#5fd97a;--amber:#ff8c42;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -49,7 +49,7 @@
   .room-tab:hover{border-color:rgba(94,200,230,0.35);color:var(--text);}
   .room-tab.active[data-tab="protoss"]{color:var(--protoss-glow);border-color:var(--protoss);background:rgba(242,199,68,0.12);box-shadow:0 0 12px rgba(242,199,68,0.2);}
   .room-tab.active[data-tab="terran"]{color:var(--terran-glow);border-color:var(--terran);background:rgba(94,200,230,0.12);box-shadow:0 0 12px rgba(94,200,230,0.2);}
-  .room-tab.active[data-tab="zerg"]{color:var(--zerg-glow);border-color:var(--zerg);background:rgba(200,116,240,0.12);box-shadow:0 0 12px rgba(200,116,240,0.2);}
+  .room-tab.active[data-tab="zerg"]{color:var(--zerg-glow);border-color:var(--zerg);background:rgba(220,48,48,0.12);box-shadow:0 0 12px rgba(220,48,48,0.2);}
   .room-panel{display:none;}
   .room-panel.active{display:block;}
 
@@ -74,8 +74,8 @@
   .protoss-panel .room-hero::before,.protoss-panel .room-hero::after{border-color:var(--protoss);box-shadow:0 0 6px rgba(242,199,68,0.4);}
   .terran-panel .room-hero{border-color:rgba(94,200,230,0.3);}
   .terran-panel .room-hero::before,.terran-panel .room-hero::after{border-color:var(--terran);box-shadow:0 0 6px rgba(94,200,230,0.4);}
-  .zerg-panel .room-hero{border-color:rgba(200,116,240,0.3);}
-  .zerg-panel .room-hero::before,.zerg-panel .room-hero::after{border-color:var(--zerg);box-shadow:0 0 6px rgba(200,116,240,0.4);}
+  .zerg-panel .room-hero{border-color:rgba(220,48,48,0.3);}
+  .zerg-panel .room-hero::before,.zerg-panel .room-hero::after{border-color:var(--zerg);box-shadow:0 0 6px rgba(220,48,48,0.4);}
 
   .room-hero-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
   .room-hero-left{display:flex;align-items:center;gap:12px;}
@@ -90,7 +90,7 @@
   }
   .protoss-panel .room-race-name{color:var(--protoss-glow);text-shadow:0 0 12px rgba(242,199,68,0.5),2px 2px 0 rgba(0,0,0,0.8);}
   .terran-panel .room-race-name{color:var(--terran-glow);text-shadow:0 0 12px rgba(94,200,230,0.5),2px 2px 0 rgba(0,0,0,0.8);}
-  .zerg-panel .room-race-name{color:var(--zerg-glow);text-shadow:0 0 12px rgba(200,116,240,0.5),2px 2px 0 rgba(0,0,0,0.8);}
+  .zerg-panel .room-race-name{color:var(--zerg-glow);text-shadow:0 0 12px rgba(220,48,48,0.5),2px 2px 0 rgba(0,0,0,0.8);}
   .room-team-name{font-size:11px;font-weight:600;color:var(--text-dim);letter-spacing:3px;}
   .room-host-row{display:flex;align-items:center;gap:6px;}
   .room-host-lbl{font-size:7px;font-weight:700;color:var(--text-dimmer);letter-spacing:2px;}
@@ -116,7 +116,7 @@
   .room-progress-fill{height:100%;border-radius:8px;transition:width 0.6s;}
   .protoss-panel .room-progress-fill{background:linear-gradient(90deg,var(--protoss),var(--protoss-glow));box-shadow:0 0 6px rgba(242,199,68,0.4);}
   .terran-panel .room-progress-fill{background:linear-gradient(90deg,var(--terran),var(--terran-glow));box-shadow:0 0 6px rgba(94,200,230,0.4);}
-  .zerg-panel .room-progress-fill{background:linear-gradient(90deg,var(--zerg),var(--zerg-glow));box-shadow:0 0 6px rgba(200,116,240,0.4);}
+  .zerg-panel .room-progress-fill{background:linear-gradient(90deg,var(--zerg),var(--zerg-glow));box-shadow:0 0 6px rgba(220,48,48,0.4);}
 
 
   /* 팀 미네랄 합계 바 */
@@ -137,7 +137,7 @@
   .member-row::before{content:'';position:absolute;left:0;top:10%;bottom:10%;width:2px;border-radius:0 2px 2px 0;}
   .protoss-panel .member-row::before{background:var(--protoss);box-shadow:0 0 6px rgba(242,199,68,0.5);}
   .terran-panel .member-row::before{background:var(--terran);box-shadow:0 0 6px rgba(94,200,230,0.5);}
-  .zerg-panel .member-row::before{background:var(--zerg);box-shadow:0 0 6px rgba(200,116,240,0.5);}
+  .zerg-panel .member-row::before{background:var(--zerg);box-shadow:0 0 6px rgba(220,48,48,0.5);}
   .member-row.empty{background:rgba(0,0,0,0.2);border-style:dashed;border-color:rgba(94,200,230,0.08);}
   .member-row.empty::before{display:none;}
   .row-num{font-size:10px;font-weight:700;color:var(--text-dimmer);letter-spacing:1px;text-align:center;}
@@ -160,7 +160,7 @@
   .apply-btn{padding:11px 18px;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--text-bright);border:1px solid;border-radius:18px;cursor:pointer;flex-shrink:0;transition:all 0.15s;}
   .protoss-panel .apply-btn{background:rgba(242,199,68,0.3);border-color:var(--protoss);}
   .terran-panel .apply-btn{background:rgba(94,200,230,0.3);border-color:var(--terran);}
-  .zerg-panel .apply-btn{background:rgba(200,116,240,0.3);border-color:var(--zerg);}
+  .zerg-panel .apply-btn{background:rgba(220,48,48,0.3);border-color:var(--zerg);}
   .apply-btn:active{transform:scale(0.97);}
   .apply-btn:disabled{opacity:0.35;cursor:not-allowed;}
   .divider{display:flex;align-items:center;gap:8px;margin:12px 0;font-size:7px;font-weight:600;color:var(--text-dimmer);letter-spacing:2px;}
@@ -210,7 +210,7 @@
   .host-race-tab{flex:1;padding:8px 4px;font-size:9px;font-weight:700;letter-spacing:1px;border:1px solid rgba(94,200,230,0.2);border-radius:14px;color:var(--text-dim);background:rgba(0,0,0,0.3);cursor:pointer;text-align:center;transition:all 0.15s;}
   .host-race-tab.active[data-race="protoss"]{color:var(--protoss-glow);border-color:var(--protoss);background:rgba(242,199,68,0.12);}
   .host-race-tab.active[data-race="terran"]{color:var(--terran-glow);border-color:var(--terran);background:rgba(94,200,230,0.12);}
-  .host-race-tab.active[data-race="zerg"]{color:var(--zerg-glow);border-color:var(--zerg);background:rgba(200,116,240,0.12);}
+  .host-race-tab.active[data-race="zerg"]{color:var(--zerg-glow);border-color:var(--zerg);background:rgba(220,48,48,0.12);}
   .host-input-row{display:flex;gap:8px;}
   .host-pw-input{flex:1;padding:10px 14px;background:rgba(0,0,0,0.5);border:1px solid rgba(94,200,230,0.22);border-radius:18px;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:600;color:var(--text-bright);letter-spacing:2px;outline:none;transition:all 0.2s;}
   .host-pw-input:focus{border-color:var(--cyan);}
@@ -266,9 +266,7 @@
   }
   .notice-item strong{color:var(--text-bright);}
 
-  .host-name-row{display:flex;flex-direction:column;gap:6px;}
-  .host-name-label{font-size:8px;font-weight:700;color:var(--text-dimmer);letter-spacing:2px;}
-  .host-name-input{
+  .host-name-input-UNUSED{
     width:100%;padding:12px 16px;
     background:rgba(0,0,0,0.5);
     border:1px solid rgba(94,200,230,0.22);
@@ -297,11 +295,7 @@
       <input class="host-pw-input" id="host-pw-input" type="text" placeholder="비밀번호" maxlength="20" autocomplete="off">
       <button class="host-login-btn" onclick="hostLogin()">입장</button>
     </div>
-    <div class="host-name-row">
-      <div class="host-name-label">방장 이름 설정</div>
-      <input class="host-name-input" id="host-name-input" placeholder="방장 이름 입력" maxlength="8" autocomplete="off">
-    </div>
-    <div class="host-modal-close" onclick="closeHostModal()">✕ 닫기</div>
+<div class="host-modal-close" onclick="closeHostModal()">✕ 닫기</div>
   </div>
 </div>
 <div class="overlay" id="overlay">
@@ -518,7 +512,7 @@
   const MAX = 12;
   const HOST_PW = { protoss:'1111', terran:'2222', zerg:'3333' };
   let hostMode = null;
-  const hostNames = { protoss:'관리자', terran:'관리자', zerg:'관리자' };
+  const hostNames = { protoss:'조광민', terran:'박병훈', zerg:'박상우' };
   const TEAM_MIN_MINERAL = 15000;
   const TEAM_MAX_MINERAL = 22000;
   const state = { protoss:[], terran:[], zerg:[] };
@@ -666,11 +660,8 @@
     const pw = document.getElementById('host-pw-input').value.trim();
     if(pw !== HOST_PW[selectedHostRace]){ toast('비밀번호가 틀렸습니다','err'); return; }
     hostMode = selectedHostRace;
-    const nameInput = document.getElementById('host-name-input').value.trim();
-    if(nameInput) hostNames[selectedHostRace] = nameInput;
     document.getElementById('host-modal').classList.remove('show');
     document.getElementById('host-pw-input').value = '';
-    document.getElementById('host-name-input').value = '';
     document.getElementById('host-btn').classList.add('active');
     document.getElementById('host-btn').textContent = '🔑 '+(hostNames[selectedHostRace]);
     switchRoom(hostMode);
@@ -752,7 +743,11 @@
     const list=document.getElementById('list-'+race);
     list.innerHTML='';
     let slot=1;
-    members.filter(m=>m.status==='active').forEach(m=>{list.appendChild(makeRow(slot++,m,race));});
+    // ACTIVE: 미네랄 내림차순 정렬
+    [...members.filter(m=>m.status==='active')]
+      .sort((a,b)=>(b.mineral||0)-(a.mineral||0))
+      .forEach(m=>{list.appendChild(makeRow(slot++,m,race));});
+    // PENDING: 신청 순서 유지
     members.filter(m=>m.status==='pending').forEach(m=>{list.appendChild(makeRow(slot++,m,race));});
     for(let i=members.length;i<MAX;i++){list.appendChild(makeEmptyRow(slot++));}
 
