@@ -1,165 +1,1033 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2113.6">
-  <style type="text/css">
-    body {background-color: #04090f}
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 14.0px 'Apple SD Gothic Neo'; color: #ecf4fb; -webkit-text-stroke: #ecf4fb}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 9.0px 'Apple SD Gothic Neo SemiBold'; color: #3c4a5f; -webkit-text-stroke: #3c4a5f}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 9.0px 'Apple SD Gothic Neo'; color: #fedb54; -webkit-text-stroke: #fedb54; background-color: #eebd35; background-color: rgba(238, 189, 53, 0.12)}
-    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 9.0px 'Apple SD Gothic Neo'; color: #677992; -webkit-text-stroke: #677992; background-color: #000000; background-color: rgba(0, 0, 0, 0.3)}
-    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Apple SD Gothic Neo SemiBold'; color: #ecf4fb; -webkit-text-stroke: #ecf4fb; background-color: #000000; background-color: rgba(0, 0, 0, 0.5); min-height: 15.0px}
-    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 10.0px 'Apple SD Gothic Neo'; color: #ecf4fb; -webkit-text-stroke: #ecf4fb; background-color: #50bce0; background-color: rgba(80, 188, 224, 0.2)}
-    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px 'Apple SD Gothic Neo'; color: #ecf4fb; -webkit-text-stroke: #ecf4fb}
-    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 8.0px 'Apple SD Gothic Neo SemiBold'; color: #50bce0; -webkit-text-stroke: #50bce0}
-    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Apple SD Gothic Neo'; color: #cdddec; -webkit-text-stroke: #cdddec; min-height: 15.0px}
-    p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 8.0px 'Apple SD Gothic Neo SemiBold'; color: #3c4a5f; -webkit-text-stroke: #3c4a5f}
-    p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 11.0px; font: 11.0px 'Apple SD Gothic Neo'; color: #ecf4fb; -webkit-text-stroke: #ecf4fb}
-    p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 7.0px 'Apple SD Gothic Neo SemiBold'; color: #50bce0; -webkit-text-stroke: #50bce0}
-    p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 8.0px 'Apple SD Gothic Neo'; color: #52d567; -webkit-text-stroke: #52d567}
-    p.p14 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px 'Apple Color Emoji'; color: #cdddec; -webkit-text-stroke: #cdddec; background-color: #000000; background-color: rgba(0, 0, 0, 0.4)}
-    p.p15 {margin: 0.0px 0.0px 0.0px 0.0px; font: 8.0px 'Apple SD Gothic Neo'; color: #677992; -webkit-text-stroke: #677992; background-color: #000000; background-color: rgba(0, 0, 0, 0.4)}
-    p.p16 {margin: 0.0px 0.0px 0.0px 0.0px; font: 8.0px 'Apple SD Gothic Neo'; color: #6fd7ec; -webkit-text-stroke: #6fd7ec}
-    p.p17 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 16.0px 'Apple Color Emoji'; color: #fedb54; -webkit-text-stroke: #fedb54}
-    p.p18 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 10.0px 'Apple SD Gothic Neo'; color: #fedb54; -webkit-text-stroke: #fedb54}
-    p.p19 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 7.0px 'Apple SD Gothic Neo'; color: #3c4a5f; -webkit-text-stroke: #3c4a5f}
-    p.p20 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 16.0px Menlo; color: #677992; -webkit-text-stroke: #677992}
-    p.p21 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 10.0px 'Apple SD Gothic Neo'; color: #677992; -webkit-text-stroke: #677992}
-    p.p22 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 16.0px 'Apple Color Emoji'; color: #677992; -webkit-text-stroke: #677992}
-    p.p23 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 32.0px; font: 32.0px 'Apple Color Emoji'; color: #eebd35; -webkit-text-stroke: #eebd35}
-    p.p24 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 22.0px; font: 22.0px 'Apple SD Gothic Neo'; color: #fedb54; -webkit-text-stroke: #fedb54}
-    p.p25 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px 'Apple SD Gothic Neo SemiBold'; color: #677992; -webkit-text-stroke: #677992}
-    p.p26 {margin: 0.0px 0.0px 0.0px 0.0px; font: 7.0px 'Apple SD Gothic Neo'; color: #3c4a5f; -webkit-text-stroke: #3c4a5f}
-    p.p27 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px 'Apple SD Gothic Neo'; color: #ecf4fb; -webkit-text-stroke: #ecf4fb}
-    p.p28 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: right; line-height: 28.0px; font: 13.0px 'Apple SD Gothic Neo'; color: #3c4a5f; -webkit-text-stroke: #3c4a5f}
-    p.p29 {margin: 0.0px 0.0px 0.0px 0.0px; font: 8.0px 'Apple SD Gothic Neo'; color: #52d567; -webkit-text-stroke: #52d567; background-color: #52d567; background-color: rgba(82, 213, 103, 0.078)}
-    p.p30 {margin: 0.0px 0.0px 0.0px 0.0px; font: 7.0px 'Apple SD Gothic Neo SemiBold'; color: #3c4a5f; -webkit-text-stroke: #3c4a5f}
-    p.p31 {margin: 0.0px 0.0px 0.0px 0.0px; font: 8.0px 'Apple SD Gothic Neo'; color: #677992; -webkit-text-stroke: #677992}
-    p.p32 {margin: 0.0px 0.0px 0.0px 0.0px; font: 7.0px 'Apple SD Gothic Neo'; color: #cdddec; -webkit-text-stroke: #cdddec; min-height: 8.0px}
-    p.p33 {margin: 0.0px 0.0px 0.0px 0.0px; font: 16.0px 'Apple SD Gothic Neo'; color: #6fd7ec; -webkit-text-stroke: #6fd7ec}
-    p.p34 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px 'Apple SD Gothic Neo'; color: #fc7734; -webkit-text-stroke: #fc7734}
-    p.p35 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px 'Apple SD Gothic Neo'; color: #3c4a5f; -webkit-text-stroke: #3c4a5f}
-    p.p36 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px 'Apple SD Gothic Neo'; color: #fc3250; -webkit-text-stroke: #fc3250}
-    p.p37 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 11.2px; font: 8.0px 'Apple SD Gothic Neo SemiBold'; color: #3c4a5f; -webkit-text-stroke: #3c4a5f}
-    p.p38 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px 'Apple SD Gothic Neo'; color: #fc7734; -webkit-text-stroke: #fc7734; background-color: #000000; background-color: rgba(0, 0, 0, 0.4)}
-    p.p39 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 15.0px; font: 10.0px 'Apple SD Gothic Neo SemiBold'; color: #677992; -webkit-text-stroke: #677992}
-    p.p40 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 12.0px; font: 8.0px 'Apple SD Gothic Neo'; color: #fc7734; -webkit-text-stroke: #fc7734; background-color: #fc7734; background-color: rgba(252, 119, 52, 0.15)}
-    p.p41 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: right; font: 7.0px 'Apple SD Gothic Neo'; color: #3c4a5f; -webkit-text-stroke: #3c4a5f}
-    p.p42 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px 'Apple SD Gothic Neo'; color: #6fd7ec; -webkit-text-stroke: #6fd7ec; background-color: #000000; background-color: rgba(0, 0, 0, 0.35)}
-    p.p43 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 10.0px 'Apple SD Gothic Neo'; color: #ecf4fb; -webkit-text-stroke: #ecf4fb; background-color: #eebd35; background-color: rgba(238, 189, 53, 0.3)}
-    p.p44 {margin: 0.0px 0.0px 0.0px 0.0px; font: 7.0px 'Apple SD Gothic Neo SemiBold'; color: #3c4a5f; -webkit-text-stroke: #3c4a5f; background-color: #000000; background-color: rgba(0, 0, 0, 0.35)}
-    p.p45 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px 'Apple SD Gothic Neo'; color: #fc3250; -webkit-text-stroke: #fc3250}
-    p.p46 {margin: 0.0px 0.0px 0.0px 0.0px; line-height: 13.5px; font: 9.0px 'Apple SD Gothic Neo SemiBold'; color: #3c4a5f; -webkit-text-stroke: #3c4a5f}
-    p.p47 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 10.0px 'Apple SD Gothic Neo'; color: #fc3250; -webkit-text-stroke: #fc3250; background-color: #fc3250; background-color: rgba(252, 50, 80, 0.1)}
-    p.p48 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Apple SD Gothic Neo'; color: #cdddec; -webkit-text-stroke: #cdddec; background-color: #000000; background-color: rgba(0, 0, 0, 0.45); min-height: 15.0px}
-    p.p49 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px 'Apple SD Gothic Neo SemiBold'; color: #677992; -webkit-text-stroke: #677992}
-    p.p50 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px 'Apple SD Gothic Neo'; color: #6fd7ec; -webkit-text-stroke: #6fd7ec; background-color: #09101e; background-color: rgba(9, 16, 30, 0.96); min-height: 12.0px}
-    span.s1 {font: 14.0px 'Apple Color Emoji'; font-kerning: none; background-color: rgba(4, 9, 15, 0.85)}
-    span.s2 {font-kerning: none; background-color: rgba(4, 9, 15, 0.85)}
-    span.s3 {font: 9.0px 'Apple SD Gothic Neo'; font-kerning: none; background-color: rgba(4, 9, 15, 0.85)}
-    span.s4 {font-kerning: none}
-    span.s5 {font: 12.0px 'Apple SD Gothic Neo'; font-kerning: none}
-    span.s6 {font: 9.0px 'Zapf Dingbats'; font-kerning: none; background-color: rgba(4, 9, 15, 0.85)}
-    span.s7 {font-kerning: none; background-color: rgba(4, 9, 15, 0.97); text-shadow: 0.0px 0.0px 10.0px #5ec8e6}
-    span.s8 {font: 8.0px 'Apple SD Gothic Neo'; font-kerning: none; background-color: rgba(4, 9, 15, 0.97)}
-    span.s9 {font: 7.0px 'Apple SD Gothic Neo'; font-kerning: none}
-    span.s10 {font-kerning: none; background-color: rgba(238, 189, 53, 0.12)}
-    span.s11 {font-kerning: none; background-color: rgba(12, 23, 44, 0.5)}
-    span.s12 {font-kerning: none; text-shadow: 0.0px 0.0px 12.0px rgba(249, 227, 162, 0.5)}
-    span.s13 {font: 11.0px 'Apple SD Gothic Neo'; font-kerning: none}
-    span.s14 {font-kerning: none; text-shadow: 0.0px 0.0px 8.0px rgba(255, 255, 255, 0.3)}
-    span.s15 {font: 28.0px 'Apple SD Gothic Neo'; font-kerning: none; color: #ecf4fb; -webkit-text-stroke: 0px #ecf4fb}
-    span.s16 {font: 8.0px 'Lucida Grande'; font-kerning: none}
-    span.s17 {font-kerning: none; text-shadow: 0.0px 0.0px 6.0px rgba(175, 227, 243, 0.5)}
-    span.s18 {font: 8.0px 'Apple SD Gothic Neo'; font-kerning: none}
-    span.s19 {font: 12.0px 'Apple SD Gothic Neo'; font-kerning: none; color: #cdddec; -webkit-text-stroke: 0px #cdddec}
-    span.s20 {font: 8.0px 'Apple SD Gothic Neo'; font-kerning: none; background-color: rgba(252, 119, 52, 0.15)}
-    span.s21 {font: 10.0px 'Apple SD Gothic Neo'; font-kerning: none; color: #ecf4fb; background-color: rgba(0, 0, 0, 0.4); -webkit-text-stroke: 0px #ecf4fb}
-    span.s22 {font: 10.0px 'Apple SD Gothic Neo'; font-kerning: none; background-color: rgba(0, 0, 0, 0.4)}
-    span.s23 {font-kerning: none; background-color: rgba(0, 0, 0, 0.3)}
-    span.s24 {font: 9.0px 'Apple SD Gothic Neo'; font-kerning: none; background-color: rgba(0, 0, 0, 0.3)}
-    span.s25 {font: 9.0px 'Apple SD Gothic Neo'; font-kerning: none}
-    span.s26 {font: 9.0px 'Apple SD Gothic Neo'; font-kerning: none; color: #ecf4fb; -webkit-text-stroke: 0px #ecf4fb}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>STARLEAGUE LIGHTWAR - LOBBY</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-0:#030812;--bg-1:#081428;
+    --cyan:#5ec8e6;--cyan-bright:#7fdef0;
+    --cyan-border:rgba(94,200,230,0.28);
+    --cyan-border-s:rgba(94,200,230,0.6);
+    --text:#d6e4f0;--text-bright:#f0f6fc;
+    --text-dim:#7a8ca3;--text-dimmer:#4d5d72;
+    --protoss:#f2c744;--protoss-glow:#ffe066;
+    --terran:#5ec8e6;--terran-glow:#7fdef0;
+    --zerg:#e03030;--zerg-glow:#ff6060;
+    --danger:#ff4d62;--ok:#5fd97a;--amber:#ff8c42;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{background:var(--bg-0);color:var(--text);font-family:'Orbitron',sans-serif;overflow:hidden;height:100vh;width:100vw;user-select:none;}
+  .app{height:100vh;width:100vw;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(94,200,230,0.08),transparent),linear-gradient(180deg,var(--bg-1),var(--bg-0));display:flex;flex-direction:column;overflow:hidden;}
+  .header{height:50px;padding:0 14px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(13,31,58,0.98),rgba(8,20,40,0.95));border-bottom:1px solid var(--cyan-border);position:relative;z-index:10;}
+  .header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0.5;}
+  .h-logo{display:flex;flex-direction:column;gap:2px;}
+  .h-main{font-size:11px;font-weight:800;color:var(--text-bright);letter-spacing:3px;line-height:1;}
+  .h-sub{font-size:7px;font-weight:600;color:var(--cyan);letter-spacing:3px;}
+  .h-right{display:flex;align-items:center;gap:8px;}
+  .h-back{padding:5px 12px;font-size:8px;font-weight:700;letter-spacing:2px;color:var(--text-dim);background:rgba(0,0,0,0.4);border:1px solid rgba(94,200,230,0.2);border-radius:12px;cursor:pointer;transition:all 0.15s;}
+  .h-back:hover{color:var(--cyan-bright);border-color:var(--cyan);}
+  .live-dot{display:flex;align-items:center;gap:4px;font-size:8px;font-weight:700;color:var(--ok);letter-spacing:2px;}
+  .live-dot::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px var(--ok);animation:blink 1.5s infinite;}
+  .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:14px 12px 20px;}
+  .scroll::-webkit-scrollbar{display:none;}
+  .sec{font-size:8px;font-weight:700;color:var(--cyan-bright);letter-spacing:3px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+  .sec::before{content:'';width:3px;height:12px;background:var(--cyan);box-shadow:0 0 6px var(--cyan);border-radius:2px;flex-shrink:0;}
+  .room-tabs{display:flex;gap:5px;margin-bottom:12px;}
+  .room-tab{
+    flex:1;padding:10px 8px;
+    font-size:10px;font-weight:700;letter-spacing:1.5px;
+    border:1px solid rgba(94,200,230,0.2);border-radius:20px;
+    color:var(--text-dim);background:rgba(13,31,58,0.5);
+    cursor:pointer;text-align:center;transition:all 0.15s;
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+  }
+  .room-tab .tab-icon{font-size:16px;}
+  .room-tab .tab-cnt{font-size:7px;color:var(--text-dimmer);letter-spacing:1px;}
+  .room-tab:hover{border-color:rgba(94,200,230,0.35);color:var(--text);}
+  .room-tab.active[data-tab="protoss"]{color:var(--protoss-glow);border-color:var(--protoss);background:rgba(242,199,68,0.12);box-shadow:0 0 12px rgba(242,199,68,0.2);}
+  .room-tab.active[data-tab="terran"]{color:var(--terran-glow);border-color:var(--terran);background:rgba(94,200,230,0.12);box-shadow:0 0 12px rgba(94,200,230,0.2);}
+  .room-tab.active[data-tab="zerg"]{color:var(--zerg-glow);border-color:var(--zerg);background:rgba(220,48,48,0.12);box-shadow:0 0 12px rgba(220,48,48,0.2);}
+  .room-panel{display:none;}
+  .room-panel.active{display:block;}
+
+  /* 방 헤더 — 종족명 + 방장 크게 */
+  .room-hero{
+    position:relative;
+    padding:16px 14px 14px;
+    margin-bottom:10px;
+    background:linear-gradient(180deg,rgba(13,31,58,0.85),rgba(8,20,40,0.9));
+    border:1px solid rgba(94,200,230,0.2);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  /* v10 코너 장식 */
+  .room-hero::before,.room-hero::after{
+    content:'';position:absolute;width:16px;height:16px;
+    border:2px solid;pointer-events:none;border-radius:2px;
+  }
+  .room-hero::before{top:4px;left:4px;border-right:none;border-bottom:none;border-top-left-radius:5px;}
+  .room-hero::after{bottom:4px;right:4px;border-left:none;border-top:none;border-bottom-right-radius:5px;}
+  .protoss-panel .room-hero{border-color:rgba(242,199,68,0.3);}
+  .protoss-panel .room-hero::before,.protoss-panel .room-hero::after{border-color:var(--protoss);box-shadow:0 0 6px rgba(242,199,68,0.4);}
+  .terran-panel .room-hero{border-color:rgba(94,200,230,0.3);}
+  .terran-panel .room-hero::before,.terran-panel .room-hero::after{border-color:var(--terran);box-shadow:0 0 6px rgba(94,200,230,0.4);}
+  .zerg-panel .room-hero{border-color:rgba(220,48,48,0.3);}
+  .zerg-panel .room-hero::before,.zerg-panel .room-hero::after{border-color:var(--zerg);box-shadow:0 0 6px rgba(220,48,48,0.4);}
+
+  .room-hero-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .room-hero-left{display:flex;align-items:center;gap:12px;}
+  .room-race-icon{font-size:32px;line-height:1;filter:drop-shadow(0 0 8px currentColor);}
+  .protoss-panel .room-race-icon{color:var(--protoss);}
+  .terran-panel .room-race-icon{color:var(--terran);}
+  .zerg-panel .room-race-icon{color:var(--zerg);}
+  .room-hero-names{display:flex;flex-direction:column;gap:4px;}
+  .room-race-name{
+    font-size:22px;font-weight:900;letter-spacing:4px;line-height:1;
+    text-shadow:2px 2px 0 rgba(0,0,0,0.8);
+  }
+  .protoss-panel .room-race-name{color:var(--protoss-glow);text-shadow:0 0 12px rgba(242,199,68,0.5),2px 2px 0 rgba(0,0,0,0.8);}
+  .terran-panel .room-race-name{color:var(--terran-glow);text-shadow:0 0 12px rgba(94,200,230,0.5),2px 2px 0 rgba(0,0,0,0.8);}
+  .zerg-panel .room-race-name{color:var(--zerg-glow);text-shadow:0 0 12px rgba(220,48,48,0.5),2px 2px 0 rgba(0,0,0,0.8);}
+  .room-team-name{font-size:11px;font-weight:600;color:var(--text-dim);letter-spacing:3px;}
+  .room-host-row{display:flex;align-items:center;gap:6px;}
+  .room-host-lbl{font-size:7px;font-weight:700;color:var(--text-dimmer);letter-spacing:2px;}
+  .room-host-name{font-size:18px;font-weight:800;color:var(--text-bright);letter-spacing:1px;text-shadow:0 0 8px rgba(255,255,255,0.3);}
+
+  .room-hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+  .room-count-big{
+    font-size:28px;font-weight:700;color:var(--text-bright);
+    letter-spacing:1px;line-height:1;
+    text-align:right;font-family:'Rajdhani',sans-serif;
+  }
+  .room-count-big span{font-size:13px;color:var(--text-dimmer);}
+  .room-status-badge{
+    font-size:8px;font-weight:700;letter-spacing:1.5px;
+    padding:4px 10px;border:1px solid;border-radius:10px;
+  }
+  .room-status-badge.open{color:var(--ok);border-color:rgba(95,217,122,0.5);background:rgba(95,217,122,0.08);}
+  .room-status-badge.full{color:var(--danger);border-color:rgba(255,77,98,0.5);background:rgba(255,77,98,0.08);}
+
+  .room-progress{display:flex;flex-direction:column;gap:3px;}
+  .room-progress-lbl{font-size:7px;font-weight:600;color:var(--text-dimmer);letter-spacing:2px;}
+  .room-progress-bar{height:8px;background:rgba(0,0,0,0.6);border-radius:8px;overflow:hidden;border:1px solid rgba(94,200,230,0.15);}
+  .room-progress-fill{height:100%;border-radius:8px;transition:width 0.6s;}
+  .protoss-panel .room-progress-fill{background:linear-gradient(90deg,var(--protoss),var(--protoss-glow));box-shadow:0 0 6px rgba(242,199,68,0.4);}
+  .terran-panel .room-progress-fill{background:linear-gradient(90deg,var(--terran),var(--terran-glow));box-shadow:0 0 6px rgba(94,200,230,0.4);}
+  .zerg-panel .room-progress-fill{background:linear-gradient(90deg,var(--zerg),var(--zerg-glow));box-shadow:0 0 6px rgba(220,48,48,0.4);}
+
+
+  /* 팀 미네랄 합계 바 */
+  .team-mineral-row{display:flex;flex-direction:column;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(94,200,230,0.15);}
+  .tm-label{font-size:8px;font-weight:700;color:var(--text-dim);letter-spacing:2px;}
+  .tm-value{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--cyan-bright);text-shadow:0 0 6px rgba(94,200,230,0.5);}
+  .tm-goal{font-size:9px;font-weight:600;color:var(--text-dimmer);letter-spacing:0.5px;}
+  .tm-badge{font-size:7px;font-weight:700;letter-spacing:1px;padding:3px 8px;border:1px solid;border-radius:8px;flex-shrink:0;}
+  .tm-badge.ok{color:var(--ok);border-color:rgba(95,217,122,0.45);background:rgba(95,217,122,0.08);}
+  .tm-badge.warn{color:var(--amber);border-color:rgba(255,140,66,0.45);background:rgba(255,140,66,0.08);}
+  .tm-badge.over{color:var(--danger);border-color:rgba(255,77,98,0.45);background:rgba(255,77,98,0.08);}
+  /* 기존 room-info-bar 제거 */
+  .room-info-bar{display:none;}
+  .list-header{display:grid;grid-template-columns:28px 1fr 90px 58px;gap:8px;padding:5px 10px;margin-bottom:4px;font-size:7px;font-weight:700;color:var(--text-dimmer);letter-spacing:2px;}
+  .list-header.host{grid-template-columns:28px 1fr 90px 58px 80px;}
+  .list-rows{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;}
+  .member-row{display:grid;grid-template-columns:28px 1fr 90px 58px;gap:8px;align-items:center;padding:10px 10px;background:rgba(13,31,58,0.6);border:1px solid rgba(94,200,230,0.14);border-radius:6px;position:relative;overflow:hidden;transition:all 0.2s;animation:rowIn 0.35s ease-out backwards;}
+  .member-row::before{content:'';position:absolute;left:0;top:10%;bottom:10%;width:2px;border-radius:0 2px 2px 0;}
+  .protoss-panel .member-row::before{background:var(--protoss);box-shadow:0 0 6px rgba(242,199,68,0.5);}
+  .terran-panel .member-row::before{background:var(--terran);box-shadow:0 0 6px rgba(94,200,230,0.5);}
+  .zerg-panel .member-row::before{background:var(--zerg);box-shadow:0 0 6px rgba(220,48,48,0.5);}
+  .member-row.empty{background:rgba(0,0,0,0.2);border-style:dashed;border-color:rgba(94,200,230,0.08);}
+  .member-row.empty::before{display:none;}
+  .row-num{font-size:10px;font-weight:700;color:var(--text-dimmer);letter-spacing:1px;text-align:center;}
+  .row-name{font-size:13px;font-weight:700;color:var(--text-bright);letter-spacing:0.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .member-row.empty .row-name{font-size:10px;color:var(--text-dimmer);letter-spacing:2px;}
+  .row-mineral{font-size:14px;font-weight:700;color:var(--cyan-bright);text-shadow:0 0 4px rgba(94,200,230,0.5);display:flex;align-items:center;gap:4px;white-space:nowrap;font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;}
+  .mineral-gem{width:7px;height:7px;background:linear-gradient(135deg,var(--cyan-bright),var(--cyan));transform:rotate(45deg);flex-shrink:0;}
+  .member-row.empty .row-mineral{color:var(--text-dimmer);}
+  .row-status{display:flex;justify-content:flex-end;}
+  .status-badge{font-size:7px;font-weight:700;letter-spacing:1px;padding:3px 7px;border:1px solid;border-radius:8px;white-space:nowrap;}
+  .status-badge.active{color:var(--ok);border-color:rgba(95,217,122,0.45);background:rgba(95,217,122,0.08);}
+  .status-badge.pending{color:var(--amber);border-color:rgba(255,140,66,0.45);background:rgba(255,140,66,0.08);animation:blink 1.5s infinite;}
+  .status-badge.open{color:var(--text-dimmer);border-color:rgba(77,93,114,0.3);background:transparent;}
+  .apply-box{background:rgba(0,0,0,0.35);border:1px solid rgba(94,200,230,0.18);border-radius:8px;padding:12px;margin-bottom:16px;}
+  .apply-title{font-size:11px;font-weight:700;color:var(--cyan-bright);letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+  .apply-row{display:flex;gap:7px;margin-bottom:8px;}
+  .apply-input{flex:1;padding:11px 14px;background:rgba(0,0,0,0.5);border:1px solid rgba(94,200,230,0.22);border-radius:18px;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:600;color:var(--text-bright);letter-spacing:1px;outline:none;transition:all 0.2s;}
+  .apply-input::placeholder{color:var(--text-dimmer);font-size:10px;}
+  .apply-input:focus{border-color:var(--cyan);box-shadow:0 0 10px rgba(94,200,230,0.18);}
+  .apply-btn{padding:11px 18px;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--text-bright);border:1px solid;border-radius:18px;cursor:pointer;flex-shrink:0;transition:all 0.15s;}
+  .protoss-panel .apply-btn{background:rgba(242,199,68,0.3);border-color:var(--protoss);}
+  .terran-panel .apply-btn{background:rgba(94,200,230,0.3);border-color:var(--terran);}
+  .zerg-panel .apply-btn{background:rgba(220,48,48,0.3);border-color:var(--zerg);}
+  .apply-btn:active{transform:scale(0.97);}
+  .apply-btn:disabled{opacity:0.35;cursor:not-allowed;}
+  .divider{display:flex;align-items:center;gap:8px;margin:12px 0;font-size:7px;font-weight:600;color:var(--text-dimmer);letter-spacing:2px;}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(94,200,230,0.1);}
+  .feed{background:rgba(0,0,0,0.45);border:1px solid rgba(94,200,230,0.1);border-radius:6px;padding:10px 12px;min-height:60px;max-height:100px;overflow-y:auto;scrollbar-width:none;}
+  .feed::-webkit-scrollbar{display:none;}
+  .feed-msg{font-size:10px;font-weight:600;color:var(--text-dim);padding:3px 0;border-bottom:1px solid rgba(94,200,230,0.05);display:flex;align-items:baseline;gap:7px;line-height:1.3;animation:rowIn 0.3s ease-out;}
+  .feed-msg:last-child{border-bottom:none;}
+  .feed-time{font-size:8px;color:var(--text-dimmer);flex-shrink:0;letter-spacing:1px;}
+  .feed-msg.ok .feed-text{color:var(--ok);}
+  .feed-msg.warn .feed-text{color:var(--amber);}
+  .feed-msg.protoss .feed-text{color:var(--protoss);}
+  .feed-msg.terran .feed-text{color:var(--terran);}
+  .feed-msg.zerg .feed-text{color:var(--zerg);}
+  .footer{height:40px;padding:0 14px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(13,31,58,0.95),rgba(5,16,32,1));border-top:1px solid var(--cyan-border);position:relative;z-index:10;}
+  .footer::before{content:'';position:absolute;top:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0.5;}
+  .footer-txt{font-size:9px;font-weight:600;color:var(--text-dim);letter-spacing:1.5px;}
+  .footer-txt span{color:var(--text-bright);font-weight:800;}
+  .overlay{position:fixed;inset:0;background:rgba(3,8,18,0.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;z-index:999;transition:opacity 0.5s;}
+  .overlay.hidden{opacity:0;pointer-events:none;display:none;}
+  .ov-logo{font-size:14px;font-weight:900;color:var(--text-bright);letter-spacing:4px;text-shadow:0 0 20px var(--cyan);animation:glow 1.5s ease-in-out infinite;}
+  .ov-sub{font-size:8px;font-weight:600;color:var(--cyan);letter-spacing:4px;}
+  .ov-bar{width:220px;height:7px;background:rgba(0,0,0,0.6);border:1px solid rgba(94,200,230,0.25);border-radius:7px;overflow:hidden;}
+  .ov-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--cyan-bright),var(--cyan));border-radius:7px;box-shadow:0 0 8px var(--cyan);animation:load 2s ease-out forwards;}
+  .ov-txt{font-size:8px;font-weight:600;color:var(--text-dimmer);letter-spacing:3px;}
+  .toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-16px);background:rgba(8,20,40,0.96);border:1px solid var(--cyan);border-radius:16px;padding:10px 22px;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--cyan-bright);box-shadow:0 0 16px rgba(94,200,230,0.35);z-index:600;opacity:0;transition:all 0.4s;pointer-events:none;}
+  .toast.ok-t{border-color:var(--ok);color:var(--ok);box-shadow:0 0 16px rgba(95,217,122,0.35);}
+  .toast.err-t{border-color:var(--danger);color:var(--danger);box-shadow:0 0 16px rgba(255,77,98,0.35);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+  @keyframes rowIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes glow{0%,100%{text-shadow:0 0 10px var(--cyan)}50%{text-shadow:0 0 30px var(--cyan),0 0 60px var(--cyan)}}
+  @keyframes load{0%{width:0%}40%{width:50%}80%{width:85%}100%{width:100%}}
+
+  /* 방장 버튼 */
+  .h-host-btn{padding:5px 10px;font-size:13px;background:rgba(0,0,0,0.4);border:1px solid rgba(94,200,230,0.2);border-radius:12px;cursor:pointer;transition:all 0.15s;}
+  .h-host-btn:hover{border-color:var(--cyan);}
+  .h-host-btn.active{border-color:var(--amber);background:rgba(255,140,66,0.15);box-shadow:0 0 8px rgba(255,140,66,0.3);}
+
+  /* 방장 모달 */
+  .host-modal{position:fixed;inset:0;background:rgba(3,8,18,0.85);display:flex;align-items:center;justify-content:center;z-index:800;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+  .host-modal.show{opacity:1;pointer-events:all;}
+  .host-modal-inner{background:linear-gradient(180deg,#0d1f3a,#081428);border:1px solid var(--cyan-border);border-radius:12px;padding:24px 20px;width:300px;display:flex;flex-direction:column;gap:14px;}
+  .host-modal-title{font-size:14px;font-weight:800;color:var(--text-bright);letter-spacing:2px;text-align:center;}
+  .host-modal-desc{font-size:9px;font-weight:600;color:var(--text-dimmer);letter-spacing:2px;text-align:center;}
+  .host-race-tabs{display:flex;gap:6px;}
+  .host-race-tab{flex:1;padding:8px 4px;font-size:9px;font-weight:700;letter-spacing:1px;border:1px solid rgba(94,200,230,0.2);border-radius:14px;color:var(--text-dim);background:rgba(0,0,0,0.3);cursor:pointer;text-align:center;transition:all 0.15s;}
+  .host-race-tab.active[data-race="protoss"]{color:var(--protoss-glow);border-color:var(--protoss);background:rgba(242,199,68,0.12);}
+  .host-race-tab.active[data-race="terran"]{color:var(--terran-glow);border-color:var(--terran);background:rgba(94,200,230,0.12);}
+  .host-race-tab.active[data-race="zerg"]{color:var(--zerg-glow);border-color:var(--zerg);background:rgba(220,48,48,0.12);}
+  .host-input-row{display:flex;gap:8px;}
+  .host-pw-input{flex:1;padding:10px 14px;background:rgba(0,0,0,0.5);border:1px solid rgba(94,200,230,0.22);border-radius:18px;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:600;color:var(--text-bright);letter-spacing:2px;outline:none;transition:all 0.2s;}
+  .host-pw-input:focus{border-color:var(--cyan);}
+  .host-login-btn{padding:10px 16px;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text-bright);border:1px solid var(--cyan);border-radius:18px;background:rgba(94,200,230,0.2);cursor:pointer;transition:all 0.15s;}
+  .host-login-btn:active{transform:scale(0.97);}
+  .host-modal-close{font-size:9px;font-weight:600;color:var(--text-dimmer);letter-spacing:2px;text-align:center;cursor:pointer;padding:4px;}
+  .host-modal-close:hover{color:var(--text);}
+
+  /* 방장 모드 수락/취소 버튼 */
+  .host-actions{display:flex;gap:4px;justify-content:flex-end;}
+  .btn-accept{padding:4px 10px;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:1px;color:var(--ok);border:1px solid rgba(95,217,122,0.5);border-radius:8px;background:rgba(95,217,122,0.1);cursor:pointer;transition:all 0.15s;}
+  .btn-cancel{padding:4px 10px;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:1px;color:var(--danger);border:1px solid rgba(255,77,98,0.5);border-radius:8px;background:rgba(255,77,98,0.1);cursor:pointer;transition:all 0.15s;}
+  .btn-accept:active,.btn-cancel:active{transform:scale(0.95);}
+
+  .tm-top-row{display:flex;align-items:center;justify-content:space-between;}
+  .tm-main-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .tm-range{display:flex;align-items:center;gap:6px;}
+  .tm-range-item{display:flex;flex-direction:column;align-items:center;gap:1px;}
+  .tm-range-item.min{font-size:7px;font-weight:600;color:var(--text-dimmer);letter-spacing:1px;}
+  .tm-range-item.max{font-size:7px;font-weight:600;color:var(--text-dimmer);letter-spacing:1px;}
+  .tm-range-item span{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--text);}
+  .tm-range-item.min span{color:var(--amber);}
+  .tm-range-item.max span{color:var(--danger);}
+  .tm-range-sep{font-size:10px;color:var(--text-dimmer);}
+  .tm-desc{font-size:8px;font-weight:600;color:var(--text-dimmer);letter-spacing:0.5px;line-height:1.4;}
+
+  /* 유의사항 공지 박스 */
+  .notice-box{
+    background:rgba(0,0,0,0.4);
+    border:1px solid rgba(255,140,66,0.3);
+    border-radius:8px;
+    padding:14px;
+    margin-bottom:14px;
+  }
+  .notice-title{
+    font-size:10px;font-weight:700;color:var(--amber);
+    letter-spacing:2px;margin-bottom:10px;
+    display:flex;align-items:center;gap:6px;
+  }
+  .notice-title::before{content:'⚠';font-size:12px;}
+  .notice-list{display:flex;flex-direction:column;gap:8px;}
+  .notice-item{
+    display:flex;gap:8px;align-items:flex-start;
+    font-size:10px;font-weight:600;color:var(--text-dim);
+    line-height:1.5;letter-spacing:0.3px;
+  }
+  .notice-num{
+    font-size:8px;font-weight:700;color:var(--amber);
+    background:rgba(255,140,66,0.15);border:1px solid rgba(255,140,66,0.3);
+    border-radius:50%;width:16px;height:16px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;
+  }
+  .notice-item strong{color:var(--text-bright);}
+
+  .host-name-input-UNUSED{
+    width:100%;padding:12px 16px;
+    background:rgba(0,0,0,0.5);
+    border:1px solid rgba(94,200,230,0.22);
+    border-radius:18px;
+    font-family:'Orbitron',sans-serif;
+    font-size:16px;font-weight:700;
+    color:var(--text-bright);letter-spacing:2px;
+    outline:none;transition:all 0.2s;
+    text-align:center;
+  }
+  .host-name-input::placeholder{color:var(--text-dimmer);font-size:11px;font-weight:500;letter-spacing:1px;}
+  .host-name-input:focus{border-color:var(--amber);box-shadow:0 0 10px rgba(255,140,66,0.2);}
+
+  .cancel-box{background:rgba(0,0,0,0.3);border:1px solid rgba(255,77,98,0.2);border-radius:8px;padding:12px;}
+  .cancel-title{font-size:11px;font-weight:700;color:var(--danger);letter-spacing:2px;margin-bottom:4px;}
+  .cancel-desc{font-size:9px;font-weight:600;color:var(--text-dimmer);letter-spacing:0.5px;margin-bottom:10px;line-height:1.5;}
+  .cancel-row{display:flex;gap:7px;}
+  .cancel-input{flex:1;padding:11px 14px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,77,98,0.25);border-radius:18px;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:600;color:var(--text-bright);letter-spacing:1px;outline:none;transition:all 0.2s;}
+  .cancel-input::placeholder{color:var(--text-dimmer);font-size:10px;}
+  .cancel-input:focus{border-color:var(--danger);box-shadow:0 0 10px rgba(255,77,98,0.15);}
+  .cancel-btn{padding:11px 16px;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--danger);border:1px solid rgba(255,77,98,0.5);border-radius:18px;background:rgba(255,77,98,0.1);cursor:pointer;flex-shrink:0;transition:all 0.15s;}
+  .cancel-btn:active{transform:scale(0.97);}
+
+  .tm-desc-inline{font-size:8px;font-weight:600;color:var(--text-dimmer);letter-spacing:0.5px;align-self:flex-end;padding-bottom:2px;}
+</style>
 </head>
 <body>
-<p class="p1"><span class="s1">🔑</span><span class="s2"><b> 방장 로그인</b></span></p>
-<p class="p2"><span class="s3"><b>팀을 선택하고 비밀번호를 입력하세요</b></span></p>
-<p class="p3"><span class="s4"><b>PROTOSS</b></span></p>
-<p class="p4"><span class="s4"><b>TERRAN</b></span></p>
-<p class="p4"><span class="s4"><b>ZERG</b></span></p>
-<p class="p5"><span class="s5"><b></b></span><br></p>
-<p class="p6"><span class="s4"><b>입장</b></span></p>
-<p class="p2"><span class="s6">✕</span><span class="s3"><b> 닫기</b></span></p>
-<p class="p7"><span class="s7"><b>STARLEAGUE</b></span></p>
-<p class="p8"><span class="s8"><b>LIGHT WAR</b></span></p>
-<p class="p9"><span class="s4"></span><br></p>
-<p class="p10"><span class="s8"><b>CONNECTING TO BATTLE.NET...</b></span></p>
-<p class="p11"><span class="s4"><b>BATTLE.NET</b></span></p>
-<p class="p12"><span class="s9"><b>TEAM RECRUITMENT</b></span></p>
-<p class="p13"><span class="s4"><b>OPEN</b></span></p>
-<p class="p14"><span class="s4">🔑</span></p>
-<p class="p15"><span class="s4"><b>← DASHBOARD</b></span></p>
-<p class="p16"><span class="s4"><b>GAME ROOMS</b></span></p>
-<p class="p17"><span class="s10">🛡</span></p>
-<p class="p18"><span class="s10"><b>PROTOSS</b></span></p>
-<p class="p19"><span class="s10"><b>0 / 12</b></span></p>
-<p class="p20"><span class="s11"><b>⚙</b></span></p>
-<p class="p21"><span class="s11"><b>TERRAN</b></span></p>
-<p class="p19"><span class="s11"><b>0 / 12</b></span></p>
-<p class="p22"><span class="s11">👾</span></p>
-<p class="p21"><span class="s11"><b>ZERG</b></span></p>
-<p class="p19"><span class="s11"><b>0 / 12</b></span></p>
-<p class="p23"><span class="s4">🛡</span></p>
-<p class="p24"><span class="s12"><b>PROTOSS</b></span></p>
-<p class="p25"><span class="s13"><b>YELLOW TEAM</b></span></p>
-<p class="p26"><span class="s4"><b>HOST</b></span></p>
-<p class="p27"><span class="s14"><b>관리자</b></span></p>
-<p class="p28"><span class="s15"><b>0</b></span><span class="s4"><b>/12</b></span></p>
-<p class="p29"><span class="s4"><b>OPEN</b></span></p>
-<p class="p30"><span class="s9"><b>RECRUITMENT PROGRESS</b></span></p>
-<p class="p9"><span class="s4"></span><br></p>
-<p class="p31"><span class="s16"><b>▸</b></span><span class="s4"><b> 확정 팀원 미네랄</b></span></p>
-<p class="p32"><span class="s4"><b></b></span><br></p>
-<p class="p33"><span class="s17"><b>0 M</b></span></p>
-<p class="p30"><span class="s9"><b>최소</b></span></p>
-<p class="p34"><span class="s4"><b>15,000 M</b></span></p>
-<p class="p35"><span class="s4">~</span></p>
-<p class="p30"><span class="s9"><b>최대</b></span></p>
-<p class="p36"><span class="s4"><b>22,000 M</b></span></p>
-<p class="p37"><span class="s18"><b>종족 개설 조건 · 확정 팀원 기준</b></span></p>
-<p class="p31"><span class="s16"><b>▸</b></span><span class="s4"><b> 전체 신청자 미네랄</b></span></p>
-<p class="p32"><span class="s4"><b></b></span><br></p>
-<p class="p33"><span class="s17"><b>0 M</b></span></p>
-<p class="p10"><span class="s18"><b>확정+대기 포함 · 팀 구성 참고용</b></span></p>
-<p class="p38"><span class="s4"><b>팀 구성 유의사항</b></span><span class="s19"> </span><span class="s20"><b>1</b></span></p>
-<p class="p39"><span class="s21"><b>미네랄 범위</b></span><span class="s22"><b> — 팀 전체 미네랄 합계가 15,000 ~ 22,000 M 범위 내에 있어야 팀 구성이 인정됩니다.</b></span></p>
-<p class="p40"><span class="s4"><b>2</b></span></p>
-<p class="p39"><span class="s21"><b>출석률</b></span><span class="s22"><b> — 본 리그는 팀원 출석 기반으로 운영되므로, 경기에 꾸준히 참여 가능한 선수를 선택하세요.</b></span></p>
-<p class="p40"><span class="s4"><b>3</b></span></p>
-<p class="p39"><span class="s21"><b>용병 불가</b></span><span class="s22"><b> — 타 팀 선수 또는 미등록 선수는 경기 참여가 불가합니다. 반드시 신청 확정된 팀원으로만 경기에 임해야 합니다.</b></span></p>
-<p class="p40"><span class="s4"><b>4</b></span></p>
-<p class="p39"><span class="s21"><b>신청 유효기간</b></span><span class="s22"><b> — 신청 후 24시간 내 방장 수락이 없으면 자동 취소됩니다.</b></span></p>
-<p class="p26"><span class="s4"><b>NO</b></span></p>
-<p class="p26"><span class="s4"><b>이름</b></span></p>
-<p class="p26"><span class="s4"><b>미네랄</b></span></p>
-<p class="p41"><span class="s4"><b>상태</b></span></p>
-<p class="p42"><span class="s4"><b>▶ 팀 참가 신청</b></span></p>
-<p class="p5"><span class="s5"><b></b></span><br></p>
-<p class="p43"><span class="s4"><b>신청</b></span></p>
-<p class="p44"><span class="s9"><b>신청을 취소하고 싶으신가요?</b></span></p>
-<p class="p45"><span class="s23"><b>▶ 신청 취소</b></span></p>
-<p class="p46"><span class="s24"><b>신청 시 입력한 이름을 입력하면 취소됩니다.</b></span></p>
-<p class="p5"><span class="s5"><b></b></span><br></p>
-<p class="p47"><span class="s4"><b>취소</b></span></p>
-<p class="p16"><span class="s4"><b>SYSTEM CHANNEL</b></span></p>
-<p class="p48"><span class="s4"></span><br></p>
-<p class="p49"><span class="s25"><b>확정 </b></span><span class="s26"><b>0</b></span><span class="s25"><b>명 · 대기 </b></span><span class="s26"><b>0</b></span><span class="s25"><b>명</b></span></p>
-<p class="p49"><span class="s25"><b>PRESEASON W1</b></span></p>
-<p class="p50"><span class="s4"><b></b></span><br></p>
+<div class="host-modal" id="host-modal">
+  <div class="host-modal-inner">
+    <div class="host-modal-title">🔑 방장 로그인</div>
+    <div class="host-modal-desc">팀을 선택하고 비밀번호를 입력하세요</div>
+    <div class="host-race-tabs">
+      <div class="host-race-tab active" data-race="protoss" onclick="selectHostRace('protoss')">PROTOSS</div>
+      <div class="host-race-tab" data-race="terran" onclick="selectHostRace('terran')">TERRAN</div>
+      <div class="host-race-tab" data-race="zerg" onclick="selectHostRace('zerg')">ZERG</div>
+    </div>
+    <div class="host-input-row">
+      <input class="host-pw-input" id="host-pw-input" type="text" placeholder="비밀번호" maxlength="20" autocomplete="off">
+      <button class="host-login-btn" onclick="hostLogin()">입장</button>
+    </div>
+<div class="host-modal-close" onclick="closeHostModal()">✕ 닫기</div>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="ov-logo">STARLEAGUE</div>
+  <div class="ov-sub">LIGHT WAR</div>
+  <div class="ov-bar"><div class="ov-fill"></div></div>
+  <div class="ov-txt">CONNECTING TO BATTLE.NET...</div>
+</div>
+<div class="app">
+  <div class="header">
+    <div class="h-logo">
+      <div class="h-main">BATTLE.NET</div>
+      <div class="h-sub">TEAM RECRUITMENT</div>
+    </div>
+    <div class="h-right">
+      <div class="live-dot">OPEN</div>
+      <div class="h-host-btn" id="host-btn" onclick="toggleHostLogin()">🔑</div>
+      <div class="h-back" onclick="goBack()">← DASHBOARD</div>
+    </div>
+  </div>
+  <div class="scroll">
+    <div class="sec">GAME ROOMS</div>
+    <div class="room-tabs">
+      <div class="room-tab active" data-tab="protoss" onclick="switchRoom('protoss')">
+        <div class="tab-icon">🛡</div><div>PROTOSS</div>
+        <div class="tab-cnt" id="tab-cnt-protoss">0 / 12</div>
+      </div>
+      <div class="room-tab" data-tab="terran" onclick="switchRoom('terran')">
+        <div class="tab-icon">⚙</div><div>TERRAN</div>
+        <div class="tab-cnt" id="tab-cnt-terran">0 / 12</div>
+      </div>
+      <div class="room-tab" data-tab="zerg" onclick="switchRoom('zerg')">
+        <div class="tab-icon">👾</div><div>ZERG</div>
+        <div class="tab-cnt" id="tab-cnt-zerg">0 / 12</div>
+      </div>
+    </div>
+
+    <!-- PROTOSS -->
+    <div class="room-panel protoss-panel active" id="panel-protoss">
+      <div class="room-hero">
+        <div class="room-hero-top">
+          <div class="room-hero-left">
+            <div class="room-race-icon">🛡</div>
+            <div class="room-hero-names">
+              <div class="room-race-name">PROTOSS</div>
+              <div class="room-team-name">YELLOW TEAM</div>
+              <div class="room-host-row">
+                <span class="room-host-lbl">HOST</span>
+                <span class="room-host-name" id="host-name-protoss">관리자</span>
+              </div>
+            </div>
+          </div>
+          <div class="room-hero-right">
+            <div class="room-count-big" id="ri-cnt-protoss">0<span>/12</span></div>
+            <div class="room-status-badge open" id="ri-badge-protoss">OPEN</div>
+          </div>
+        </div>
+        <div class="room-progress">
+          <div class="room-progress-lbl">RECRUITMENT PROGRESS</div>
+          <div class="room-progress-bar"><div class="room-progress-fill" id="ri-fill-protoss" style="width:0%"></div></div>
+        </div>
+        <div class="team-mineral-row">
+          <div class="tm-top-row">
+            <div class="tm-label">▸ 확정 팀원 미네랄</div>
+            <div class="tm-badge" id="tm-badge-protoss"></div>
+          </div>
+          <div class="tm-main-row">
+            <div class="tm-value" id="tm-protoss">0 M</div>
+            <div class="tm-range">
+              <div class="tm-range-item min">최소 <span>15,000 M</span></div>
+              <div class="tm-range-sep">~</div>
+              <div class="tm-range-item max">최대 <span>22,000 M</span></div>
+            </div>
+          </div>
+          <div class="tm-desc">종족 개설 조건 · 확정 팀원 기준</div>
+          <div class="tm-top-row" style="margin-top:8px;">
+            <div class="tm-label">▸ 전체 신청자 미네랄</div>
+            <div class="tm-badge" id="tm-badge-all-protoss"></div>
+          </div>
+          <div class="tm-main-row">
+            <div class="tm-value" id="tm-all-protoss">0 M</div>
+            <div class="tm-desc-inline">확정+대기 포함 · 팀 구성 참고용</div>
+          </div>
+        </div>
+      </div>
+      <div class="notice-box">
+        <div class="notice-title">팀 구성 유의사항</div>
+        <div class="notice-list">
+          <div class="notice-item"><div class="notice-num">1</div><div><strong>미네랄 범위</strong> — 팀 전체 미네랄 합계가 15,000 ~ 22,000 M 범위 내에 있어야 팀 구성이 인정됩니다.</div></div>
+          <div class="notice-item"><div class="notice-num">2</div><div><strong>출석률</strong> — 본 리그는 팀원 출석 기반으로 운영되므로, 경기에 꾸준히 참여 가능한 선수를 선택하세요.</div></div>
+          <div class="notice-item"><div class="notice-num">3</div><div><strong>용병 불가</strong> — 타 팀 선수 또는 미등록 선수는 경기 참여가 불가합니다. 반드시 신청 확정된 팀원으로만 경기에 임해야 합니다.</div></div>
+          <div class="notice-item"><div class="notice-num">4</div><div><strong>신청 유효기간</strong> — 신청 후 24시간 내 방장 수락이 없으면 자동 취소됩니다.</div></div>
+        </div>
+      </div>
+      <div class="list-header"><div>NO</div><div>이름</div><div>미네랄</div><div style="text-align:right">상태</div></div>
+      <div class="list-rows" id="list-protoss"></div>
+      <div class="apply-box">
+        <div class="apply-title">▶ 팀 참가 신청</div>
+        <div class="apply-row">
+          <input class="apply-input" id="apply-name-protoss" placeholder="이름 (2~6자)" maxlength="6" autocomplete="off">
+          <button class="apply-btn" id="apply-btn-protoss" onclick="applyTeam('protoss')">신청</button>
+        </div>
+
+              <div class="divider">신청을 취소하고 싶으신가요?</div>
+        <div class="cancel-box">
+          <div class="cancel-title">▶ 신청 취소</div>
+          <div class="cancel-desc">신청 시 입력한 이름을 입력하면 취소됩니다.</div>
+          <div class="cancel-row">
+            <input class="cancel-input" id="cancel-input-protoss" placeholder="이름 입력" maxlength="6" autocomplete="off">
+            <button class="cancel-btn" onclick="selfCancel('protoss')">취소</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TERRAN -->
+    <div class="room-panel terran-panel" id="panel-terran">
+      <div class="room-hero">
+        <div class="room-hero-top">
+          <div class="room-hero-left">
+            <div class="room-race-icon">⚙</div>
+            <div class="room-hero-names">
+              <div class="room-race-name">TERRAN</div>
+              <div class="room-team-name">BLUE TEAM</div>
+              <div class="room-host-row">
+                <span class="room-host-lbl">HOST</span>
+                <span class="room-host-name" id="host-name-terran">관리자</span>
+              </div>
+            </div>
+          </div>
+          <div class="room-hero-right">
+            <div class="room-count-big" id="ri-cnt-terran">0<span>/12</span></div>
+            <div class="room-status-badge open" id="ri-badge-terran">OPEN</div>
+          </div>
+        </div>
+        <div class="room-progress">
+          <div class="room-progress-lbl">RECRUITMENT PROGRESS</div>
+          <div class="room-progress-bar"><div class="room-progress-fill" id="ri-fill-terran" style="width:0%"></div></div>
+        </div>
+        <div class="team-mineral-row">
+          <div class="tm-top-row">
+            <div class="tm-label">▸ 확정 팀원 미네랄</div>
+            <div class="tm-badge" id="tm-badge-terran"></div>
+          </div>
+          <div class="tm-main-row">
+            <div class="tm-value" id="tm-terran">0 M</div>
+            <div class="tm-range">
+              <div class="tm-range-item min">최소 <span>15,000 M</span></div>
+              <div class="tm-range-sep">~</div>
+              <div class="tm-range-item max">최대 <span>22,000 M</span></div>
+            </div>
+          </div>
+          <div class="tm-desc">종족 개설 조건 · 확정 팀원 기준</div>
+          <div class="tm-top-row" style="margin-top:8px;">
+            <div class="tm-label">▸ 전체 신청자 미네랄</div>
+            <div class="tm-badge" id="tm-badge-all-terran"></div>
+          </div>
+          <div class="tm-main-row">
+            <div class="tm-value" id="tm-all-terran">0 M</div>
+            <div class="tm-desc-inline">확정+대기 포함 · 팀 구성 참고용</div>
+          </div>
+        </div>
+      </div>
+      <div class="list-header"><div>NO</div><div>이름</div><div>미네랄</div><div style="text-align:right">상태</div></div>
+      <div class="list-rows" id="list-terran"></div>
+      <div class="apply-box">
+        <div class="apply-title">▶ 팀 참가 신청</div>
+        <div class="apply-row">
+          <input class="apply-input" id="apply-name-terran" placeholder="이름 (2~6자)" maxlength="6" autocomplete="off">
+          <button class="apply-btn" id="apply-btn-terran" onclick="applyTeam('terran')">신청</button>
+        </div>
+
+              <div class="divider">신청을 취소하고 싶으신가요?</div>
+        <div class="cancel-box">
+          <div class="cancel-title">▶ 신청 취소</div>
+          <div class="cancel-desc">신청 시 입력한 이름을 입력하면 취소됩니다.</div>
+          <div class="cancel-row">
+            <input class="cancel-input" id="cancel-input-terran" placeholder="이름 입력" maxlength="6" autocomplete="off">
+            <button class="cancel-btn" onclick="selfCancel('terran')">취소</button>
+          </div>
+        </div>
+              <div class="divider">신청을 취소하고 싶으신가요?</div>
+        <div class="cancel-box">
+          <div class="cancel-title">▶ 신청 취소</div>
+          <div class="cancel-desc">신청 시 입력한 이름을 입력하면 취소됩니다.</div>
+          <div class="cancel-row">
+            <input class="cancel-input" id="cancel-input-zerg" placeholder="이름 입력" maxlength="6" autocomplete="off">
+            <button class="cancel-btn" onclick="selfCancel('zerg')">취소</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ZERG -->
+    <div class="room-panel zerg-panel" id="panel-zerg">
+      <div class="room-hero">
+        <div class="room-hero-top">
+          <div class="room-hero-left">
+            <div class="room-race-icon">👾</div>
+            <div class="room-hero-names">
+              <div class="room-race-name">ZERG</div>
+              <div class="room-team-name">RED TEAM</div>
+              <div class="room-host-row">
+                <span class="room-host-lbl">HOST</span>
+                <span class="room-host-name" id="host-name-zerg">관리자</span>
+              </div>
+            </div>
+          </div>
+          <div class="room-hero-right">
+            <div class="room-count-big" id="ri-cnt-zerg">0<span>/12</span></div>
+            <div class="room-status-badge open" id="ri-badge-zerg">OPEN</div>
+          </div>
+        </div>
+        <div class="room-progress">
+          <div class="room-progress-lbl">RECRUITMENT PROGRESS</div>
+          <div class="room-progress-bar"><div class="room-progress-fill" id="ri-fill-zerg" style="width:0%"></div></div>
+        </div>
+        <div class="team-mineral-row">
+          <div class="tm-top-row">
+            <div class="tm-label">▸ 확정 팀원 미네랄</div>
+            <div class="tm-badge" id="tm-badge-zerg"></div>
+          </div>
+          <div class="tm-main-row">
+            <div class="tm-value" id="tm-zerg">0 M</div>
+            <div class="tm-range">
+              <div class="tm-range-item min">최소 <span>15,000 M</span></div>
+              <div class="tm-range-sep">~</div>
+              <div class="tm-range-item max">최대 <span>22,000 M</span></div>
+            </div>
+          </div>
+          <div class="tm-desc">종족 개설 조건 · 확정 팀원 기준</div>
+          <div class="tm-top-row" style="margin-top:8px;">
+            <div class="tm-label">▸ 전체 신청자 미네랄</div>
+            <div class="tm-badge" id="tm-badge-all-zerg"></div>
+          </div>
+          <div class="tm-main-row">
+            <div class="tm-value" id="tm-all-zerg">0 M</div>
+            <div class="tm-desc-inline">확정+대기 포함 · 팀 구성 참고용</div>
+          </div>
+        </div>
+      </div>
+      <div class="list-header"><div>NO</div><div>이름</div><div>미네랄</div><div style="text-align:right">상태</div></div>
+      <div class="list-rows" id="list-zerg"></div>
+      <div class="apply-box">
+        <div class="apply-title">▶ 팀 참가 신청</div>
+        <div class="apply-row">
+          <input class="apply-input" id="apply-name-zerg" placeholder="이름 (2~6자)" maxlength="6" autocomplete="off">
+          <button class="apply-btn" id="apply-btn-zerg" onclick="applyTeam('zerg')">신청</button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="sec" style="margin-top:6px;">SYSTEM CHANNEL</div>
+    <div class="feed" id="feed"></div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-txt">확정 <span id="total-active">0</span>명 · 대기 <span id="total-pending">0</span>명</div>
+    <div class="footer-txt">PRESEASON W1</div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+  const MAX = 12;
+  const API_URL = 'https://script.google.com/macros/s/AKfycbw9GWWYVgz5rVs_Ef2AUXCtLru8WaA7pncE2OYGg1TQ9h42DHAB-3OqbQurDSXX7eA5/exec';
+  const HOST_PW = { protoss:'1111', terran:'2222', zerg:'3333' };
+  let hostMode = null;
+  const hostNames = { protoss:'조광민', terran:'박병훈', zerg:'박상우' };
+  const TEAM_MIN_MINERAL = 15000;
+  const TEAM_MAX_MINERAL = 22000;
+  const state = { protoss:[], terran:[], zerg:[] };
+
+  // ── Google Sheets 연동 ──
+  const SHEET_ID = '1VE6OnU6IirhnR9bJX9UPpuPtVI_WJOFDH5nmFTSINjs';
+  const API_KEY  = 'AIzaSyDZ1wkWyjUb6wCe2RfT_TJxhaZIh8mVoNc';
+  const BASE     = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values`;
+  const MO=200, MG=50, MA=20, MW=200;
+  let mineralMap = {};
+
+  async function fetchSheet(range){
+    const res = await fetch(`${BASE}/${encodeURIComponent(range)}?key=${API_KEY}`);
+    const j = await res.json();
+    return j.values || [];
+  }
+
+  async function loadMinerals(){
+    try {
+      const tRows = await fetchSheet('팀배정!A2:D');
+      const gRows = await fetchSheet('경기결과!A2:E');
+
+      const MO=200, MG=50, MA=20, MW=200;
+      const C=['옐로','블루','레드'];
+      const weekMap={};
+
+      // 팀배정 파싱
+      tRows.forEach(r=>{
+        const wk=parseInt(r[0]); if(!wk) return;
+        if(!weekMap[wk]) weekMap[wk]={week:wk,teams:{옐로:[],블루:[],레드:[]},rounds:[],captains:{}};
+        ['옐로','블루','레드'].forEach((c,ci)=>{
+          const name=(r[ci+1]||'').trim();
+          if(!name) return;
+          weekMap[wk].teams[c].push(name);
+          if(!weekMap[wk].captains[c]) weekMap[wk].captains[c]=name;
+        });
+      });
+
+      // 경기결과 파싱
+      const rdMap={};
+      const parseScorers=s=>{
+        const scores={};
+        (s||'').split(' ').map(n=>n.trim()).filter(Boolean).forEach(token=>{
+          const m=token.match(/^([^(]+)(?:\(([^)]+)\))?$/);
+          if(!m) return;
+          const scorer=m[1].trim(), assist=m[2]?m[2].trim():null;
+          if(scorer){scores[scorer]=scores[scorer]||{g:0,a:0};scores[scorer].g++;}
+          if(assist){scores[assist]=scores[assist]||{g:0,a:0};scores[assist].a++;}
+        });
+        return scores;
+      };
+
+      gRows.forEach(r=>{
+        const wk=parseInt(r[0]),ri=parseInt(r[1]); if(!wk||!ri) return;
+        if(!weekMap[wk]) weekMap[wk]={week:wk,teams:{옐로:[],블루:[],레드:[]},rounds:[],captains:{}};
+        if(!rdMap[wk]) rdMap[wk]={};
+        const participating=[];
+        ['옐로','블루','레드'].forEach((c,idx)=>{
+          const raw=(r[2+idx]||'').trim();
+          if(raw==='') return;
+          if(raw==='0'){participating.push({c,s:{}});return;}
+          participating.push({c,s:parseScorers(raw)});
+        });
+        if(participating.length>=2) rdMap[wk][ri]={tA:participating[0].c,tB:participating[1].c,sA:participating[0].s,sB:participating[1].s};
+      });
+
+      Object.keys(rdMap).forEach(wk=>{
+        if(!weekMap[wk]) return;
+        const maxRi=Math.max(...Object.keys(rdMap[wk]).map(Number));
+        weekMap[wk].rounds=[];
+        for(let i=1;i<=maxRi;i++) weekMap[wk].rounds.push(rdMap[wk][i]||{tA:null,tB:null,sA:{},sB:{}});
+      });
+
+      const weeks=Object.values(weekMap).sort((a,b)=>a.week-b.week);
+
+      // 미네랄 계산
+      const P={};
+      const ens=n=>{if(!P[n])P[n]={att:0,goals:0,assists:0,rankMin:0,cap:0};return P[n];};
+      weeks.forEach(wk=>{
+        C.forEach(c=>(wk.teams[c]||[]).forEach(n=>ens(n).att++));
+        C.forEach(c=>{const cap=(wk.captains||{})[c];if(cap)ens(cap).cap++;});
+        const rw={옐로:0,블루:0,레드:0};
+        (wk.rounds||[]).filter(rd=>rd.tA&&rd.tB).forEach(rd=>{
+          let gA=0,gB=0;
+          Object.entries(rd.sA||{}).forEach(([n,v])=>{const g=typeof v==='object'?v.g||0:+v||0;const a=typeof v==='object'?v.a||0:0;ens(n).goals+=g;ens(n).assists+=a;gA+=g;});
+          Object.entries(rd.sB||{}).forEach(([n,v])=>{const g=typeof v==='object'?v.g||0:+v||0;const a=typeof v==='object'?v.a||0:0;ens(n).goals+=g;ens(n).assists+=a;gB+=g;});
+          if(gA>gB)rw[rd.tA]++;else if(gB>gA)rw[rd.tB]++;
+        });
+        const activeC=C.filter(c=>(wk.teams[c]||[]).length>0);
+        const pts={};activeC.forEach(c=>{pts[c]=rw[c]||0;});
+        const rankedC=[...activeC].sort((a,b)=>pts[b]-pts[a]);
+        const topPts=pts[rankedC[0]]||0;
+        const tiedFirst=topPts>0?rankedC.filter(c=>pts[c]===topPts):[];
+        if(tiedFirst.length>=2){
+          rankedC.forEach(c=>{const bonus=tiedFirst.includes(c)?200:50;(wk.teams[c]||[]).forEach(n=>ens(n).rankMin+=bonus);});
+        } else {
+          rankedC.forEach((c,ri)=>{const bonus=[200,100,50][ri]||0;(wk.teams[c]||[]).forEach(n=>ens(n).rankMin+=bonus);});
+        }
+      });
+
+      mineralMap={};
+      Object.entries(P).forEach(([name,p])=>{
+        mineralMap[name]=p.att*MO+p.goals*MG+p.assists*MA+p.rankMin+p.cap*50;
+      });
+
+      feed('✅ 미네랄 데이터 로드 완료 ('+Object.keys(mineralMap).length+'명)','ok');
+    } catch(e){
+      feed('⚠ 미네랄 데이터 로드 실패','warn');
+      console.error(e);
+    }
+  }
+
+    // ── 신청명단 로드 ──
+  async function loadApplications(){
+    try {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      ['protoss','terran','zerg'].forEach(race=>{
+        if(data[race]){
+          state[race] = data[race].map(m=>({
+            name: m.name,
+            status: m.status,
+            mineral: m.mineral || null,
+            appliedAt: m.appliedAt ? new Date(m.appliedAt).getTime() : Date.now()
+          }));
+        }
+      });
+      feed('✅ 신청명단 로드 완료','ok');
+    } catch(e){
+      feed('⚠ 신청명단 로드 실패','warn');
+      console.error(e);
+    }
+  }
+
+  // ── 신청 저장 ──
+  async function postToSheet(body){
+    try {
+      await fetch(API_URL, {
+        method:'POST',
+        mode:'no-cors',
+        body: JSON.stringify(body),
+      });
+    } catch(e){ console.error('postToSheet error', e); }
+  }
+
+  async function saveApply(name, race, mineral){
+    await postToSheet({action:'apply', name, race, mineral: mineral||''});
+  }
+
+  async function saveAccept(name, race){
+    await postToSheet({action:'accept', name, race});
+  }
+
+  async function saveCancel(name, race){
+    await postToSheet({action:'cancel', name, race});
+  }
+
+  async function init(){
+    try { await loadMinerals(); } catch(e) { console.error(e); }
+    try { await loadApplications(); } catch(e) { console.error(e); }
+    document.getElementById('overlay').classList.add('hidden');
+    feed('BROCELONA 채널에 접속했습니다.','');
+    feed('신청 후 방장이 수락하면 팀원으로 확정됩니다.','warn');
+    renderAll();
+  }
+
+  setTimeout(()=>{ init(); }, 300);
+
+  // ── 방장 모드 ──
+  let selectedHostRace = 'protoss';
+
+  function toggleHostLogin(){
+    if(hostMode){
+      hostMode = null;
+      document.getElementById('host-btn').classList.remove('active');
+      document.getElementById('host-btn').textContent = '🔑';
+      feed('방장 모드 종료','');
+      renderAll();
+    } else {
+      document.getElementById('host-modal').classList.add('show');
+    }
+  }
+
+  function selectHostRace(race){
+    selectedHostRace = race;
+    document.querySelectorAll('.host-race-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelector(`.host-race-tab[data-race="${race}"]`).classList.add('active');
+  }
+
+  function hostLogin(){
+    const pw = document.getElementById('host-pw-input').value.trim();
+    if(pw !== HOST_PW[selectedHostRace]){ toast('비밀번호가 틀렸습니다','err'); return; }
+    hostMode = selectedHostRace;
+    document.getElementById('host-modal').classList.remove('show');
+    document.getElementById('host-pw-input').value = '';
+    document.getElementById('host-btn').classList.add('active');
+    document.getElementById('host-btn').textContent = '🔑 '+(hostNames[selectedHostRace]);
+    switchRoom(hostMode);
+    feed('🔑 '+hostNames[hostMode]+' 님이 '+hostMode.toUpperCase()+' 방장 모드 활성화','warn');
+    renderAll();
+  }
+
+  function closeHostModal(){
+    document.getElementById('host-modal').classList.remove('show');
+    document.getElementById('host-pw-input').value = '';
+  }
+
+  function hostAccept(race, name){
+    const member = state[race].find(m=>m.name===name && m.status==='pending');
+    if(!member) return;
+    member.status = 'active';
+    saveAccept(name, race);
+    renderAll();
+    feed('✅ '+name+' 님을 '+race.toUpperCase()+' 팀원으로 수락했습니다.',race);
+    toast(name+' 수락 완료!','ok');
+  }
+
+  function hostCancel(race, name){
+    const idx = state[race].findIndex(m=>m.name===name);
+    if(idx===-1) return;
+    state[race].splice(idx,1);
+    saveCancel(name, race);
+    renderAll();
+    feed('❌ '+name+' 님의 신청이 취소되었습니다.',race);
+    toast(name+' 취소 완료','');
+  }
+
+  // 24시간 자동 취소 체크
+  function checkExpired(){
+    const now = Date.now();
+    ['protoss','terran','zerg'].forEach(race=>{
+      const before = state[race].length;
+      state[race] = state[race].filter(m=>{
+        if(m.status==='pending' && m.appliedAt && (now - m.appliedAt) > 24*60*60*1000){
+          feed('⏰ '+m.name+' 님의 신청이 24시간 만료로 자동 취소됐습니다.',race);
+          return false;
+        }
+        return true;
+      });
+      if(state[race].length !== before) renderRoom(race);
+    });
+  }
+  setInterval(checkExpired, 60*1000); // 1분마다 체크
+
+  function switchRoom(race){
+    document.querySelectorAll('.room-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelector('[data-tab="'+race+'"]').classList.add('active');
+    document.querySelectorAll('.room-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('panel-'+race).classList.add('active');
+  }
+
+  function renderAll(){
+    ['protoss','terran','zerg'].forEach(renderRoom);
+    updateFooter();
+  }
+
+  function renderRoom(race){
+    const members=state[race];
+    const activeCount=members.filter(m=>m.status==='active').length;
+    const pct=Math.round(activeCount/MAX*100);
+    const full=activeCount>=MAX;
+
+    // 탭 카운트
+    document.getElementById('tab-cnt-'+race).textContent=activeCount+' / '+MAX;
+    // 방장 이름 업데이트
+    const hostNameEl = document.getElementById('host-name-'+race);
+    if(hostNameEl) hostNameEl.textContent = hostNames[race];
+
+    // room-hero 업데이트
+    document.getElementById('ri-cnt-'+race).innerHTML=activeCount+'<span>/12</span>';
+    document.getElementById('ri-fill-'+race).style.width=pct+'%';
+    const badge=document.getElementById('ri-badge-'+race);
+    if(badge){badge.textContent=full?'FULL':'OPEN';badge.className='room-status-badge '+(full?'full':'open');}
+
+    // 리스트
+    const list=document.getElementById('list-'+race);
+    list.innerHTML='';
+    let slot=1;
+    // ACTIVE: 미네랄 내림차순 정렬
+    [...members.filter(m=>m.status==='active')]
+      .sort((a,b)=>(b.mineral||0)-(a.mineral||0))
+      .forEach(m=>{list.appendChild(makeRow(slot++,m,race));});
+    // PENDING: 신청 순서 유지
+    members.filter(m=>m.status==='pending').forEach(m=>{list.appendChild(makeRow(slot++,m,race));});
+    for(let i=members.length;i<MAX;i++){list.appendChild(makeEmptyRow(slot++));}
+
+    // 확정 팀원 미네랄 합계
+    const teamTotal = members
+      .filter(m=>m.status==='active' && m.mineral)
+      .reduce((sum,m)=>sum+(m.mineral||0),0);
+    const tmEl = document.getElementById('tm-'+race);
+    const tmBadge = document.getElementById('tm-badge-'+race);
+    if(tmEl) tmEl.textContent = teamTotal.toLocaleString()+' M';
+    if(tmBadge){
+      if(teamTotal > TEAM_MAX_MINERAL){
+        const over = (teamTotal - TEAM_MAX_MINERAL).toLocaleString();
+        tmBadge.textContent='🚫 '+over+' M 초과';
+        tmBadge.className='tm-badge over';
+      } else if(teamTotal >= TEAM_MIN_MINERAL){
+        tmBadge.textContent='✅ 목표 달성';
+        tmBadge.className='tm-badge ok';
+      } else {
+        const remain = (TEAM_MIN_MINERAL - teamTotal).toLocaleString();
+        tmBadge.textContent='⚠ '+remain+' M 부족';
+        tmBadge.className='tm-badge warn';
+      }
+    }
+
+    // 전체 신청자 미네랄 합계 (확정+대기)
+    const allTotal = members
+      .filter(m=>m.mineral)
+      .reduce((sum,m)=>sum+(m.mineral||0),0);
+    const tmAllEl = document.getElementById('tm-all-'+race);
+    const tmAllBadge = document.getElementById('tm-badge-all-'+race);
+    if(tmAllEl) tmAllEl.textContent = allTotal.toLocaleString()+' M';
+    if(tmAllBadge){
+      if(allTotal > TEAM_MAX_MINERAL){
+        const over = (allTotal - TEAM_MAX_MINERAL).toLocaleString();
+        tmAllBadge.textContent='🚫 '+over+' M 초과';
+        tmAllBadge.className='tm-badge over';
+      } else if(allTotal >= TEAM_MIN_MINERAL){
+        tmAllBadge.textContent='✅ 범위 내';
+        tmAllBadge.className='tm-badge ok';
+      } else {
+        const remain = (TEAM_MIN_MINERAL - allTotal).toLocaleString();
+        tmAllBadge.textContent='⚠ '+remain+' M 부족';
+        tmAllBadge.className='tm-badge warn';
+      }
+    }
+    // 신청 버튼
+    const btn=document.getElementById('apply-btn-'+race);
+    if(btn){btn.disabled=full;btn.textContent=full?'FULL':'신청';}
+  }
+
+  function makeRow(num,member,race){
+    const row=document.createElement('div');
+    row.className='member-row';
+    row.style.animationDelay=(num*0.04)+'s';
+    const isPending=member.status==='pending';
+    const mineralTxt=member.mineral
+      ?'<div class="mineral-gem"></div>'+member.mineral.toLocaleString()+' M'
+      :'<div class="mineral-gem" style="opacity:0.2"></div><span style="color:var(--text-dimmer)">집계 전</span>';
+    const isHostRace = hostMode === race;
+    const hostBtns = isHostRace
+      ? isPending
+        ? `<div class="host-actions"><button class="btn-accept" onclick="hostAccept('${race}','${member.name}')">수락</button><button class="btn-cancel" onclick="hostCancel('${race}','${member.name}')">취소</button></div>`
+        : `<div class="host-actions"><button class="btn-cancel" onclick="hostCancel('${race}','${member.name}')">취소</button></div>`
+      : '';
+    row.style.gridTemplateColumns = isHostRace ? '28px 1fr 90px 58px 84px' : '28px 1fr 90px 58px';
+    row.innerHTML=`
+      <div class="row-num">${String(num).padStart(2,'0')}</div>
+      <div class="row-name">${member.name}</div>
+      <div class="row-mineral">${mineralTxt}</div>
+      <div class="row-status"><span class="status-badge ${isPending?'pending':'active'}">${isPending?'⏳ 대기':'✅ 확정'}</span></div>
+      ${isHostRace ? hostBtns : ''}`;
+    return row;
+  }
+
+  function makeEmptyRow(num){
+    const row=document.createElement('div');
+    row.className='member-row empty';
+    row.style.animationDelay=(num*0.04)+'s';
+    row.innerHTML=`
+      <div class="row-num" style="opacity:0.3">${String(num).padStart(2,'0')}</div>
+      <div class="row-name">OPEN SLOT</div>
+      <div class="row-mineral" style="opacity:0.2"><div class="mineral-gem"></div>—</div>
+      <div class="row-status"><span class="status-badge open">OPEN</span></div>`;
+    return row;
+  }
+
+  function applyTeam(race){
+    const input=document.getElementById('apply-name-'+race);
+    const name=input.value.trim();
+    if(!name||name.length<2){toast('이름을 2자 이상 입력하세요','err');return;}
+    for(const r of['protoss','terran','zerg']){
+      if(state[r].find(m=>m.name===name)){toast(name+' — 이미 신청됨','err');return;}
+    }
+    const activeCount=state[race].filter(m=>m.status==='active').length;
+    if(activeCount>=MAX){toast('팀이 가득 찼습니다','err');return;}
+    const mineral = mineralMap[name] || 0;
+    state[race].push({name, mineral: mineral||null, status:'pending', appliedAt: Date.now()});
+    input.value='';
+    renderAll();
+    const m = mineralMap[name]||0;
+    if(m > 0 && m < TEAM_MIN_MINERAL){
+      feed('⚠ '+name+' 님 미네랄 '+m.toLocaleString()+' M — 팀 목표(15,000M) 달성에 참고하세요.',race);
+    }
+    saveApply(name, race, mineralMap[name]||null);
+    feed('📋 '+name+' 님이 '+race.toUpperCase()+' 팀에 신청했습니다. (대기 중)',race);
+    toast('신청 완료! 방장 수락을 기다려주세요','ok');
+  }
+
+
+  ['protoss','terran','zerg'].forEach(race=>{
+    document.getElementById('apply-name-'+race)?.addEventListener('keydown',e=>{if(e.key==='Enter')applyTeam(race);});
+  });
+
+  function updateFooter(){
+    let active=0,pending=0;
+    ['protoss','terran','zerg'].forEach(r=>{
+      state[r].forEach(m=>{if(m.status==='active')active++;else if(m.status==='pending')pending++;});
+    });
+    document.getElementById('total-active').textContent=active;
+    document.getElementById('total-pending').textContent=pending;
+  }
+
+  function feed(text,cls){
+    const el=document.getElementById('feed');
+    const now=new Date();
+    const t=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    const msg=document.createElement('div');
+    msg.className='feed-msg'+(cls?' '+cls:'');
+    msg.innerHTML='<span class="feed-time">['+t+']</span><span class="feed-text">'+text+'</span>';
+    el.appendChild(msg);el.scrollTop=el.scrollHeight;
+  }
+
+  function toast(msg,type){
+    const t=document.getElementById('toast');
+    t.textContent=msg;
+    t.className='toast'+(type==='ok'?' ok-t':type==='err'?' err-t':'')+' show';
+    setTimeout(()=>t.classList.remove('show'),2200);
+  }
+
+  document.getElementById('host-pw-input')?.addEventListener('keydown',e=>{if(e.key==='Enter')hostLogin();});
+
+  // ── 본인 취소 ──
+  function selfCancel(race){
+    const input = document.getElementById('cancel-input-'+race);
+    const name = input.value.trim();
+    if(!name){ toast('이름을 입력하세요','err'); return; }
+
+    const idx = state[race].findIndex(m=>m.name===name);
+    if(idx===-1){ toast(name+' — 신청 내역 없음','err'); return; }
+
+    const member = state[race][idx];
+    if(member.status==='active'){
+      toast('확정된 팀원은 방장에게 문의하세요','err'); return;
+    }
+
+    state[race].splice(idx,1);
+    saveCancel(name, race);
+    input.value='';
+    renderAll();
+    feed('🚪 '+name+' 님이 '+race.toUpperCase()+' 팀 신청을 취소했습니다.',race);
+    toast(name+' 신청 취소 완료','');
+  }
+  function goBack(){window.location.href='brocelona.html';}
+    ['protoss','terran','zerg'].forEach(race=>{
+    document.getElementById('cancel-input-'+race)?.addEventListener('keydown',e=>{if(e.key==='Enter')selfCancel(race);});
+  });
+  renderAll();
+</script>
 </body>
 </html>
