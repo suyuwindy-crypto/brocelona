@@ -399,7 +399,7 @@
           <div class="notice-item"><div class="notice-num">1</div><div><strong>미네랄 범위</strong> — 팀 전체 미네랄 합계가 15,000 ~ 22,000 M 범위 내에 있어야 팀 구성이 인정됩니다.</div></div>
           <div class="notice-item"><div class="notice-num">2</div><div><strong>출석률</strong> — 본 리그는 팀원 출석 기반으로 운영되므로, 경기에 꾸준히 참여 가능한 선수를 선택하세요.</div></div>
           <div class="notice-item"><div class="notice-num">3</div><div><strong>용병 불가</strong> — 타 팀 선수 또는 미등록 선수는 경기 참여가 불가합니다. 반드시 신청 확정된 팀원으로만 경기에 임해야 합니다.</div></div>
-          <div class="notice-item"><div class="notice-num">4</div><div><strong>신청 유효기간</strong> — 신청 후 24시간 내 방장 수락이 없으면 자동 취소됩니다.</div></div>
+          <div class="notice-item"><div class="notice-num">4</div><div><strong>신청 취소</strong> — 신청 취소는 본인이 직접 하단 취소 버튼을 이용하세요.</div></div>
         </div>
       </div>
       <div class="list-header"><div>NO</div><div>이름</div><div>미네랄</div><div style="text-align:right">상태</div></div>
@@ -804,22 +804,6 @@
     toast(name+' 취소 완료','');
   }
 
-  // 24시간 자동 취소 체크
-  function checkExpired(){
-    const now = Date.now();
-    ['protoss','terran','zerg'].forEach(race=>{
-      const before = state[race].length;
-      state[race] = state[race].filter(m=>{
-        if(m.status==='pending' && m.appliedAt && (now - m.appliedAt) > 24*60*60*1000){
-          feed('⏰ '+m.name+' 님의 신청이 24시간 만료로 자동 취소됐습니다.',race);
-          return false;
-        }
-        return true;
-      });
-      if(state[race].length !== before) renderRoom(race);
-    });
-  }
-  setInterval(checkExpired, 60*1000); // 1분마다 체크
 
   function switchRoom(race){
     document.querySelectorAll('.room-tab').forEach(t=>t.classList.remove('active'));
