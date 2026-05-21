@@ -498,27 +498,27 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
   const UNIT_IMG = {
     protoss: {
-      double: {src:'https://suyuwindy-crypto.github.io/brocelona/1. carrier.mp4',  type:'video'},
-      pk:     {src:'https://suyuwindy-crypto.github.io/brocelona/1. river.mp4',    type:'video'},
-      trade:  {src:'https://suyuwindy-crypto.github.io/brocelona/1. darkarcon.webp', type:'img'},
-      worker: {src:'https://suyuwindy-crypto.github.io/brocelona/1. probe.webp',   type:'img'},
+      double: {src:'https://suyuwindy-crypto.github.io/brocelona/1.%20carrier.mp4',  type:'video'},
+      pk:     {src:'https://suyuwindy-crypto.github.io/brocelona/1.%20river.mp4',    type:'video'},
+      trade:  {src:'https://suyuwindy-crypto.github.io/brocelona/1.%20darkarcon.webp', type:'img'},
+      worker: {src:'https://suyuwindy-crypto.github.io/brocelona/1.%20probe.webp',   type:'img'},
     },
     zerg: {
-      double: {src:'https://suyuwindy-crypto.github.io/brocelona/2. ultrarisk.webp', type:'img'},
-      pk:     {src:'https://suyuwindy-crypto.github.io/brocelona/2. scurge.webp',  type:'img'},
-      trade:  {src:'https://suyuwindy-crypto.github.io/brocelona/2. queen.webp',   type:'img'},
-      worker: {src:'https://suyuwindy-crypto.github.io/brocelona/2. drone.mp4',    type:'video'},
+      double: {src:'https://suyuwindy-crypto.github.io/brocelona/2.%20ultrarisk.webp', type:'img'},
+      pk:     {src:'https://suyuwindy-crypto.github.io/brocelona/2.%20scurge.webp',  type:'img'},
+      trade:  {src:'https://suyuwindy-crypto.github.io/brocelona/2.%20queen.webp',   type:'img'},
+      worker: {src:'https://suyuwindy-crypto.github.io/brocelona/2.%20drone.mp4',    type:'video'},
     },
     terran: {
-      double: {src:'https://suyuwindy-crypto.github.io/brocelona/3. battlecruiser.mp4', type:'video'},
-      pk:     {src:'https://suyuwindy-crypto.github.io/brocelona/3. vulture.webp', type:'img'},
-      trade:  {src:'https://suyuwindy-crypto.github.io/brocelona/3. ghost.webp',   type:'img'},
-      worker: {src:'https://suyuwindy-crypto.github.io/brocelona/3. scv.webp',     type:'img'},
+      double: {src:'https://suyuwindy-crypto.github.io/brocelona/3.%20battlecruiser.mp4', type:'video'},
+      pk:     {src:'https://suyuwindy-crypto.github.io/brocelona/3.%20vulture.webp', type:'img'},
+      trade:  {src:'https://suyuwindy-crypto.github.io/brocelona/3.%20ghost.webp',   type:'img'},
+      worker: {src:'https://suyuwindy-crypto.github.io/brocelona/3.%20scv.webp',     type:'img'},
     },
   };
 
   function makeUnitMedia(race, unitKey){
-    const info = UNIT_IMG[race]?.[unitKey];
+    const info = UNIT_IMG[race] && UNIT_IMG[race][unitKey];
     if(!info) return '<span style="font-size:18px;">⛏</span>';
     if(info.type === 'video'){
       return '<video src="'+info.src+'" autoplay loop muted playsinline style="width:32px;height:32px;object-fit:contain;border-radius:2px;"></video>';
