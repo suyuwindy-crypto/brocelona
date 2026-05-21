@@ -224,7 +224,16 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 .ts-dot.crit{background:#ff3300;box-shadow:0 0 8px #ff3300,0 0 16px rgba(255,51,0,0.4);animation:blink 1s infinite;}
 
 /* 미네랄 */
-.sec-lbl{font-size:9px;color:var(--yellow);letter-spacing:2px;margin:10px 0 6px;text-shadow:0 0 6px var(--yellow-glow);font-family:'Orbitron',sans-serif;}
+.sec-lbl{
+  font-size:9px;font-weight:700;color:var(--green);letter-spacing:3px;
+  margin:12px 0 7px;font-family:'Orbitron',sans-serif;
+  padding:5px 10px;
+  background:rgba(0,0,0,0.4);
+  border:1px solid rgba(180,20,20,0.35);
+  border-left:2px solid rgba(57,255,20,0.6);
+  box-shadow:inset 0 0 10px rgba(0,0,0,0.3);
+  display:block;
+}
 .mineral-row{display:flex;gap:4px;}
 .mc{
   flex:1;padding:10px 6px;text-align:center;
@@ -255,6 +264,30 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   .pop-icon.protoss{content:url('https://suyuwindy-crypto.github.io/brocelona/populationp.webp');}
   .pop-icon.terran{content:url('https://suyuwindy-crypto.github.io/brocelona/populationt.webp');}
   .pop-icon.zerg{content:url('https://suyuwindy-crypto.github.io/brocelona/populationz.webp');}
+
+  .charge-btn{
+    width:100%;margin-top:6px;
+    padding:8px;
+    font-family:'Orbitron',sans-serif;
+    font-size:9px;font-weight:700;letter-spacing:2px;
+    color:var(--green);
+    background:rgba(0,20,0,0.6);
+    border:1px solid rgba(57,255,20,0.35);
+    box-shadow:0 0 8px rgba(57,255,20,0.1);
+    cursor:pointer;transition:all 0.15s;
+  }
+  .charge-btn:active{
+    background:rgba(57,255,20,0.15);
+    box-shadow:0 0 16px rgba(57,255,20,0.3);
+  }
+  .charge-btn:disabled{
+    color:var(--text-dim);
+    border-color:rgba(57,255,20,0.1);
+    cursor:not-allowed;
+    box-shadow:none;
+  }
+  .charge-row{display:flex;gap:4px;align-items:stretch;}
+  .charge-row .mc{flex:1;}
 </style>
 </head>
 <body>
@@ -281,19 +314,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
     <div class="hp-popup protoss">
       <div class="pop-race">Protoss</div>
-      <div class="pop-lbl">Energy</div>
+      <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-protoss"></div>
       <div class="pop-num" id="hp-protoss">8600<span> / 10000</span></div>
     </div>
     <div class="hp-popup zerg">
       <div class="pop-race">Zerg</div>
-      <div class="pop-lbl">Energy</div>
+      <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-zerg"></div>
       <div class="pop-num mid" id="hp-zerg">5200<span> / 10000</span></div>
     </div>
     <div class="hp-popup terran">
       <div class="pop-race">Terran</div>
-      <div class="pop-lbl">Energy</div>
+      <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-terran"></div>
       <div class="pop-num low" id="hp-terran">2300<span> / 10000</span></div>
     </div>
@@ -311,13 +344,28 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
     <div class="scroll">
       <div id="tab-overview">
-        <div class="sec-lbl">▶ 본리그 미네랄 획득량</div>
+        <div class="sec-lbl">본리그 미네랄 획득량</div>
         <div class="mineral-row">
-          <div class="mc protoss"><div class="mc-race">PROTOSS</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">320 M</div></div>
-          <div class="mc zerg"><div class="mc-race">ZERG</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">410 M</div></div>
-          <div class="mc terran"><div class="mc-race">TERRAN</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">280 M</div></div>
+          <div class="mc protoss">
+            <div class="mc-race">PROTOSS</div>
+            <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
+            <div class="mc-val" id="earn-protoss">320 M</div>
+            <button class="charge-btn" onclick="charge('protoss')">⚡ 충전</button>
+          </div>
+          <div class="mc zerg">
+            <div class="mc-race">ZERG</div>
+            <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
+            <div class="mc-val" id="earn-zerg">410 M</div>
+            <button class="charge-btn" onclick="charge('zerg')">⚡ 충전</button>
+          </div>
+          <div class="mc terran">
+            <div class="mc-race">TERRAN</div>
+            <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
+            <div class="mc-val" id="earn-terran">280 M</div>
+            <button class="charge-btn" onclick="charge('terran')">⚡ 충전</button>
+          </div>
         </div>
-        <div class="sec-lbl" style="margin-top:12px;">▶ 프리시즌 보유 미네랄</div>
+        <div class="sec-lbl" style="margin-top:12px;">프리시즌 보유 미네랄</div>
         <div class="mineral-row">
           <div class="mc protoss"><div class="mc-race">PROTOSS</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">9,660 M</div></div>
           <div class="mc zerg"><div class="mc-race">ZERG</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">7,420 M</div></div>
@@ -366,6 +414,42 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     btn.classList.add('active');
   }
   Object.entries(teams).forEach(([race,d])=>renderSeg(race,d.hp,MAX_HP));
+  // 충전 데이터
+  const earnData = { protoss:320, zerg:410, terran:280 };
+
+  function charge(race){
+    const earn = earnData[race];
+    if(!earn || earn <= 0) return;
+
+    // HP 충전
+    teams[race].hp = Math.min(teams[race].hp + earn, MAX_HP);
+    earnData[race] = 0;
+
+    // 팝업 세그 + 숫자 업데이트
+    renderSeg(race, teams[race].hp, MAX_HP);
+
+    // HP 숫자 업데이트
+    const pct = teams[race].hp / MAX_HP;
+    const cls = pct > 0.5 ? 'high' : pct > 0.25 ? 'mid' : 'low';
+    const numEl = document.getElementById('hp-' + race);
+    if(numEl){
+      numEl.className = 'pop-num ' + cls;
+      numEl.innerHTML = teams[race].hp.toLocaleString() + '<span> / ' + MAX_HP.toLocaleString() + '</span>';
+    }
+
+    // 획득량 0으로 리셋
+    const earnEl = document.getElementById('earn-' + race);
+    if(earnEl) earnEl.textContent = '0 M';
+
+    // 충전 버튼 비활성화
+    const btns = document.querySelectorAll('.charge-btn');
+    btns.forEach(btn => {
+      if(btn.getAttribute('onclick') === "charge('" + race + "')"){
+        btn.disabled = true;
+        btn.textContent = '✓ 충전완료';
+      }
+    });
+  }
 </script>
 </body>
 </html>
