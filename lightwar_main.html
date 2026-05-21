@@ -99,8 +99,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 .battle-bg{
   position:absolute;inset:0;
   background-image:url('https://suyuwindy-crypto.github.io/brocelona/main.png');
-  background-size:110% auto;
-  background-position:-5% -8%;
+  background-size:115% auto;
+  background-position:center -15%;
   background-repeat:no-repeat;
 }
 .battle-fade{
@@ -148,9 +148,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 .hp-popup::before{content:'';position:absolute;top:-1px;left:-1px;width:8px;height:8px;border-top:1px solid var(--yellow);border-left:1px solid var(--yellow);}
 .hp-popup::after{content:'';position:absolute;bottom:-1px;right:-1px;width:8px;height:8px;border-bottom:1px solid var(--yellow);border-right:1px solid var(--yellow);}
 
-.hp-popup.protoss{left:1%;bottom:4%;width:31%;}
-.hp-popup.zerg{left:50%;transform:translateX(-50%);bottom:4%;width:31%;}
-.hp-popup.terran{right:1%;bottom:4%;width:31%;}
+.hp-popup.protoss{left:1%;top:52%;width:32%;}
+.hp-popup.zerg{left:34%;top:52%;width:32%;}
+.hp-popup.terran{right:1%;top:52%;width:32%;}
 
 .pop-race{font-size:13px;font-weight:700;font-family:'Orbitron',sans-serif;font-style:normal;color:var(--yellow);letter-spacing:2px;margin-bottom:2px;text-shadow:0 0 8px var(--yellow-glow);}
 .pop-lbl{font-size:9px;color:var(--green);letter-spacing:2px;margin-bottom:3px;text-shadow:0 0 4px var(--green-glow);font-family:'Orbitron',sans-serif;font-weight:600;}
@@ -163,7 +163,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 .pseg.on.hp-low{background:#ff3300;box-shadow:0 0 3px #ff3300;}
 .pseg.off{background:rgba(57,255,20,0.04);}
 
-.pop-num{font-size:18px;font-family:'Russo One',sans-serif;font-family:'Russo One',sans-serif;font-weight:700;letter-spacing:1px;color:var(--green);text-shadow:0 0 6px var(--green-glow);}
+.pop-num{font-size:16px;font-family:'Russo One',sans-serif;white-space:nowrap;font-family:'Russo One',sans-serif;font-weight:700;letter-spacing:1px;color:var(--green);text-shadow:0 0 6px var(--green-glow);}
 .pop-num.high{color:var(--green);text-shadow:0 0 6px var(--green-glow);}
 .pop-num span{font-size:9px;color:var(--text-dim);}
 .pop-num.mid{color:var(--yellow);text-shadow:0 0 6px var(--yellow-glow);}
@@ -227,7 +227,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 .sec-lbl{font-size:9px;color:var(--yellow);letter-spacing:2px;margin:10px 0 6px;text-shadow:0 0 6px var(--yellow-glow);font-family:'Orbitron',sans-serif;}
 .mineral-row{display:flex;gap:4px;}
 .mc{
-  flex:1;padding:8px 6px;text-align:center;
+  flex:1;padding:10px 6px;text-align:center;
   border:1px solid rgba(180,20,20,0.2);
   background:rgba(0,5,0,0.4);
   backdrop-filter:blur(2px);
@@ -306,10 +306,13 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
     <div class="scroll">
       <div id="tab-overview">
-        <div class="ts-row"><div class="ts-race">PROTOSS</div><div class="ts-bar"><div class="ts-fill" style="width:86%"></div></div><div class="ts-num">8,600</div><div class="ts-dot ok"></div></div>
-        <div class="ts-row"><div class="ts-race">ZERG</div><div class="ts-bar"><div class="ts-fill" style="width:52%"></div></div><div class="ts-num">5,200</div><div class="ts-dot warn"></div></div>
-        <div class="ts-row"><div class="ts-race">TERRAN</div><div class="ts-bar"><div class="ts-fill" style="width:23%"></div></div><div class="ts-num">2,300</div><div class="ts-dot crit"></div></div>
-        <div class="sec-lbl">▶ TEAM MINERAL</div>
+        <div class="sec-lbl">▶ 본리그 미네랄 획득량</div>
+        <div class="mineral-row">
+          <div class="mc"><div class="mc-race">PROTOSS</div><div class="mc-val">320 M</div></div>
+          <div class="mc"><div class="mc-race">ZERG</div><div class="mc-val">410 M</div></div>
+          <div class="mc"><div class="mc-race">TERRAN</div><div class="mc-val">280 M</div></div>
+        </div>
+        <div class="sec-lbl" style="margin-top:12px;">▶ 프리시즌 보유 미네랄</div>
         <div class="mineral-row">
           <div class="mc"><div class="mc-race">PROTOSS</div><div class="mc-val">9,660 M</div></div>
           <div class="mc"><div class="mc-race">ZERG</div><div class="mc-val">7,420 M</div></div>
