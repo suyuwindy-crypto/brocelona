@@ -100,7 +100,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   position:absolute;inset:0;
   background-image:url('https://suyuwindy-crypto.github.io/brocelona/main.png');
   background-size:100% auto;
-  background-position:center -40px;
+  background-position:center -55px;
   background-repeat:no-repeat;
 }
 .battle-fade{
@@ -250,6 +250,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 .nav-btn:last-child{border-right:none;}
 .nav-btn .ni{font-size:14px;}
 .nav-btn:hover,.nav-btn.active{color:var(--yellow);text-shadow:0 0 6px var(--yellow-glow);}
+
+  .pop-icon{width:18px;height:18px;object-fit:contain;vertical-align:middle;}
+  .pop-icon.protoss{content:url('https://suyuwindy-crypto.github.io/brocelona/populationp.webp');}
+  .pop-icon.terran{content:url('https://suyuwindy-crypto.github.io/brocelona/populationt.webp');}
+  .pop-icon.zerg{content:url('https://suyuwindy-crypto.github.io/brocelona/populationz.webp');}
 </style>
 </head>
 <body>
@@ -308,15 +313,15 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       <div id="tab-overview">
         <div class="sec-lbl">▶ 본리그 미네랄 획득량</div>
         <div class="mineral-row">
-          <div class="mc"><div class="mc-race">PROTOSS</div><div class="mc-val">320 M</div></div>
-          <div class="mc"><div class="mc-race">ZERG</div><div class="mc-val">410 M</div></div>
-          <div class="mc"><div class="mc-race">TERRAN</div><div class="mc-val">280 M</div></div>
+          <div class="mc protoss"><div class="mc-race">PROTOSS</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">320 M</div></div>
+          <div class="mc zerg"><div class="mc-race">ZERG</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">410 M</div></div>
+          <div class="mc terran"><div class="mc-race">TERRAN</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">280 M</div></div>
         </div>
         <div class="sec-lbl" style="margin-top:12px;">▶ 프리시즌 보유 미네랄</div>
         <div class="mineral-row">
-          <div class="mc"><div class="mc-race">PROTOSS</div><div class="mc-val">9,660 M</div></div>
-          <div class="mc"><div class="mc-race">ZERG</div><div class="mc-val">7,420 M</div></div>
-          <div class="mc"><div class="mc-race">TERRAN</div><div class="mc-val">9,806 M</div></div>
+          <div class="mc protoss"><div class="mc-race">PROTOSS</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">9,660 M</div></div>
+          <div class="mc zerg"><div class="mc-race">ZERG</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">7,420 M</div></div>
+          <div class="mc terran"><div class="mc-race">TERRAN</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">9,806 M</div></div>
         </div>
       </div>
       <div id="tab-units" style="display:none"><div style="color:var(--text-dim);font-size:10px;text-align:center;padding:24px;letter-spacing:2px;">유닛 배정 전</div></div>
