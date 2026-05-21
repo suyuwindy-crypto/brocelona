@@ -366,19 +366,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     <div class="battle-bg"></div>
     <div class="battle-fade"></div>
 
-    <div class="hp-popup protoss" onclick="openRoster('protoss')" style="cursor:pointer;">
+    <div class="hp-popup protoss" id="popup-protoss" style="cursor:pointer;">
       <div class="pop-race">Protoss</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-protoss"></div>
       <div class="pop-num" id="hp-protoss">8600<span> / 10000</span></div>
     </div>
-    <div class="hp-popup zerg" onclick="openRoster('zerg')" style="cursor:pointer;">
+    <div class="hp-popup zerg" id="popup-zerg" style="cursor:pointer;">
       <div class="pop-race">Zerg</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-zerg"></div>
       <div class="pop-num mid" id="hp-zerg">5200<span> / 10000</span></div>
     </div>
-    <div class="hp-popup terran" onclick="openRoster('terran')" style="cursor:pointer;">
+    <div class="hp-popup terran" id="popup-terran" style="cursor:pointer;">
       <div class="pop-race">Terran</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-terran"></div>
@@ -390,10 +390,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     <div class="c-tr"></div><div class="c-bl"></div>
 
     <div class="tabs">
-      <div class="tab active" onclick="switchTab('overview',this)">OVERVIEW</div>
-      <div class="tab" onclick="switchTab('units',this)">UNITS</div>
-      <div class="tab" onclick="switchTab('battle',this)">BATTLE</div>
-      <div class="tab" onclick="switchTab('weekly',this)">WEEKLY</div>
+      <div class="tab active" id="tab-btn-overview">OVERVIEW</div>
+      <div class="tab" id="tab-btn-units">UNITS</div>
+      <div class="tab" id="tab-btn-battle">BATTLE</div>
+      <div class="tab" id="tab-btn-weekly">WEEKLY</div>
     </div>
 
     <div class="scroll">
@@ -404,19 +404,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
             <div class="mc-race">PROTOSS</div>
             <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
             <div class="mc-val" id="earn-protoss">320 M</div>
-            <button class="charge-btn" onclick="charge('protoss')">⚡ 충전</button>
+            <button class="charge-btn" id="charge-btn-protoss">⚡ 충전</button>
           </div>
           <div class="mc zerg">
             <div class="mc-race">ZERG</div>
             <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
             <div class="mc-val" id="earn-zerg">410 M</div>
-            <button class="charge-btn" onclick="charge('zerg')">⚡ 충전</button>
+            <button class="charge-btn" id="charge-btn-zerg">⚡ 충전</button>
           </div>
           <div class="mc terran">
             <div class="mc-race">TERRAN</div>
             <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
             <div class="mc-val" id="earn-terran">280 M</div>
-            <button class="charge-btn" onclick="charge('terran')">⚡ 충전</button>
+            <button class="charge-btn" id="charge-btn-terran">⚡ 충전</button>
           </div>
         </div>
         <div class="sec-lbl" style="margin-top:12px;">프리시즌 보유 미네랄</div>
@@ -579,21 +579,24 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       const row = document.createElement('div');
       row.className = 'roster-row';
       row.style.animationDelay = (i*0.05)+'s';
-      row.innerHTML = \`
-        <div class="r-num">\${String(i+1).padStart(2,'0')}</div>
-        <div class="r-name">\${m.name}</div>
-        <div class="r-unit">
-          <span class="r-unit-icon">\${unitIcon}</span>
-          <span class="r-unit-name">\${unitName}</span>
-          <span class="r-unit-badge \${m.unit}">\${unitLabel}</span>
-        </div>
-        <div class="r-stats">
-          <span class="r-stat">출 \${m.att}</span>
-          <span class="r-stat">골 \${m.goal}</span>
-          <span class="r-stat">어 \${m.ast}</span>
-        </div>
-        <div class="r-mineral"><img src="${BASE}mineral.webp" style="width:12px;height:12px;object-fit:contain;vertical-align:middle;margin-right:2px;">\${mineral}M</div>
-      \`;
+      var num = String(i+1).padStart(2,'0');
+      var capBadge = m.cap ? '<span class="r-cap" style="margin-left:5px;">주장</span>' : '';
+      row.innerHTML =
+        '<div class="r-num">'+num+'</div>'+
+        '<div class="r-name">'+m.name+capBadge+'</div>'+
+        '<div class="r-unit">'+
+          '<div class="r-unit-media">'+makeUnitMedia(race, m.unit)+'</div>'+
+          '<div class="r-unit-info">'+
+            '<div class="r-unit-name">'+unitName+'</div>'+
+            '<span class="r-unit-badge '+m.unit+'">'+unitLabel+'</span>'+
+          '</div>'+
+        '</div>'+
+        '<div class="r-stats">'+
+          '<span class="r-stat">출 '+m.att+'</span>'+
+          '<span class="r-stat">골 '+m.goal+'</span>'+
+          '<span class="r-stat">어 '+m.ast+'</span>'+
+        '</div>'+
+        '<div class="r-mineral"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:12px;height:12px;object-fit:contain;vertical-align:middle;margin-right:2px;">'+mineral+'M</div>';
       el.appendChild(row);
     });
   }
@@ -648,6 +651,25 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     renderRoster(race);
     const cnt = document.getElementById('roster-count-'+race);
     if(cnt) cnt.textContent = roster[race].length + '명';
+  });
+
+  // 이벤트 리스너 - DOMContentLoaded 후 안전하게 연결
+  document.addEventListener('DOMContentLoaded', function(){
+    // 탭 버튼
+    ['overview','units','battle','weekly'].forEach(name=>{
+      const el = document.getElementById('tab-btn-'+name);
+      if(el) el.addEventListener('click', function(){ switchTab(name, this); });
+    });
+    // 기지 팝업
+    ['protoss','zerg','terran'].forEach(race=>{
+      const el = document.getElementById('popup-'+race);
+      if(el) el.addEventListener('click', function(){ openRoster(race); });
+    });
+    // 충전 버튼
+    ['protoss','zerg','terran'].forEach(race=>{
+      const el = document.getElementById('charge-btn-'+race);
+      if(el) el.addEventListener('click', function(){ charge(race); });
+    });
   });
 </script>
 </body>
