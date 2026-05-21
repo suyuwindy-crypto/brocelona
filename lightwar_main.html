@@ -598,21 +598,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     });
   }
 
-  function openRoster(race){
-    switchTab('units', document.querySelectorAll('.tab')[1]);
-    // 해당 종족 섹션으로 스크롤
-    setTimeout(()=>{
-      const el = document.getElementById('roster-section-'+race);
-      if(el) el.scrollIntoView({behavior:'smooth'});
-    }, 100);
-  }
-
-  // 초기 렌더
-  ['protoss','zerg','terran'].forEach(race=>{
-    renderRoster(race);
-    const cnt = document.getElementById('roster-count-'+race);
-    if(cnt) cnt.textContent = roster[race].length + '명';
-  });
   // 충전 데이터
   const earnData = { protoss:320, zerg:410, terran:280 };
 
@@ -649,6 +634,21 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       }
     });
   }
+
+  function openRoster(race){
+    switchTab('units', document.querySelectorAll('.tab')[1]);
+    setTimeout(()=>{
+      const el = document.getElementById('roster-section-'+race);
+      if(el) el.scrollIntoView({behavior:'smooth'});
+    }, 100);
+  }
+
+  // 초기 렌더
+  ['protoss','zerg','terran'].forEach(race=>{
+    renderRoster(race);
+    const cnt = document.getElementById('roster-count-'+race);
+    if(cnt) cnt.textContent = roster[race].length + '명';
+  });
 </script>
 </body>
 </html>
