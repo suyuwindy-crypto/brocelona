@@ -579,7 +579,11 @@
   const hostNames = { protoss:'조광민', terran:'박병훈', zerg:'박상우' };
   const TEAM_MIN_MINERAL = 15000;
   const TEAM_MAX_MINERAL = 22000;
-  const state = { protoss:[], terran:[], zerg:[] };
+  const state = {
+    protoss:[ {name:'조광민', mineral:null, status:'active'} ],
+    terran:[  {name:'박병훈', mineral:null, status:'active'} ],
+    zerg:[    {name:'박상우', mineral:null, status:'active'} ],
+  };
 
   // ── Google Sheets 연동 ──
   const SHEET_ID = '1VE6OnU6IirhnR9bJX9UPpuPtVI_WJOFDH5nmFTSINjs';
@@ -744,6 +748,21 @@
   }
 
   setTimeout(()=>{ init(); }, 300);
+
+  // 5분마다 미네랄 자동 갱신
+  setInterval(async ()=>{
+    await loadMinerals();
+    // 기존 신청자 미네랄도 업데이트
+    ['protoss','terran','zerg'].forEach(race=>{
+      state[race].forEach(m=>{
+        if(mineralMap[m.name] !== undefined){
+          m.mineral = mineralMap[m.name] || null;
+        }
+      });
+    });
+    renderAll();
+    feed('🔄 미네랄 데이터 갱신됨','ok');
+  }, 5 * 60 * 1000);
 
   // ── 방장 모드 ──
   let selectedHostRace = 'protoss';
