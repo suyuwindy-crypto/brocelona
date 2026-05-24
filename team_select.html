@@ -703,7 +703,7 @@
           state[race] = data[race].map(m=>({
             name: m.name,
             status: m.status,
-            mineral: m.mineral || null,
+            mineral: mineralMap[m.name] || (m.mineral ? parseInt(m.mineral) : null),
             appliedAt: m.appliedAt ? new Date(m.appliedAt).getTime() : Date.now()
           }));
         }
@@ -755,8 +755,8 @@
     // 기존 신청자 미네랄도 업데이트
     ['protoss','terran','zerg'].forEach(race=>{
       state[race].forEach(m=>{
-        if(mineralMap[m.name] !== undefined){
-          m.mineral = mineralMap[m.name] || null;
+        if(mineralMap[m.name]){
+          m.mineral = mineralMap[m.name];
         }
       });
     });
