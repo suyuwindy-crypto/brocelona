@@ -26,25 +26,16 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 /* 배경 */
 .bg{
   position:fixed;inset:0;z-index:0;
-  background:
-    radial-gradient(ellipse 100% 60% at 20% 70%,#0a0a1a,transparent),
-    radial-gradient(ellipse 80% 50% at 80% 20%,#150500,transparent),
-    #030308;
+  background-image:url('https://suyuwindy-crypto.github.io/brocelona/background.jfif');
+  background-size:cover;
+  background-position:center center;
 }
 .bg::before{
   content:'';position:absolute;inset:0;
-  background-image:
-    radial-gradient(1px 1px at 8% 12%,rgba(255,255,255,0.7),transparent),
-    radial-gradient(1px 1px at 22% 28%,rgba(255,255,255,0.5),transparent),
-    radial-gradient(1px 1px at 38% 6%,rgba(255,255,255,0.6),transparent),
-    radial-gradient(1px 1px at 55% 18%,rgba(255,255,255,0.4),transparent),
-    radial-gradient(1px 1px at 72% 10%,rgba(255,255,255,0.7),transparent),
-    radial-gradient(1px 1px at 88% 32%,rgba(255,255,255,0.5),transparent),
-    radial-gradient(1px 1px at 14% 52%,rgba(255,255,255,0.3),transparent),
-    radial-gradient(1px 1px at 92% 48%,rgba(255,255,255,0.4),transparent),
-    radial-gradient(2px 2px at 45% 75%,rgba(255,255,255,0.3),transparent),
-    radial-gradient(1px 1px at 68% 82%,rgba(255,255,255,0.4),transparent),
-    radial-gradient(1px 1px at 30% 90%,rgba(255,255,255,0.2),transparent);
+  background:
+    radial-gradient(ellipse 100% 60% at 20% 70%,rgba(10,10,26,0.7),transparent),
+    radial-gradient(ellipse 80% 50% at 80% 20%,rgba(21,5,0,0.6),transparent),
+    rgba(3,3,8,0.55);
 }
 
 .app{
@@ -56,12 +47,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
 /* ── SC1 패널 공통 ── */
 .sc-panel{
-  background:var(--panel);
+  background:rgba(0,0,0,0.45);
   border:1.5px solid var(--red);
-  box-shadow:0 0 6px rgba(180,20,20,0.2),inset 0 0 16px rgba(0,0,0,0.3);
+  box-shadow:0 0 6px rgba(180,20,20,0.2),inset 0 0 16px rgba(0,0,0,0.2);
   position:relative;
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
 }
 .sc-panel::before,.sc-panel::after{
   content:'';position:absolute;width:10px;height:10px;
@@ -98,9 +89,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 }
 .battle-bg{
   position:absolute;inset:0;
-  background-image:url('https://suyuwindy-crypto.github.io/brocelona/main.png');
-  background-size:100% auto;
-  background-position:center -55px;
+  background-image:url('https://suyuwindy-crypto.github.io/brocelona/bg_battle.png');
+  background-size:cover;
+  background-position:center center;
   background-repeat:no-repeat;
 }
 .battle-fade{
