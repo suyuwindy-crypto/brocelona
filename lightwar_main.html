@@ -495,6 +495,109 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   }
   Object.entries(teams).forEach(([race,d])=>renderSeg(race,d.hp,MAX_HP));
 
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwu04g4D5FNDzsuBkTQ2bPwdDunGTAt7A1s0YPFXV_O5X5GtqvYoTbg_PLaT_rOaNY-/exec';
+
+  async function loadMainLeague(){
+    try {
+      const res = await fetch(API_URL + '?action=mainleague');
+      const data = await res.json();
+
+      // HP 업데이트
+      if(data.hp){
+        Object.entries(data.hp).forEach(([race, d])=>{
+          teams[race] = { hp: d.current, mineral: teams[race]?.mineral || 0 };
+          renderSeg(race, d.current, d.max);
+          const pct = d.current / d.max;
+          const cls = pct>0.5?'high':pct>0.25?'mid':'low';
+          const numEl = document.getElementById('hp-'+race);
+          if(numEl){
+            numEl.className = 'pop-num '+cls;
+            numEl.innerHTML = d.current.toLocaleString()+'<span> / '+d.max.toLocaleString()+'</span>';
+          }
+          const barEl = document.getElementById('bar-'+race);
+          if(barEl) barEl.style.width = (pct*100)+'%';
+          const numEl2 = document.getElementById('tsn-'+race);
+          if(numEl2) numEl2.textContent = d.current.toLocaleString();
+        });
+      }
+
+      // 팀구성 업데이트
+      if(data.roster){
+        Object.entries(data.roster).forEach(([race, members])=>{
+          if(!members || !members.length) return;
+          // roster 배열 업데이트
+          roster[race] = members.map(m=>({
+            name: m.name,
+            unit: unitKeyFromName(m.unit),
+            cap: m.unit === '더블골',
+            att:0, goal:0, ast:0
+          }));
+        });
+      }
+
+      // 주차별 미네랄/경기기록 업데이트
+      if(data.weekly){
+        weeklyData = data.weekly;
+        // 각 선수 기록 roster에 반영
+        Object.values(data.weekly).forEach(w=>{
+          w.players.forEach(p=>{
+            const r = roster[p.team];
+            if(!r) return;
+            const m = r.find(x=>x.name===p.name);
+            if(m){ m.att=p.att; m.goal=p.goals; m.ast=p.assists; }
+          });
+        });
+        // 본리그 미네랄 획득량 업데이트
+        const totalMineral = {protoss:0, zerg:0, terran:0};
+        Object.values(data.weekly).forEach(w=>{
+          Object.entries(w.teamMineral).forEach(([race, m])=>{
+            totalMineral[race] = (totalMineral[race]||0) + m;
+          });
+        });
+        Object.entries(totalMineral).forEach(([race, m])=>{
+          const el = document.getElementById('earn-'+race);
+          if(el) el.textContent = m.toLocaleString()+' M';
+          earnData[race] = m;
+        });
+      }
+
+      // 팀원 목록 다시 렌더
+      ['protoss','zerg','terran'].forEach(race=>{
+        renderRoster(race);
+        const cnt = document.getElementById('roster-count-'+race);
+        if(cnt) cnt.textContent = roster[race].length+'명';
+      });
+
+    } catch(e){
+      console.error('mainleague load error', e);
+    }
+  }
+
+  function unitKeyFromName(unitName){
+    const map = {
+      '더블골':'double', 'PK':'pk', '트레이드':'trade', '일꾼':'worker',
+      'double':'double', 'pk':'pk', 'trade':'trade', 'worker':'worker'
+    };
+    return map[unitName] || 'worker';
+  }
+
+  let weeklyData = {};
+
+  async function saveHP(race, hp){
+    try {
+      await fetch(API_URL, {
+        method:'POST',
+        mode:'no-cors',
+        body: JSON.stringify({action:'updateHP', race, hp}),
+      });
+    } catch(e){ console.error(e); }
+  }
+
+  // 초기 로드
+  loadMainLeague();
+  // 5분마다 갱신
+  setInterval(loadMainLeague, 5*60*1000);
+
 
   const UNIT_IMG = {
     protoss: {
@@ -623,6 +726,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       numEl.className = 'pop-num ' + cls;
       numEl.innerHTML = teams[race].hp.toLocaleString() + '<span> / ' + MAX_HP.toLocaleString() + '</span>';
     }
+
+    // 시트에 HP 저장
+    saveHP(race, teams[race].hp);
 
     // 획득량 0으로 리셋
     const earnEl = document.getElementById('earn-' + race);
