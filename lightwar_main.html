@@ -530,9 +530,20 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   .trade-btn:disabled{color:var(--text-dim);border-color:rgba(100,100,100,0.2);cursor:not-allowed;box-shadow:none;opacity:0.5;}
 
   /* ── 탭 배경 이미지 (UNITS 제외) ── */
-  #tab-overview, #tab-battle, #tab-weekly, #tab-rule{
-    background-image:url('https://suyuwindy-crypto.github.io/brocelona/background.jfif');
+  #tab-overview, #tab-battle, #tab-weekly{
+    background-image:
+      linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+      url('https://suyuwindy-crypto.github.io/brocelona/background.jfif');
     background-size:cover;
+    background-position:center center;
+    background-attachment:local;
+    min-height:100%;
+  }
+  #tab-rule{
+    background-image:
+      linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+      url('https://suyuwindy-crypto.github.io/brocelona/background.jfif');
+    background-size:150% auto;
     background-position:center center;
     background-attachment:local;
     min-height:100%;
