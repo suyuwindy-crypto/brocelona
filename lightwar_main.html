@@ -342,6 +342,56 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   .r-cap{font-size:7px;font-weight:700;color:var(--yellow);
     background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.4);
     padding:1px 5px;border-radius:3px;letter-spacing:1px;font-family:'Orbitron',sans-serif;}
+
+  /* BATTLE/WEEKLY 탭 */
+  .week-btns{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+  .week-btn{
+    padding:6px 14px;font-size:9px;font-weight:700;letter-spacing:1.5px;
+    color:var(--text-dim);background:rgba(0,0,0,0.4);
+    border:1px solid rgba(180,20,20,0.3);cursor:pointer;transition:all 0.15s;
+  }
+  .week-btn.active{color:var(--yellow);border-color:rgba(255,215,0,0.5);background:rgba(255,215,0,0.07);}
+
+  .battle-week{margin-bottom:14px;}
+  .battle-week-hdr{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:6px 10px;margin-bottom:5px;
+    background:rgba(0,0,0,0.5);border:1px solid rgba(180,20,20,0.3);
+    border-left:2px solid rgba(57,255,20,0.5);
+  }
+  .bw-title{font-size:11px;font-weight:700;color:var(--green);letter-spacing:2px;font-family:'Orbitron',sans-serif;}
+  .bw-hploss{font-size:9px;color:var(--text-dim);letter-spacing:1px;}
+
+  .battle-table{width:100%;border-collapse:collapse;margin-bottom:8px;}
+  .battle-table th{
+    font-size:7px;font-weight:700;color:var(--text-dim);
+    letter-spacing:2px;padding:5px 6px;
+    border-bottom:1px solid rgba(57,255,20,0.15);
+    font-family:'Orbitron',sans-serif;text-align:left;
+  }
+  .battle-table td{padding:6px 6px;border-bottom:1px solid rgba(57,255,20,0.05);font-size:13px;}
+  .battle-table tr:last-child td{border-bottom:none;}
+  .td-name{color:var(--green);font-weight:700;}
+  .td-team{font-size:8px;font-weight:700;font-family:'Orbitron',sans-serif;}
+  .td-team.protoss{color:rgba(242,199,68,0.8);}
+  .td-team.terran{color:rgba(94,200,230,0.8);}
+  .td-team.zerg{color:rgba(220,48,48,0.8);}
+  .td-val{font-family:'Russo One',sans-serif;font-size:14px;text-align:center;color:var(--green);}
+  .td-val.zero{color:var(--text-dim);}
+  .td-mineral{font-family:'Share Tech Mono',monospace;font-size:12px;text-align:right;color:var(--green);}
+
+  .team-sum-row{display:flex;gap:5px;margin-top:6px;}
+  .ts-sum{
+    flex:1;padding:8px 6px;text-align:center;
+    background:rgba(0,0,0,0.4);border:1px solid rgba(180,20,20,0.25);
+  }
+  .ts-sum-race{font-size:7px;font-weight:700;letter-spacing:2px;margin-bottom:3px;font-family:'Orbitron',sans-serif;}
+  .ts-sum.protoss .ts-sum-race{color:rgba(242,199,68,0.8);}
+  .ts-sum.terran .ts-sum-race{color:rgba(94,200,230,0.8);}
+  .ts-sum.zerg .ts-sum-race{color:rgba(220,48,48,0.8);}
+  .ts-sum-val{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--green);}
+  .ts-sum-hp{font-size:9px;color:var(--danger);margin-top:2px;}
+
 </style>
 </head>
 <body>
@@ -453,8 +503,16 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         </div>
 
       </div>
-      <div id="tab-battle" style="display:none"><div style="color:var(--text-dim);font-size:10px;text-align:center;padding:24px;letter-spacing:2px;">경기 기록 준비 중</div></div>
-      <div id="tab-weekly" style="display:none"><div style="color:var(--text-dim);font-size:10px;text-align:center;padding:24px;letter-spacing:2px;">주차 선택</div></div>
+      <div id="tab-battle" style="display:none">
+        <div id="battle-content">
+          <div style="color:var(--text-dim);font-size:10px;text-align:center;padding:24px;letter-spacing:2px;">데이터 로딩 중...</div>
+        </div>
+      </div>
+
+      <div id="tab-weekly" style="display:none">
+        <div class="week-btns" id="week-btns"></div>
+        <div id="weekly-detail" style="color:var(--text-dim);font-size:10px;text-align:center;padding:24px;letter-spacing:2px;">주차를 선택하세요</div>
+      </div>
     </div>
 
     <div class="nav">
@@ -496,6 +554,122 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   Object.entries(teams).forEach(([race,d])=>renderSeg(race,d.hp,MAX_HP));
 
   const API_URL = 'https://script.google.com/macros/s/AKfycbwu04g4D5FNDzsuBkTQ2bPwdDunGTAt7A1s0YPFXV_O5X5GtqvYoTbg_PLaT_rOaNY-/exec';
+
+
+  function renderBattle(){
+    const el = document.getElementById('battle-content');
+    if(!el) return;
+    if(!weeklyData || !Object.keys(weeklyData).length){
+      el.innerHTML = '<div style="color:var(--text-dim);font-size:10px;text-align:center;padding:24px;letter-spacing:2px;">경기 기록 없음</div>';
+      return;
+    }
+    el.innerHTML = '';
+    Object.values(weeklyData).sort((a,b)=>b.week-a.week).forEach(w=>{
+      const div = document.createElement('div');
+      div.className = 'battle-week';
+
+      const hpStr = ['protoss','zerg','terran'].map(r=>
+        '<span class="td-team '+r+'">'+r.toUpperCase()+'</span> -'+w.hpLoss[r].toLocaleString()+' HP'
+      ).join(' &nbsp; ');
+
+      let rows = '';
+      [...w.players].sort((a,b)=>b.mineral-a.mineral).forEach(p=>{
+        rows += '<tr>'+
+          '<td class="td-name">'+p.name+'</td>'+
+          '<td><div class="td-team '+p.team+'">'+p.team.toUpperCase().slice(0,3)+'</div></td>'+
+          '<td class="td-val '+(p.att?'':'zero')+'">'+p.att+'</td>'+
+          '<td class="td-val '+(p.goals?'':'zero')+'">'+p.goals+'</td>'+
+          '<td class="td-val '+(p.assists?'':'zero')+'">'+p.assists+'</td>'+
+          '<td class="td-mineral">'+p.mineral+'M</td>'+
+        '</tr>';
+      });
+
+      const sumRow = ['protoss','zerg','terran'].map(r=>
+        '<div class="ts-sum '+r+'">'+
+          '<div class="ts-sum-race">'+r.toUpperCase()+'</div>'+
+          '<div class="ts-sum-val">'+(w.teamMineral[r]||0)+'M</div>'+
+          '<div class="ts-sum-hp">-'+w.hpLoss[r].toLocaleString()+' HP</div>'+
+        '</div>'
+      ).join('');
+
+      div.innerHTML =
+        '<div class="battle-week-hdr">'+
+          '<div class="bw-title">'+w.week+'주차</div>'+
+          '<div class="bw-hploss">HP 손실</div>'+
+        '</div>'+
+        '<table class="battle-table">'+
+          '<thead><tr>'+
+            '<th>선수</th><th>팀</th><th style="text-align:center">출석</th>'+
+            '<th style="text-align:center">골</th><th style="text-align:center">어시</th>'+
+            '<th style="text-align:right">미네랄</th>'+
+          '</tr></thead>'+
+          '<tbody>'+rows+'</tbody>'+
+        '</table>'+
+        '<div class="team-sum-row">'+sumRow+'</div>';
+
+      el.appendChild(div);
+    });
+  }
+
+  function buildWeekBtns(){
+    const el = document.getElementById('week-btns');
+    if(!el) return;
+    el.innerHTML = '';
+    const weeks = Object.keys(weeklyData).sort((a,b)=>parseInt(a)-parseInt(b));
+    if(!weeks.length){
+      document.getElementById('weekly-detail').innerHTML =
+        '<div style="color:var(--text-dim);font-size:10px;text-align:center;padding:24px;letter-spacing:2px;">경기 기록 없음</div>';
+      return;
+    }
+    weeks.forEach(wk=>{
+      const btn = document.createElement('div');
+      btn.className = 'week-btn';
+      btn.textContent = wk+'주차';
+      btn.addEventListener('click', ()=>{
+        document.querySelectorAll('.week-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        renderWeekDetail(parseInt(wk));
+      });
+      el.appendChild(btn);
+    });
+  }
+
+  function renderWeekDetail(wk){
+    const el = document.getElementById('weekly-detail');
+    const w = weeklyData[wk];
+    if(!w){ el.innerHTML='<div style="color:var(--text-dim);text-align:center;padding:20px;">데이터 없음</div>'; return; }
+
+    let rows = '';
+    [...w.players].sort((a,b)=>b.mineral-a.mineral).forEach(p=>{
+      rows += '<tr>'+
+        '<td class="td-name">'+p.name+'</td>'+
+        '<td><div class="td-team '+p.team+'">'+p.team.toUpperCase().slice(0,3)+'</div></td>'+
+        '<td class="td-val '+(p.att?'':'zero')+'">'+p.att+'</td>'+
+        '<td class="td-val '+(p.goals?'':'zero')+'">'+p.goals+'</td>'+
+        '<td class="td-val '+(p.assists?'':'zero')+'">'+p.assists+'</td>'+
+        '<td class="td-mineral">'+p.mineral+'M</td>'+
+      '</tr>';
+    });
+
+    const sumRow = ['protoss','zerg','terran'].map(r=>
+      '<div class="ts-sum '+r+'">'+
+        '<div class="ts-sum-race">'+r.toUpperCase()+'</div>'+
+        '<div class="ts-sum-val">'+(w.teamMineral[r]||0)+'M</div>'+
+        '<div class="ts-sum-hp">-'+w.hpLoss[r].toLocaleString()+' HP</div>'+
+      '</div>'
+    ).join('');
+
+    el.innerHTML =
+      '<table class="battle-table">'+
+        '<thead><tr>'+
+          '<th>선수</th><th>팀</th><th style="text-align:center">출석</th>'+
+          '<th style="text-align:center">골</th><th style="text-align:center">어시</th>'+
+          '<th style="text-align:right">미네랄</th>'+
+        '</tr></thead>'+
+        '<tbody>'+rows+'</tbody>'+
+      '</table>'+
+      '<div class="team-sum-row">'+sumRow+'</div>';
+  }
 
   async function loadMainLeague(){
     try {
@@ -560,6 +734,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
           earnData[race] = m;
         });
       }
+
+      // BATTLE/WEEKLY 탭 렌더
+      renderBattle();
+      buildWeekBtns();
 
       // 팀원 목록 다시 렌더
       ['protoss','zerg','terran'].forEach(race=>{
