@@ -402,6 +402,13 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   .th-protoss{color:rgba(242,199,68,0.7) !important;}
   .th-zerg{color:rgba(220,80,80,0.7) !important;}
   .th-terran{color:rgba(94,200,230,0.7) !important;}
+
+  .r-left{display:flex;flex-direction:column;gap:5px;justify-content:center;}
+  .r-stats{display:flex;flex-direction:column;gap:4px;align-self:center;align-items:flex-start;}
+  .r-stat-row{display:flex;align-items:center;gap:6px;}
+  .r-stat-lbl{font-size:8px;color:var(--text-dim);letter-spacing:1px;font-family:'Orbitron',sans-serif;width:22px;}
+  .r-stat-val{font-family:'Russo One',sans-serif;font-size:14px;color:var(--green);}
+  .r-mineral{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--green);text-align:right;white-space:nowrap;align-self:center;}
 </style>
 </head>
 <body>
@@ -580,16 +587,18 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       const div = document.createElement('div');
       div.className = 'battle-week';
 
-      // 라운드별 표
-      let roundRows = '';
-      if(w.rounds && w.rounds.length){
-        w.rounds.forEach(r=>{
-          roundRows +=
+      // 개인 기록 표
+      let rows = '';
+      if(w.players && w.players.length){
+        [...w.players].sort((a,b)=>b.mineral-a.mineral).forEach(p=>{
+          rows +=
             '<tr>'+
-            '<td class="td-rnd">R'+r.round+'</td>'+
-            '<td class="td-cell protoss">'+(r.protoss||'-')+'</td>'+
-            '<td class="td-cell zerg">'+(r.zerg||'-')+'</td>'+
-            '<td class="td-cell terran">'+(r.terran||'-')+'</td>'+
+            '<td class="td-name">'+p.name+'</td>'+
+            '<td><div class="td-team '+p.team+'">'+p.team.toUpperCase().slice(0,3)+'</div></td>'+
+            '<td class="td-val '+(p.att?'':'zero')+'">'+p.att+'</td>'+
+            '<td class="td-val '+(p.goals?'':'zero')+'">'+p.goals+'</td>'+
+            '<td class="td-val '+(p.assists?'':'zero')+'">'+p.assists+'</td>'+
+            '<td class="td-mineral">'+p.mineral+'M</td>'+
             '</tr>';
         });
       }
@@ -606,16 +615,17 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       div.innerHTML =
         '<div class="battle-week-hdr">'+
           '<div class="bw-title">'+w.week+'주차</div>'+
-          '<div class="bw-hploss">'+w.rounds.length+'라운드</div>'+
+          '<div class="bw-hploss">'+((w.rounds&&w.rounds.length)||0)+'라운드</div>'+
         '</div>'+
         '<table class="battle-table">'+
           '<thead><tr>'+
-            '<th style="width:32px">R</th>'+
-            '<th class="th-protoss">PROTOSS</th>'+
-            '<th class="th-zerg">ZERG</th>'+
-            '<th class="th-terran">TERRAN</th>'+
+            '<th>선수</th><th>팀</th>'+
+            '<th style="text-align:center">출석</th>'+
+            '<th style="text-align:center">골</th>'+
+            '<th style="text-align:center">어시</th>'+
+            '<th style="text-align:right">미네랄</th>'+
           '</tr></thead>'+
-          '<tbody>'+roundRows+'</tbody>'+
+          '<tbody>'+rows+'</tbody>'+
         '</table>'+
         '<div class="team-sum-row">'+sumRow+'</div>';
 
@@ -876,20 +886,22 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       var capBadge = m.cap ? '<span class="r-cap" style="margin-left:5px;">주장</span>' : '';
       row.innerHTML =
         '<div class="r-num">'+num+'</div>'+
-        '<div class="r-name">'+m.name+capBadge+'</div>'+
-        '<div class="r-unit">'+
-          '<div class="r-unit-media">'+makeUnitMedia(race, m.unit)+'</div>'+
-          '<div class="r-unit-info">'+
-            '<div class="r-unit-name">'+unitName+'</div>'+
-            '<span class="r-unit-badge '+m.unit+'">'+unitLabel+'</span>'+
+        '<div class="r-left">'+
+          '<div class="r-name">'+m.name+capBadge+'</div>'+
+          '<div class="r-unit">'+
+            '<div class="r-unit-media">'+makeUnitMedia(race, m.unit)+'</div>'+
+            '<div class="r-unit-info">'+
+              '<div class="r-unit-name">'+unitName+'</div>'+
+              '<span class="r-unit-badge '+m.unit+'">'+unitLabel+'</span>'+
+            '</div>'+
           '</div>'+
         '</div>'+
         '<div class="r-stats">'+
-          '<span class="r-stat">출 '+m.att+'</span>'+
-          '<span class="r-stat">골 '+m.goal+'</span>'+
-          '<span class="r-stat">어 '+m.ast+'</span>'+
+          '<div class="r-stat-row"><span class="r-stat-lbl">출석</span><span class="r-stat-val">'+m.att+'</span></div>'+
+          '<div class="r-stat-row"><span class="r-stat-lbl">골</span><span class="r-stat-val">'+m.goal+'</span></div>'+
+          '<div class="r-stat-row"><span class="r-stat-lbl">어시</span><span class="r-stat-val">'+m.ast+'</span></div>'+
         '</div>'+
-        '<div class="r-mineral"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:12px;height:12px;object-fit:contain;vertical-align:middle;margin-right:2px;">'+mineral+'M</div>';
+        '<div class="r-mineral"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:14px;height:14px;object-fit:contain;vertical-align:middle;margin-right:3px;">'+mineral+'M</div>';
       el.appendChild(row);
     });
   }
