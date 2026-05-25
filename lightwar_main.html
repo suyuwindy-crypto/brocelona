@@ -497,6 +497,38 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   }
   .tmo-confirm-btn:active{background:rgba(255,215,0,0.7);}
 
+  /* ── RULE 탭 ── */
+  .rule-section{margin-bottom:14px;}
+  .rule-section-star{border:1px solid rgba(255,215,0,0.2);padding:10px;background:rgba(255,215,0,0.02);}
+  .rule-chapter{
+    font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;
+    letter-spacing:2px;color:var(--green);
+    padding:5px 10px;margin-bottom:6px;
+    background:rgba(0,0,0,0.5);
+    border-left:2px solid rgba(57,255,20,0.5);
+  }
+  .rule-chapter-star{color:var(--yellow);border-left-color:rgba(255,215,0,0.6);}
+  .rule-block{padding:5px 10px 8px;border-bottom:1px solid rgba(57,255,20,0.05);}
+  .rule-block:last-child{border-bottom:none;}
+  .rule-sub{font-family:'Orbitron',sans-serif;font-size:8px;color:var(--yellow);letter-spacing:1px;margin-bottom:4px;opacity:0.8;}
+  .rule-text{font-size:10px;color:rgba(57,255,20,0.7);line-height:1.6;margin-bottom:2px;}
+  .rule-hi{color:var(--green);font-weight:700;}
+  .rule-list{display:flex;flex-direction:column;gap:3px;margin-top:3px;}
+  .rule-li{font-size:10px;color:rgba(57,255,20,0.65);line-height:1.5;padding-left:10px;position:relative;}
+  .rule-li::before{content:'▸';position:absolute;left:0;color:var(--text-dim);}
+  .rule-li .rule-hi{color:var(--green);}
+
+  .rule-unit-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+  .rule-unit-badge{font-size:8px;font-weight:700;padding:2px 7px;border-radius:2px;font-family:'Orbitron',sans-serif;flex-shrink:0;}
+  .rule-unit-badge.double{color:var(--yellow);border:1px solid rgba(255,215,0,0.4);background:rgba(255,215,0,0.07);}
+  .rule-unit-badge.pk{color:var(--green);border:1px solid rgba(57,255,20,0.35);background:rgba(57,255,20,0.05);}
+  .rule-unit-badge.trade{color:rgba(94,200,230,0.9);border:1px solid rgba(94,200,230,0.35);background:rgba(94,200,230,0.05);}
+  .rule-unit-name{font-size:10px;color:rgba(57,255,20,0.8);flex:1;}
+  .rule-unit-desc{font-size:9px;color:var(--text-dim);text-align:right;flex-shrink:0;}
+
+  /* 트레이드 버튼 비활성 */
+  .trade-btn:disabled{color:var(--text-dim);border-color:rgba(100,100,100,0.2);cursor:not-allowed;box-shadow:none;opacity:0.5;}
+
   /* 주차별 실점 차트 */
   .chart-wrap{
     padding:8px 4px 4px;
@@ -631,6 +663,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       <div class="tab" id="tab-btn-units">UNITS</div>
       <div class="tab" id="tab-btn-battle">BATTLE</div>
       <div class="tab" id="tab-btn-weekly">WEEKLY</div>
+      <div class="tab" id="tab-btn-rule">RULE</div>
     </div>
 
     <div class="scroll">
@@ -710,6 +743,114 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         <div class="week-btns" id="week-btns"></div>
         <div id="weekly-detail" style="color:var(--text-dim);font-size:10px;text-align:center;padding:24px;letter-spacing:2px;">주차를 선택하세요</div>
       </div>
+
+      <div id="tab-rule" style="display:none">
+        <div class="rule-section">
+          <div class="rule-chapter">⬡ 1. 운영 안내</div>
+          <div class="rule-block">
+            <div class="rule-sub">1-1. 모임 및 공지</div>
+            <div class="rule-text">전체 인원이 모이면 즉시 운영 시작. 지연 시 <span class="rule-hi">오전 10시 5분</span> 강제 시작.</div>
+            <div class="rule-text">운영진은 경기 전 전체 공지 및 부상 안내 진행.</div>
+          </div>
+          <div class="rule-block">
+            <div class="rule-sub">1-2. 경기 운영</div>
+            <div class="rule-text">타이머 운영 등 경기 준비·운영은 준비요원 담당. 필요 시 주심 판단으로 경기 정지 가능.</div>
+          </div>
+          <div class="rule-block">
+            <div class="rule-sub">1-3. 주심·부심</div>
+            <div class="rule-text">각 팀 주심 <span class="rule-hi">3명</span> 지정 (주장 포함). 반대편 사이드라인에 부심 배치, 반드시 깃발 사용.</div>
+          </div>
+        </div>
+
+        <div class="rule-section">
+          <div class="rule-chapter">⬡ 2. 경기 규정</div>
+          <div class="rule-block">
+            <div class="rule-sub">2-1. 출전 인원</div>
+            <div class="rule-text">본리그 기준 경기 출전 최대 <span class="rule-hi">8명</span>. 프리시즌은 미적용.</div>
+          </div>
+          <div class="rule-block">
+            <div class="rule-sub">5-1. 최소 인원</div>
+            <div class="rule-text">팀 인원 <span class="rule-hi">5명 미만</span> 시 휴식팀으로 충원. 해당 팀은 <span class="rule-hi">3실점</span> 상태로 시작.</div>
+          </div>
+        </div>
+
+        <div class="rule-section">
+          <div class="rule-chapter">⬡ 4. 파울 · 안전</div>
+          <div class="rule-block">
+            <div class="rule-sub">4-1. 안면 충돌</div>
+            <div class="rule-text">공을 차서 상대 이마 아래 안면 직접 적중 시 <span class="rule-hi">2분 퇴장</span>. 타 부위 바운드 후 맞은 경우 제외.</div>
+          </div>
+          <div class="rule-block">
+            <div class="rule-sub">위험 플레이 기준</div>
+            <div class="rule-list">
+              <div class="rule-li">속도 미제어 달려들기 · 몸 던지기</div>
+              <div class="rule-li">어깨·팔·상체 이용 과도한 압박</div>
+              <div class="rule-li">상대 진행 방향에 몸 넣어 충돌 유도</div>
+              <div class="rule-li">공보다 볼 경합 우선 — 주심 즉시 파울 가능</div>
+              <div class="rule-li">뒤늦게 발 뻗기 (공 미접촉 시)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rule-section">
+          <div class="rule-chapter">⬡ 5. 장비 규정</div>
+          <div class="rule-block">
+            <div class="rule-text">안경 착용 시 <span class="rule-hi">고글 필수</span> 또는 무안경 상태.</div>
+            <div class="rule-text">신발 — <span class="rule-hi">풋살화(TF·AG)만</span> 허용. 일반 축구화 금지.</div>
+            <div class="rule-text">조끼 <span class="rule-hi">반드시</span> 착용 (공용 또는 개인 제작).</div>
+          </div>
+        </div>
+
+        <div class="rule-section rule-section-star">
+          <div class="rule-chapter rule-chapter-star">★ STARLEAGUE 특별 규정</div>
+
+          <div class="rule-block">
+            <div class="rule-sub">팀 구성</div>
+            <div class="rule-text">특수 유닛 <span class="rule-hi">3명</span> + 일꾼으로 구성. 특수 유닛 외 전원 일꾼.</div>
+          </div>
+
+          <div class="rule-block">
+            <div class="rule-sub">일꾼 미네랄</div>
+            <div class="rule-text">출석·득점·어시 기록당 <span class="rule-hi">10M</span> 팀에 기여.</div>
+          </div>
+
+          <div class="rule-block">
+            <div class="rule-sub">특수 유닛</div>
+            <div class="rule-unit-row">
+              <span class="rule-unit-badge double">X2</span>
+              <span class="rule-unit-name">배틀크루저 (주장)</span>
+              <span class="rule-unit-desc">골 득점 시 <span class="rule-hi">2점</span> 인정</span>
+            </div>
+            <div class="rule-unit-row">
+              <span class="rule-unit-badge pk">PK</span>
+              <span class="rule-unit-name">스커지 (미네랄 1위)</span>
+              <span class="rule-unit-desc">파울 당할 시 <span class="rule-hi">PK 선언</span> 가능</span>
+            </div>
+            <div class="rule-unit-row">
+              <span class="rule-unit-badge trade">⇄</span>
+              <span class="rule-unit-name">다크아칸·퀸·고스트</span>
+              <span class="rule-unit-desc">타 종족 트레이딩 발동 가능</span>
+            </div>
+          </div>
+
+          <div class="rule-block">
+            <div class="rule-sub">트레이딩 규정</div>
+            <div class="rule-list">
+              <div class="rule-li">발동 조건 — <span class="rule-hi">트레이드 유닛(다크아칸·퀸·고스트)</span> 보유 팀만 가능</div>
+              <div class="rule-li">비용 — 팀 미네랄 <span class="rule-hi">-1,000M</span></div>
+              <div class="rule-li">대상 — 상대 팀 일꾼만, 특수 유닛 제외</div>
+              <div class="rule-li">최대 <span class="rule-hi">3회</span>까지 가능</div>
+              <div class="rule-li">트레이딩된 선수는 <span class="rule-hi">재트레이딩 불가</span></div>
+            </div>
+          </div>
+
+          <div class="rule-block">
+            <div class="rule-sub">기지 HP 시스템</div>
+            <div class="rule-text">남은 미네랄 → 팀 기지 HP 전환.</div>
+            <div class="rule-text">실점 <span class="rule-hi">1점 = -100 HP</span>. 매주 경기 후 HP 0 이하 시 <span class="rule-hi">탈락</span>.</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="nav">
@@ -770,7 +911,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     }
   }
   function switchTab(name,btn){
-    ['overview','units','battle','weekly'].forEach(t=>{
+    ['overview','units','battle','weekly','rule'].forEach(t=>{
       document.getElementById('tab-'+t).style.display=t===name?'block':'none';
     });
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -1383,38 +1524,69 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
   // ── 트레이드 시스템 ──
   const TRADE_COST = 1000;
+  const MAX_TRADE = 3;
   const RACE_COLOR_TEXT = { protoss:'tn-pro', zerg:'tn-zer', terran:'tn-ter' };
   const RACE_FULL = { protoss:'PROTOSS', zerg:'ZERG', terran:'TERRAN' };
+  const TRADE_UNIT_NAME = { protoss:'다크아칸', zerg:'퀸', terran:'고스트' };
   let tradeLog = [
-    // 샘플 데이터
     { weekLabel:'1주차', raceA:'zerg', nameA:'이호진', raceB:'terran', nameB:'박병훈' },
   ];
+  // 트레이드된 선수 이름 목록 (재트레이드 방지)
+  let tradedPlayers = new Set(['이호진','박병훈']);
   let tradeModalRace = null;
 
+  function hasTradeUnit(race){
+    return roster[race] && roster[race].some(m=>m.unit==='trade');
+  }
+
+  function updateTradeBtns(){
+    ['protoss','zerg','terran'].forEach(race=>{
+      const btn = document.querySelector(`.trade-btn[onclick="openTradeModal('${race}')"]`);
+      if(!btn) return;
+      const hasTrade = hasTradeUnit(race);
+      const overLimit = tradeLog.filter(t=>t.raceA===race||t.raceB===race).length >= MAX_TRADE;
+      btn.disabled = !hasTrade || overLimit;
+      if(!hasTrade) btn.title = `${TRADE_UNIT_NAME[race]} 유닛 없음`;
+      else if(overLimit) btn.title = '트레이드 최대 횟수(3회) 초과';
+      else btn.title = '';
+    });
+  }
+
   function openTradeModal(race){
+    if(!hasTradeUnit(race)){ return; }
     tradeModalRace = race;
     const modal = document.getElementById('trade-modal');
     modal.style.display = 'flex';
 
-    // 내 팀 라벨
-    document.getElementById('tmo-lbl-a').textContent = RACE_FULL[race];
-    document.getElementById('tmo-lbl-a').style.color = {protoss:'rgba(242,199,68,0.9)',zerg:'rgba(220,80,80,0.9)',terran:'rgba(94,200,230,0.9)'}[race];
+    const raceColors = {protoss:'rgba(242,199,68,0.9)',zerg:'rgba(220,80,80,0.9)',terran:'rgba(94,200,230,0.9)'};
+    const lbl = document.getElementById('tmo-lbl-a');
+    lbl.textContent = RACE_FULL[race]+' · '+TRADE_UNIT_NAME[race];
+    lbl.style.color = raceColors[race];
 
-    // 내 팀 선수 목록
+    // 내 팀 일꾼만 (이미 트레이드된 선수 제외)
     const selA = document.getElementById('tmo-player-a');
     selA.innerHTML = '';
-    roster[race].forEach(m=>{
+    roster[race].filter(m=>m.unit==='worker'&&!tradedPlayers.has(m.name)).forEach(m=>{
       const opt = document.createElement('option');
       opt.value = m.name;
       opt.textContent = m.name + (m.cap?' ◈':'');
       selA.appendChild(opt);
     });
+    if(!selA.options.length){
+      selA.innerHTML = '<option disabled>트레이드 가능 선수 없음</option>';
+    }
 
     // 상대팀 초기화
-    document.getElementById('tmo-race-b').value = '';
+    const raceBSel = document.getElementById('tmo-race-b');
+    raceBSel.innerHTML = '<option value="">팀 선택</option>';
+    ['protoss','zerg','terran'].filter(r=>r!==race).forEach(r=>{
+      const opt = document.createElement('option');
+      opt.value = r; opt.textContent = RACE_FULL[r];
+      raceBSel.appendChild(opt);
+    });
+    raceBSel.value = '';
     const selB = document.getElementById('tmo-player-b');
-    selB.innerHTML = '';
-    selB.style.display = 'none';
+    selB.innerHTML = ''; selB.style.display='none';
   }
 
   function closeTradeModal(){
@@ -1427,12 +1599,16 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     if(!race){ selB.style.display='none'; return; }
     selB.innerHTML = '';
     selB.style.display = 'block';
-    roster[race].forEach(m=>{
+    // 상대팀 일꾼, 이미 트레이드된 선수 제외
+    roster[race].filter(m=>m.unit==='worker'&&!tradedPlayers.has(m.name)).forEach(m=>{
       const opt = document.createElement('option');
       opt.value = m.name;
       opt.textContent = m.name + (m.cap?' ◈':'');
       selB.appendChild(opt);
     });
+    if(!selB.options.length){
+      selB.innerHTML = '<option disabled>트레이드 가능 선수 없음</option>';
+    }
   }
 
   function confirmTrade(){
@@ -1442,14 +1618,24 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     const nameB = document.getElementById('tmo-player-b').value;
 
     if(!raceB){ alert('상대 팀을 선택하세요'); return; }
-    if(!nameB){ alert('상대 선수를 선택하세요'); return; }
+    if(!nameB || nameB==='' || document.getElementById('tmo-player-b').options[0]?.disabled){
+      alert('트레이드 가능한 상대 선수가 없습니다'); return;
+    }
     if(raceA === raceB){ alert('같은 팀끼리는 트레이드 불가'); return; }
+    if(tradeLog.length >= MAX_TRADE){ alert('트레이드는 최대 3회까지만 가능합니다'); return; }
+    if(tradedPlayers.has(nameA)||tradedPlayers.has(nameB)){
+      alert('이미 트레이드된 선수는 재트레이드 불가'); return;
+    }
 
     // 미네랄 차감
     earnData[raceA] = Math.max((earnData[raceA]||0) - TRADE_COST, 0);
     earnData[raceB] = Math.max((earnData[raceB]||0) - TRADE_COST, 0);
     document.getElementById('earn-'+raceA).textContent = earnData[raceA].toLocaleString()+' M';
     document.getElementById('earn-'+raceB).textContent = earnData[raceB].toLocaleString()+' M';
+
+    // 트레이드된 선수 등록
+    tradedPlayers.add(nameA);
+    tradedPlayers.add(nameB);
 
     // 로그 기록
     const wk = weeklyData && Object.keys(weeklyData).length
@@ -1458,6 +1644,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
     closeTradeModal();
     renderTradeHistory();
+    updateTradeBtns();
   }
 
   function renderTradeHistory(){
@@ -1467,7 +1654,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     if(!tradeLog.length){ section.style.display='none'; return; }
 
     section.style.display = 'block';
-    countEl.textContent = tradeLog.length+'회';
+    countEl.textContent = tradeLog.length+'/'+MAX_TRADE+'회';
     list.innerHTML = '';
 
     tradeLog.forEach((t,i)=>{
@@ -1536,11 +1723,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     if(cnt) cnt.textContent = roster[race].length + '명';
   });
   renderTradeHistory();
+  updateTradeBtns();
 
   // 이벤트 리스너 - DOMContentLoaded 후 안전하게 연결
   document.addEventListener('DOMContentLoaded', function(){
     // 탭 버튼
-    ['overview','units','battle','weekly'].forEach(name=>{
+    ['overview','units','battle','weekly','rule'].forEach(name=>{
       const el = document.getElementById('tab-btn-'+name);
       if(el) el.addEventListener('click', function(){ switchTab(name, this); });
     });
