@@ -309,7 +309,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
   .roster-row{
     display:grid;
-    grid-template-columns:24px 56px 1fr auto 52px;
+    grid-template-columns:24px 40px 1fr auto 48px;
     gap:6px;align-items:center;
     padding:8px 10px;
     background:rgba(0,5,0,0.45);
@@ -334,7 +334,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   .r-mineral{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--green);text-align:right;white-space:nowrap;}
 
 
-  .r-unit-media{width:44px;height:44px;flex-shrink:0;}
+  .r-unit-media{width:30px;height:30px;flex-shrink:0;}
   .r-unit-info{display:flex;flex-direction:column;gap:2px;}
   .r-unit-name{font-size:9px;color:var(--text-dim);letter-spacing:0.5px;}
   .r-unit{display:flex;align-items:center;gap:6px;}
@@ -392,6 +392,15 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   .ts-sum-val{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--green);}
   .ts-sum-hp{font-size:9px;color:var(--danger);margin-top:2px;}
 
+
+  .td-rnd{font-size:9px;color:var(--text-dim);font-family:'Orbitron',sans-serif;letter-spacing:1px;width:28px;}
+  .td-cell{font-size:11px;color:var(--green);padding:6px 4px;border-bottom:1px solid rgba(57,255,20,0.05);line-height:1.4;vertical-align:top;}
+  .td-cell.protoss{color:rgba(242,199,68,0.85);}
+  .td-cell.zerg{color:rgba(220,80,80,0.85);}
+  .td-cell.terran{color:rgba(94,200,230,0.85);}
+  .th-protoss{color:rgba(242,199,68,0.7) !important;}
+  .th-zerg{color:rgba(220,80,80,0.7) !important;}
+  .th-terran{color:rgba(94,200,230,0.7) !important;}
 </style>
 </head>
 <body>
@@ -564,46 +573,46 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       return;
     }
     el.innerHTML = '';
-    Object.values(weeklyData).sort((a,b)=>b.week-a.week).forEach(w=>{
+    Object.values(weeklyData).sort((a,b)=>a.week-b.week).forEach(w=>{
       const div = document.createElement('div');
       div.className = 'battle-week';
 
-      const hpStr = ['protoss','zerg','terran'].map(r=>
-        '<span class="td-team '+r+'">'+r.toUpperCase()+'</span> -'+w.hpLoss[r].toLocaleString()+' HP'
-      ).join(' &nbsp; ');
+      // 라운드별 표
+      let roundRows = '';
+      if(w.rounds && w.rounds.length){
+        w.rounds.forEach(r=>{
+          roundRows +=
+            '<tr>'+
+            '<td class="td-rnd">R'+r.round+'</td>'+
+            '<td class="td-cell protoss">'+(r.protoss||'-')+'</td>'+
+            '<td class="td-cell zerg">'+(r.zerg||'-')+'</td>'+
+            '<td class="td-cell terran">'+(r.terran||'-')+'</td>'+
+            '</tr>';
+        });
+      }
 
-      let rows = '';
-      [...w.players].sort((a,b)=>b.mineral-a.mineral).forEach(p=>{
-        rows += '<tr>'+
-          '<td class="td-name">'+p.name+'</td>'+
-          '<td><div class="td-team '+p.team+'">'+p.team.toUpperCase().slice(0,3)+'</div></td>'+
-          '<td class="td-val '+(p.att?'':'zero')+'">'+p.att+'</td>'+
-          '<td class="td-val '+(p.goals?'':'zero')+'">'+p.goals+'</td>'+
-          '<td class="td-val '+(p.assists?'':'zero')+'">'+p.assists+'</td>'+
-          '<td class="td-mineral">'+p.mineral+'M</td>'+
-        '</tr>';
-      });
-
-      const sumRow = ['protoss','zerg','terran'].map(r=>
-        '<div class="ts-sum '+r+'">'+
-          '<div class="ts-sum-race">'+r.toUpperCase()+'</div>'+
-          '<div class="ts-sum-val">'+(w.teamMineral[r]||0)+'M</div>'+
-          '<div class="ts-sum-hp">-'+w.hpLoss[r].toLocaleString()+' HP</div>'+
+      // 팀 합산
+      const sumRow = ['protoss','zerg','terran'].map(race=>
+        '<div class="ts-sum '+race+'">'+
+          '<div class="ts-sum-race">'+race.toUpperCase()+'</div>'+
+          '<div class="ts-sum-val">'+(w.teamMineral[race]||0)+'M</div>'+
+          '<div class="ts-sum-hp">-'+(w.hpLoss[race]||0).toLocaleString()+' HP</div>'+
         '</div>'
       ).join('');
 
       div.innerHTML =
         '<div class="battle-week-hdr">'+
           '<div class="bw-title">'+w.week+'주차</div>'+
-          '<div class="bw-hploss">HP 손실</div>'+
+          '<div class="bw-hploss">'+w.rounds.length+'라운드</div>'+
         '</div>'+
         '<table class="battle-table">'+
           '<thead><tr>'+
-            '<th>선수</th><th>팀</th><th style="text-align:center">출석</th>'+
-            '<th style="text-align:center">골</th><th style="text-align:center">어시</th>'+
-            '<th style="text-align:right">미네랄</th>'+
+            '<th style="width:32px">R</th>'+
+            '<th class="th-protoss">PROTOSS</th>'+
+            '<th class="th-zerg">ZERG</th>'+
+            '<th class="th-terran">TERRAN</th>'+
           '</tr></thead>'+
-          '<tbody>'+rows+'</tbody>'+
+          '<tbody>'+roundRows+'</tbody>'+
         '</table>'+
         '<div class="team-sum-row">'+sumRow+'</div>';
 
@@ -779,8 +788,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
   const UNIT_IMG = {
     protoss: {
-      double: {src:'https://suyuwindy-crypto.github.io/brocelona/1.%20carrier.mp4',  type:'video'},
-      pk:     {src:'https://suyuwindy-crypto.github.io/brocelona/1.%20river.mp4',    type:'video'},
+      double: {src:'https://suyuwindy-crypto.github.io/brocelona/1.%20carrier.webp',  type:'video'},
+      pk:     {src:'https://suyuwindy-crypto.github.io/brocelona/1.%20river.webp',    type:'video'},
       trade:  {src:'https://suyuwindy-crypto.github.io/brocelona/1.%20darkarcon.webp', type:'img'},
       worker: {src:'https://suyuwindy-crypto.github.io/brocelona/1.%20probe.webp',   type:'img'},
     },
@@ -788,10 +797,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       double: {src:'https://suyuwindy-crypto.github.io/brocelona/2.%20ultrarisk.webp', type:'img'},
       pk:     {src:'https://suyuwindy-crypto.github.io/brocelona/2.%20scurge.webp',  type:'img'},
       trade:  {src:'https://suyuwindy-crypto.github.io/brocelona/2.%20queen.webp',   type:'img'},
-      worker: {src:'https://suyuwindy-crypto.github.io/brocelona/2.%20drone.mp4',    type:'video'},
+      worker: {src:'https://suyuwindy-crypto.github.io/brocelona/2.%20drone.webp',    type:'video'},
     },
     terran: {
-      double: {src:'https://suyuwindy-crypto.github.io/brocelona/3.%20battlecruiser.mp4', type:'video'},
+      double: {src:'https://suyuwindy-crypto.github.io/brocelona/3.%20battlecruiser.webp', type:'video'},
       pk:     {src:'https://suyuwindy-crypto.github.io/brocelona/3.%20vulture.webp', type:'img'},
       trade:  {src:'https://suyuwindy-crypto.github.io/brocelona/3.%20ghost.webp',   type:'img'},
       worker: {src:'https://suyuwindy-crypto.github.io/brocelona/3.%20scv.webp',     type:'img'},
@@ -802,9 +811,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     const info = UNIT_IMG[race] && UNIT_IMG[race][unitKey];
     if(!info) return '<span style="font-size:18px;">⛏</span>';
     if(info.type === 'video'){
-      return '<video src="'+info.src+'" autoplay loop muted playsinline style="width:44px;height:44px;object-fit:contain;border-radius:2px;background:#000;mix-blend-mode:screen;"></video>';
+      return '<img src="'+info.src+'" style="width:30px;height:30px;object-fit:contain;border-radius:2px;background:#000;mix-blend-mode:screen;">';
     } else {
-      return '<img src="'+info.src+'" style="width:44px;height:44px;object-fit:contain;border-radius:2px;background:#000;mix-blend-mode:screen;">';
+      return '<img src="'+info.src+'" style="width:30px;height:30px;object-fit:contain;border-radius:2px;background:#000;mix-blend-mode:screen;">';
     }
   }
 
