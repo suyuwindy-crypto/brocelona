@@ -26,16 +26,25 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 /* 배경 */
 .bg{
   position:fixed;inset:0;z-index:0;
-  background-image:url('https://suyuwindy-crypto.github.io/brocelona/background.jfif');
-  background-size:cover;
-  background-position:center center;
+  background:
+    radial-gradient(ellipse 100% 60% at 20% 70%,#0a0a1a,transparent),
+    radial-gradient(ellipse 80% 50% at 80% 20%,#150500,transparent),
+    #030308;
 }
 .bg::before{
   content:'';position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 100% 60% at 20% 70%,rgba(10,10,26,0.7),transparent),
-    radial-gradient(ellipse 80% 50% at 80% 20%,rgba(21,5,0,0.6),transparent),
-    rgba(3,3,8,0.55);
+  background-image:
+    radial-gradient(1px 1px at 8% 12%,rgba(255,255,255,0.7),transparent),
+    radial-gradient(1px 1px at 22% 28%,rgba(255,255,255,0.5),transparent),
+    radial-gradient(1px 1px at 38% 6%,rgba(255,255,255,0.6),transparent),
+    radial-gradient(1px 1px at 55% 18%,rgba(255,255,255,0.4),transparent),
+    radial-gradient(1px 1px at 72% 10%,rgba(255,255,255,0.7),transparent),
+    radial-gradient(1px 1px at 88% 32%,rgba(255,255,255,0.5),transparent),
+    radial-gradient(1px 1px at 14% 52%,rgba(255,255,255,0.3),transparent),
+    radial-gradient(1px 1px at 92% 48%,rgba(255,255,255,0.4),transparent),
+    radial-gradient(2px 2px at 45% 75%,rgba(255,255,255,0.3),transparent),
+    radial-gradient(1px 1px at 68% 82%,rgba(255,255,255,0.4),transparent),
+    radial-gradient(1px 1px at 30% 90%,rgba(255,255,255,0.2),transparent);
 }
 
 .app{
@@ -89,9 +98,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 }
 .battle-bg{
   position:absolute;inset:0;
-  background-image:url('https://suyuwindy-crypto.github.io/brocelona/background.jfif');
-  background-size:cover;
-  background-position:center center;
+  background-image:url('https://suyuwindy-crypto.github.io/brocelona/main.png');
+  background-size:100% auto;
+  background-position:center -55px;
   background-repeat:no-repeat;
 }
 .battle-fade{
@@ -795,7 +804,15 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     </div>
 
     <div class="scroll">
-      <div id="tab-overview">
+      <div id="tab-overview" style="
+        background-image:url('https://suyuwindy-crypto.github.io/brocelona/background.jfif');
+        background-size:cover;
+        background-position:center center;
+        background-attachment:local;
+        position:relative;
+      ">
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,0.72);pointer-events:none;z-index:0;"></div>
+      <div style="position:relative;z-index:1;">
         <div class="sec-lbl">본리그 미네랄 획득량</div>
         <div class="mineral-row">
           <div class="mc protoss">
@@ -833,7 +850,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
             <span class="cl-item cl-ter">● TER</span>
           </div>
         </div>
-      </div>
+      </div><!-- /z-index wrapper -->
+      </div><!-- /tab-overview -->
       <div id="tab-units" style="display:none">
 
         <div class="roster-section" id="roster-section-protoss">
