@@ -335,7 +335,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   /* col 2: 이름 + 주장 배지 — 한 줄 */
   .r-name-wrap{display:flex;flex-direction:row;align-items:center;gap:5px;min-width:0;white-space:nowrap;}
   .r-name{font-size:14px;font-weight:700;color:var(--green);white-space:nowrap;line-height:1.2;}
-  .r-cap{font-size:7px;font-weight:700;color:var(--yellow);border:1px solid rgba(255,215,0,0.5);padding:1px 5px;border-radius:2px;font-family:'Orbitron',sans-serif;display:inline-block;flex-shrink:0;background:rgba(255,215,0,0.07);}
+  .r-cap{font-size:11px;color:var(--yellow);display:inline-block;flex-shrink:0;line-height:1;text-shadow:0 0 6px rgba(255,215,0,0.7);}
 
   /* col 3: 유닛 이미지 */
   .r-unit-media{width:34px;height:34px;display:flex;align-items:center;justify-content:flex-start;}
@@ -428,6 +428,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   .br-w{color:#39ff14;background:rgba(57,255,20,0.1);border:1px solid rgba(57,255,20,0.35);}
   .br-l{color:rgba(220,60,60,0.9);background:rgba(200,40,40,0.08);border:1px solid rgba(200,40,40,0.3);}
   .br-d{color:var(--yellow);background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.3);}
+
+  /* 주차별 실점 차트 */
+  .chart-wrap{
+    padding:8px 4px 4px;
+    background:rgba(0,5,0,0.4);
+    border:1px solid rgba(180,20,20,0.2);
+  }
+  #hp-loss-chart{width:100%;height:130px;display:block;}
+  .chart-legend{display:flex;justify-content:center;gap:14px;padding:5px 0 3px;}
+  .cl-item{font-size:8px;font-family:'Orbitron',sans-serif;letter-spacing:1px;}
+  .cl-pro{color:rgba(242,199,68,0.85);}
+  .cl-zer{color:rgba(220,80,80,0.85);}
+  .cl-ter{color:rgba(94,200,230,0.85);}
 
   /* BATTLE/WEEKLY 탭 */
   .week-btns{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
@@ -575,11 +588,14 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
             <button class="charge-btn" id="charge-btn-terran">⚡ 충전</button>
           </div>
         </div>
-        <div class="sec-lbl" style="margin-top:12px;">프리시즌 보유 미네랄</div>
-        <div class="mineral-row">
-          <div class="mc protoss"><div class="mc-race">PROTOSS</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">9,660 M</div></div>
-          <div class="mc zerg"><div class="mc-race">ZERG</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">7,420 M</div></div>
-          <div class="mc terran"><div class="mc-race">TERRAN</div><div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div><div class="mc-val">9,806 M</div></div>
+        <div class="sec-lbl" style="margin-top:12px;">주차별 실점 현황</div>
+        <div class="chart-wrap">
+          <canvas id="hp-loss-chart"></canvas>
+          <div class="chart-legend">
+            <span class="cl-item cl-pro">● PRO</span>
+            <span class="cl-item cl-zer">● ZER</span>
+            <span class="cl-item cl-ter">● TER</span>
+          </div>
         </div>
       </div>
       <div id="tab-units" style="display:none">
@@ -622,10 +638,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     </div>
 
     <div class="nav">
-      <div class="nav-btn" onclick="window.location.href='brocelona.html'"><div class="ni">💎</div><div>MINERAL</div></div>
-      <div class="nav-btn" onclick="window.location.href='team_select.html'"><div class="ni">⚔</div><div>TEAM</div></div>
-      <div class="nav-btn active"><div class="ni">🏰</div><div>BOARD</div></div>
-      <div class="nav-btn"><div class="ni">⚙</div><div>MENU</div></div>
+      <div class="nav-btn" onclick="window.location.href='brocelona.html'"><div class="ni"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;mix-blend-mode:screen;"></div><div>MINERAL</div></div>
+      <div class="nav-btn" onclick="window.location.href='team_select.html'"><div class="ni"><img src="https://suyuwindy-crypto.github.io/brocelona/populationt.webp" style="width:20px;height:20px;object-fit:contain;mix-blend-mode:screen;"></div><div>TEAM</div></div>
+      <div class="nav-btn active"><div class="ni">⚽</div><div>BOARD</div></div>
     </div>
   </div>
 
@@ -946,6 +961,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       // BATTLE/WEEKLY 탭 렌더
       renderBattle();
       buildWeekBtns();
+      renderHpLossChart();
 
       // 팀원 목록 다시 렌더
       ['protoss','zerg','terran'].forEach(race=>{
@@ -977,6 +993,173 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         body: JSON.stringify({action:'updateHP', race, hp}),
       });
     } catch(e){ console.error(e); }
+  }
+
+  // 주차별 HP 잔여 + 추세 예측 차트
+  function renderHpLossChart(){
+    const canvas = document.getElementById('hp-loss-chart');
+    if(!canvas) return;
+
+    const weeks = Object.values(weeklyData).sort((a,b)=>a.week-b.week);
+
+    const colors = {
+      protoss:{ line:'rgba(242,199,68,0.9)',  glow:'rgba(242,199,68,0.3)',  dash:'rgba(242,199,68,0.35)' },
+      zerg:   { line:'rgba(220,80,80,0.9)',   glow:'rgba(220,80,80,0.3)',   dash:'rgba(220,80,80,0.35)'  },
+      terran: { line:'rgba(94,200,230,0.9)',  glow:'rgba(94,200,230,0.3)',  dash:'rgba(94,200,230,0.35)' },
+    };
+
+    // 주차별 누적 HP 계산 (초기 HP - 누적 hpLoss)
+    const races = ['protoss','zerg','terran'];
+    const hpHistory = {}; // race -> [{ week, hp }]
+    races.forEach(r => {
+      let hp = teams[r] ? teams[r].hp : MAX_HP;
+      // hpLoss를 역산해서 초기 HP 복원
+      let totalLoss = 0;
+      weeks.forEach(w => totalLoss += (w.hpLoss&&w.hpLoss[r])||0);
+      let startHp = hp + totalLoss;
+
+      let cumHp = startHp;
+      hpHistory[r] = [{ week:0, hp:cumHp }]; // 0주차 = 시작점
+      weeks.forEach(w => {
+        cumHp -= (w.hpLoss&&w.hpLoss[r])||0;
+        hpHistory[r].push({ week:w.week, hp:Math.max(cumHp,0) });
+      });
+    });
+
+    // 추세선: 선형 회귀로 소멸 주차 예측
+    function calcTrend(points){
+      if(points.length < 2) return null;
+      const n = points.length;
+      const sx = points.reduce((s,p)=>s+p.week,0);
+      const sy = points.reduce((s,p)=>s+p.hp,0);
+      const sxy = points.reduce((s,p)=>s+p.week*p.hp,0);
+      const sxx = points.reduce((s,p)=>s+p.week*p.week,0);
+      const slope = (n*sxy - sx*sy) / (n*sxx - sx*sx);
+      const intercept = (sy - slope*sx) / n;
+      const deathWeek = slope < 0 ? -intercept/slope : null;
+      return { slope, intercept, deathWeek };
+    }
+
+    // Canvas 설정
+    const dpr = window.devicePixelRatio||1;
+    const W = canvas.parentElement.clientWidth - 8;
+    const H = 130;
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width  = W+'px';
+    canvas.style.height = H+'px';
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0,0,W,H);
+
+    const PAD = {top:14, right:14, bottom:28, left:42};
+    const cW = W - PAD.left - PAD.right;
+    const cH = H - PAD.top  - PAD.bottom;
+
+    // 최대 주차 (실제 + 예측 여유)
+    const lastWeek = weeks.length ? weeks[weeks.length-1].week : 1;
+    const trends = {};
+    races.forEach(r => trends[r] = calcTrend(hpHistory[r]));
+    const maxPredWeek = Math.min(
+      lastWeek + Math.ceil(lastWeek * 0.8) + 2,
+      Math.max(...races.map(r => trends[r]&&trends[r].deathWeek ? Math.ceil(trends[r].deathWeek)+1 : lastWeek+3))
+    );
+    const maxHp = MAX_HP;
+
+    function toX(week){ return PAD.left + (week / maxPredWeek) * cW; }
+    function toY(hp)  { return PAD.top  + cH * (1 - Math.max(hp,0)/maxHp); }
+
+    // 그리드
+    ctx.strokeStyle='rgba(57,255,20,0.06)';
+    ctx.lineWidth=1;
+    [0,0.25,0.5,0.75,1].forEach(r=>{
+      const y = PAD.top + cH*(1-r);
+      ctx.beginPath(); ctx.moveTo(PAD.left,y); ctx.lineTo(PAD.left+cW,y); ctx.stroke();
+      ctx.fillStyle='rgba(57,255,20,0.35)';
+      ctx.font=`7px monospace`;
+      ctx.textAlign='right';
+      ctx.fillText((maxHp*r/1000).toFixed(0)+'k', PAD.left-4, y+3);
+    });
+
+    // x축 주차 레이블 (실제 주차만)
+    ctx.fillStyle='rgba(57,255,20,0.4)';
+    ctx.font='7px monospace';
+    ctx.textAlign='center';
+    for(let wk=0; wk<=lastWeek; wk++){
+      const x = toX(wk);
+      ctx.fillText(wk===0?'시작':wk+'주', x, H-PAD.bottom+11);
+      // 수직 점선
+      if(wk>0){
+        ctx.save();
+        ctx.strokeStyle='rgba(57,255,20,0.05)';
+        ctx.setLineDash([2,4]);
+        ctx.beginPath(); ctx.moveTo(x,PAD.top); ctx.lineTo(x,PAD.top+cH); ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    // HP=0 기준선 강조
+    ctx.strokeStyle='rgba(180,20,20,0.25)';
+    ctx.lineWidth=1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(PAD.left,toY(0)); ctx.lineTo(PAD.left+cW,toY(0)); ctx.stroke();
+    ctx.setLineDash([]);
+
+    races.forEach(race=>{
+      const pts = hpHistory[race];
+      const c = colors[race];
+      const trend = trends[race];
+
+      // ── 실선: 실제 HP ──
+      ctx.strokeStyle = c.line;
+      ctx.lineWidth = 2;
+      ctx.shadowColor = c.glow;
+      ctx.shadowBlur = 5;
+      ctx.beginPath();
+      pts.forEach((p,i)=>{
+        const x=toX(p.week), y=toY(p.hp);
+        i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+      ctx.shadowBlur=0;
+
+      // ── 점 ──
+      pts.forEach((p,i)=>{
+        if(i===0) return;
+        const x=toX(p.week), y=toY(p.hp);
+        ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2);
+        ctx.fillStyle=c.line;
+        ctx.shadowColor=c.glow; ctx.shadowBlur=6;
+        ctx.fill(); ctx.shadowBlur=0;
+        // HP 수치
+        ctx.fillStyle=c.line;
+        ctx.font='7px monospace'; ctx.textAlign='center';
+        ctx.fillText((p.hp/1000).toFixed(1)+'k', x, y-7);
+      });
+
+      // ── 점선: 추세 예측선 ──
+      if(trend && trend.slope < 0){
+        const extendTo = trend.deathWeek ? Math.min(trend.deathWeek, maxPredWeek) : maxPredWeek;
+        ctx.strokeStyle = c.dash;
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([4,4]);
+        ctx.beginPath();
+        ctx.moveTo(toX(lastWeek), toY(pts[pts.length-1].hp));
+        ctx.lineTo(toX(extendTo), toY(Math.max(trend.slope*extendTo+trend.intercept,0)));
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 소멸 예측 주차 표시
+        if(trend.deathWeek && trend.deathWeek <= maxPredWeek+1){
+          const dx = toX(trend.deathWeek);
+          ctx.fillStyle = c.line;
+          ctx.font = 'bold 7px monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText('☠'+Math.ceil(trend.deathWeek)+'주', dx, toY(0)-5);
+        }
+      }
+    });
   }
 
   // 초기 로드
@@ -1025,7 +1208,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     double:'🚀', pk:'💣', trade:'🌀', worker:'⛏'
   };
   const UNIT_LABEL = {
-    double:'더블골', pk:'PK', trade:'트레이드', worker:'일꾼'
+    double:'X2', pk:'PK', trade:'⇄', worker:'일꾼'
   };
 
   const roster = {
@@ -1069,12 +1252,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       row.className = 'roster-row';
       row.style.animationDelay = (i*0.05)+'s';
       var num = String(i+1).padStart(2,'0');
-      var capBadge = m.cap ? '<span class="r-cap" style="margin-left:5px;">주장</span>' : '';
+      var capBadge = m.cap ? '<span class="r-cap" style="margin-left:5px;">◈</span>' : '';
       row.innerHTML =
         '<div class="r-num">'+num+'</div>'+
         '<div class="r-name-wrap">'+
           '<div class="r-name">'+m.name+'</div>'+
-          (m.cap?'<span class="r-cap">주장</span>':'')+
+          (m.cap?'<span class="r-cap">◈</span>':'')+
         '</div>'+
         '<div class="r-unit-media">'+makeUnitMedia(race, m.unit)+'</div>'+
         '<div class="r-unit-wrap">'+
