@@ -429,6 +429,74 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   .br-l{color:rgba(220,60,60,0.9);background:rgba(200,40,40,0.08);border:1px solid rgba(200,40,40,0.3);}
   .br-d{color:var(--yellow);background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.3);}
 
+  .trade-btn{
+    width:100%;margin-top:4px;
+    padding:6px;
+    font-family:'Orbitron',sans-serif;
+    font-size:9px;font-weight:700;letter-spacing:2px;
+    color:var(--yellow);
+    background:rgba(255,215,0,0.04);
+    border:1px solid rgba(255,215,0,0.3);
+    box-shadow:0 0 6px rgba(255,215,0,0.07);
+    cursor:pointer;transition:all 0.15s;
+  }
+  .trade-btn:active{background:rgba(255,215,0,0.12);box-shadow:0 0 12px rgba(255,215,0,0.25);}
+
+  /* 트레이드 내역 */
+  .trade-item{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:6px 10px;
+    border-bottom:1px solid rgba(57,255,20,0.05);
+    background:rgba(0,5,0,0.35);
+    font-size:11px;
+  }
+  .trade-item:last-child{border-bottom:none;}
+  .trade-names{display:flex;align-items:center;gap:6px;font-weight:700;}
+  .trade-names .tn-pro{color:rgba(242,199,68,0.9);}
+  .trade-names .tn-zer{color:rgba(220,80,80,0.9);}
+  .trade-names .tn-ter{color:rgba(94,200,230,0.9);}
+  .trade-arrow{font-size:13px;color:var(--text-dim);}
+  .trade-meta{font-size:8px;color:var(--text-dim);font-family:'Orbitron',sans-serif;letter-spacing:1px;}
+
+  /* 트레이드 모달 */
+  .trade-modal-box{
+    width:88vw;max-width:320px;
+    background:rgba(0,5,0,0.95);
+    border:1.5px solid rgba(255,215,0,0.4);
+    box-shadow:0 0 20px rgba(255,215,0,0.15),inset 0 0 20px rgba(0,0,0,0.5);
+    padding:16px;
+    position:relative;
+  }
+  .trade-modal-box::before{content:'';position:absolute;top:-1px;left:-1px;width:10px;height:10px;border-top:1px solid var(--yellow);border-left:1px solid var(--yellow);}
+  .trade-modal-box::after{content:'';position:absolute;bottom:-1px;right:-1px;width:10px;height:10px;border-bottom:1px solid var(--yellow);border-right:1px solid var(--yellow);}
+  .tmo-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .tmo-title{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--yellow);letter-spacing:3px;text-shadow:0 0 8px rgba(255,215,0,0.4);}
+  .tmo-close{font-size:14px;color:var(--text-dim);cursor:pointer;padding:2px 6px;}
+  .tmo-close:active{color:var(--green);}
+  .tmo-body{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+  .tmo-side{flex:1;display:flex;flex-direction:column;gap:6px;}
+  .tmo-side-lbl{font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--green);}
+  .tmo-arrow{font-size:20px;color:var(--yellow);text-shadow:0 0 8px rgba(255,215,0,0.5);flex-shrink:0;}
+  .tmo-select{
+    width:100%;padding:6px 8px;
+    background:rgba(0,10,0,0.7);
+    border:1px solid rgba(57,255,20,0.25);
+    color:var(--green);
+    font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:1px;
+    outline:none;
+  }
+  .tmo-select option{background:#001500;color:#39ff14;}
+  .tmo-cost{text-align:center;font-size:9px;color:rgba(255,215,0,0.6);font-family:'Orbitron',sans-serif;letter-spacing:1px;margin-bottom:12px;}
+  .tmo-confirm-btn{
+    width:100%;padding:10px;
+    font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;
+    color:#000;background:var(--yellow);
+    border:none;cursor:pointer;
+    box-shadow:0 0 12px rgba(255,215,0,0.3);
+    transition:all 0.15s;
+  }
+  .tmo-confirm-btn:active{background:rgba(255,215,0,0.7);}
+
   /* 주차별 실점 차트 */
   .chart-wrap{
     padding:8px 4px 4px;
@@ -574,19 +642,26 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
             <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
             <div class="mc-val" id="earn-protoss">320 M</div>
             <button class="charge-btn" id="charge-btn-protoss">⚡ 충전</button>
+            <button class="trade-btn" onclick="openTradeModal('protoss')">⇄ 트레이드</button>
           </div>
           <div class="mc zerg">
             <div class="mc-race">ZERG</div>
             <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
             <div class="mc-val" id="earn-zerg">410 M</div>
             <button class="charge-btn" id="charge-btn-zerg">⚡ 충전</button>
+            <button class="trade-btn" onclick="openTradeModal('zerg')">⇄ 트레이드</button>
           </div>
           <div class="mc terran">
             <div class="mc-race">TERRAN</div>
             <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
             <div class="mc-val" id="earn-terran">280 M</div>
             <button class="charge-btn" id="charge-btn-terran">⚡ 충전</button>
+            <button class="trade-btn" onclick="openTradeModal('terran')">⇄ 트레이드</button>
           </div>
+        </div>
+        <div id="trade-history-section" style="display:none;margin-top:12px;">
+          <div class="sec-lbl">트레이드 내역 <span id="trade-count" style="color:var(--yellow);margin-left:6px;"></span></div>
+          <div id="trade-history-list"></div>
         </div>
         <div class="sec-lbl" style="margin-top:12px;">주차별 실점 현황</div>
         <div class="chart-wrap">
@@ -644,6 +719,35 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     </div>
   </div>
 
+</div>
+
+<!-- 트레이드 모달 -->
+<div id="trade-modal" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+  <div class="trade-modal-box">
+    <div class="tmo-header">
+      <span class="tmo-title">⇄ TRADE</span>
+      <span class="tmo-close" onclick="closeTradeModal()">✕</span>
+    </div>
+    <div class="tmo-body">
+      <div class="tmo-side">
+        <div class="tmo-side-lbl" id="tmo-lbl-a">—</div>
+        <select class="tmo-select" id="tmo-player-a"></select>
+      </div>
+      <div class="tmo-arrow">⇄</div>
+      <div class="tmo-side">
+        <div class="tmo-side-lbl">상대팀</div>
+        <select class="tmo-select" id="tmo-race-b" onchange="populatePlayerB()">
+          <option value="">팀 선택</option>
+          <option value="protoss">PROTOSS</option>
+          <option value="zerg">ZERG</option>
+          <option value="terran">TERRAN</option>
+        </select>
+        <select class="tmo-select" id="tmo-player-b" style="margin-top:6px;display:none;"></select>
+      </div>
+    </div>
+    <div class="tmo-cost">💎 각 팀 -1,000M 차감</div>
+    <button class="tmo-confirm-btn" onclick="confirmTrade()">트레이드 확정</button>
+  </div>
 </div>
 <script>
   const MAX_HP=10000,SEG=10;
@@ -1277,6 +1381,109 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   // 충전 데이터
   const earnData = { protoss:320, zerg:410, terran:280 };
 
+  // ── 트레이드 시스템 ──
+  const TRADE_COST = 1000;
+  const RACE_COLOR_TEXT = { protoss:'tn-pro', zerg:'tn-zer', terran:'tn-ter' };
+  const RACE_FULL = { protoss:'PROTOSS', zerg:'ZERG', terran:'TERRAN' };
+  let tradeLog = [
+    // 샘플 데이터
+    { weekLabel:'1주차', raceA:'zerg', nameA:'이호진', raceB:'terran', nameB:'박병훈' },
+  ];
+  let tradeModalRace = null;
+
+  function openTradeModal(race){
+    tradeModalRace = race;
+    const modal = document.getElementById('trade-modal');
+    modal.style.display = 'flex';
+
+    // 내 팀 라벨
+    document.getElementById('tmo-lbl-a').textContent = RACE_FULL[race];
+    document.getElementById('tmo-lbl-a').style.color = {protoss:'rgba(242,199,68,0.9)',zerg:'rgba(220,80,80,0.9)',terran:'rgba(94,200,230,0.9)'}[race];
+
+    // 내 팀 선수 목록
+    const selA = document.getElementById('tmo-player-a');
+    selA.innerHTML = '';
+    roster[race].forEach(m=>{
+      const opt = document.createElement('option');
+      opt.value = m.name;
+      opt.textContent = m.name + (m.cap?' ◈':'');
+      selA.appendChild(opt);
+    });
+
+    // 상대팀 초기화
+    document.getElementById('tmo-race-b').value = '';
+    const selB = document.getElementById('tmo-player-b');
+    selB.innerHTML = '';
+    selB.style.display = 'none';
+  }
+
+  function closeTradeModal(){
+    document.getElementById('trade-modal').style.display = 'none';
+  }
+
+  function populatePlayerB(){
+    const race = document.getElementById('tmo-race-b').value;
+    const selB = document.getElementById('tmo-player-b');
+    if(!race){ selB.style.display='none'; return; }
+    selB.innerHTML = '';
+    selB.style.display = 'block';
+    roster[race].forEach(m=>{
+      const opt = document.createElement('option');
+      opt.value = m.name;
+      opt.textContent = m.name + (m.cap?' ◈':'');
+      selB.appendChild(opt);
+    });
+  }
+
+  function confirmTrade(){
+    const raceA = tradeModalRace;
+    const raceB = document.getElementById('tmo-race-b').value;
+    const nameA = document.getElementById('tmo-player-a').value;
+    const nameB = document.getElementById('tmo-player-b').value;
+
+    if(!raceB){ alert('상대 팀을 선택하세요'); return; }
+    if(!nameB){ alert('상대 선수를 선택하세요'); return; }
+    if(raceA === raceB){ alert('같은 팀끼리는 트레이드 불가'); return; }
+
+    // 미네랄 차감
+    earnData[raceA] = Math.max((earnData[raceA]||0) - TRADE_COST, 0);
+    earnData[raceB] = Math.max((earnData[raceB]||0) - TRADE_COST, 0);
+    document.getElementById('earn-'+raceA).textContent = earnData[raceA].toLocaleString()+' M';
+    document.getElementById('earn-'+raceB).textContent = earnData[raceB].toLocaleString()+' M';
+
+    // 로그 기록
+    const wk = weeklyData && Object.keys(weeklyData).length
+      ? Math.max(...Object.keys(weeklyData).map(Number))+'주차' : '진행중';
+    tradeLog.push({ weekLabel:wk, raceA, nameA, raceB, nameB });
+
+    closeTradeModal();
+    renderTradeHistory();
+  }
+
+  function renderTradeHistory(){
+    const section = document.getElementById('trade-history-section');
+    const list = document.getElementById('trade-history-list');
+    const countEl = document.getElementById('trade-count');
+    if(!tradeLog.length){ section.style.display='none'; return; }
+
+    section.style.display = 'block';
+    countEl.textContent = tradeLog.length+'회';
+    list.innerHTML = '';
+
+    tradeLog.forEach((t,i)=>{
+      const div = document.createElement('div');
+      div.className = 'trade-item';
+      div.innerHTML =
+        '<div class="trade-names">'+
+          '<span class="'+RACE_COLOR_TEXT[t.raceA]+'">'+t.nameA+'</span>'+
+          '<span class="trade-arrow">⇄</span>'+
+          '<span class="'+RACE_COLOR_TEXT[t.raceB]+'">'+t.nameB+'</span>'+
+        '</div>'+
+        '<div class="trade-meta">'+(i+1)+' · '+t.weekLabel+' · -1000M×2</div>';
+      list.appendChild(div);
+    });
+  }
+
   function charge(race){
     const earn = earnData[race];
     if(!earn || earn <= 0) return;
@@ -1328,6 +1535,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     const cnt = document.getElementById('roster-count-'+race);
     if(cnt) cnt.textContent = roster[race].length + '명';
   });
+  renderTradeHistory();
 
   // 이벤트 리스너 - DOMContentLoaded 후 안전하게 연결
   document.addEventListener('DOMContentLoaded', function(){
