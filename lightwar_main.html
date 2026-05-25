@@ -611,6 +611,114 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   .td-rnd{font-size:9px;color:var(--text-dim);font-family:'Orbitron',sans-serif;padding:5px 6px;width:28px;}
   .td-cell{font-size:11px;color:var(--green);padding:5px 6px;vertical-align:middle;}
   .hp-loss-row td{border-top:1px solid rgba(255,77,98,0.2);}
+
+  /* ── 기지 불꽃/연기 (battle-zone 내 배경 위) ── */
+  .base-fx{
+    position:absolute;
+    bottom:6%;          /* hp-popup과 동일 기준선 */
+    width:32%;height:55%;
+    pointer-events:none;
+    z-index:3;          /* battle-fade(2) 위, hp-popup(4) 아래 */
+    opacity:0;transition:opacity 0.8s;
+  }
+  .base-fx.protoss{left:1%;}
+  .base-fx.zerg   {left:34%;}
+  .base-fx.terran {right:1%;}
+
+  /* 연기 레이어 */
+  .bfx-smoke{
+    position:absolute;bottom:0;left:0;right:0;height:60%;
+    background:
+      radial-gradient(ellipse 50% 80% at 25% 100%,rgba(80,78,74,0.5),transparent 70%),
+      radial-gradient(ellipse 40% 70% at 65% 100%,rgba(65,62,58,0.4),transparent 70%),
+      radial-gradient(ellipse 30% 55% at 85% 100%,rgba(55,52,48,0.3),transparent 70%);
+    animation:bfxSmoke 3.5s ease-in-out infinite alternate;
+    opacity:0;transition:opacity 1s;
+  }
+  @keyframes bfxSmoke{
+    0%  {transform:translateY(0) scaleX(1);   opacity:0.6;}
+    100%{transform:translateY(-10px) scaleX(1.1);opacity:1;}
+  }
+
+  /* 불꽃 파티클 */
+  .bfx-fire{
+    position:absolute;bottom:0;left:0;right:0;height:100%;
+    opacity:0;transition:opacity 0.8s;
+  }
+  .bf{
+    position:absolute;bottom:0;
+    border-radius:50% 50% 20% 20%;
+    filter:blur(1.5px);
+    animation:bfRise 0.75s ease-in-out infinite alternate;
+  }
+  .bf:nth-child(1){left:6%; width:14px;height:28px;background:linear-gradient(to top,#ff5500,#ff1100 55%,transparent);animation-duration:0.6s; animation-delay:0s;}
+  .bf:nth-child(2){left:20%;width:10px;height:20px;background:linear-gradient(to top,#ff7700,#ff3300 55%,transparent);animation-duration:0.8s; animation-delay:0.1s;}
+  .bf:nth-child(3){left:37%;width:16px;height:34px;background:linear-gradient(to top,#ff4400,#ff0000 55%,transparent);animation-duration:0.55s;animation-delay:0.05s;}
+  .bf:nth-child(4){left:55%;width:12px;height:24px;background:linear-gradient(to top,#ff6600,#ff2200 55%,transparent);animation-duration:0.72s;animation-delay:0.15s;}
+  .bf:nth-child(5){left:71%;width:9px; height:18px;background:linear-gradient(to top,#ff8800,#ff4400 55%,transparent);animation-duration:0.65s;animation-delay:0.08s;}
+  .bf:nth-child(6){left:85%;width:11px;height:22px;background:linear-gradient(to top,#ff5000,#ff1500 55%,transparent);animation-duration:0.78s;animation-delay:0.2s;}
+  @keyframes bfRise{
+    0%  {transform:scaleX(1)   scaleY(1)   translateY(0);}
+    100%{transform:scaleX(0.55) scaleY(1.45) translateY(-8px);}
+  }
+
+  /* 불빛 글로우 */
+  .bfx-glow{
+    position:absolute;bottom:0;left:-10%;right:-10%;height:35%;
+    background:linear-gradient(to top,rgba(255,70,0,0.4),rgba(255,40,0,0.15),transparent);
+    animation:bfxGlow 0.9s ease-in-out infinite alternate;
+    opacity:0;transition:opacity 0.8s;
+  }
+  @keyframes bfxGlow{
+    0%  {opacity:0.5;}
+    100%{opacity:1;}
+  }
+
+  /* 상태별 활성화 */
+  .base-fx.fx-smoke{opacity:1;}
+  .base-fx.fx-smoke .bfx-smoke{opacity:1;}
+  .base-fx.fx-fire{opacity:1;}
+  .base-fx.fx-fire .bfx-smoke{opacity:1;}
+  .base-fx.fx-fire .bfx-fire{opacity:1;}
+  .base-fx.fx-fire .bfx-glow{opacity:1;}
+  /* 잿더미: 연기만 회색으로 */
+  .base-fx.fx-dead{opacity:1;}
+  .base-fx.fx-dead .bfx-smoke{
+    opacity:0.7;
+    background:
+      radial-gradient(ellipse 55% 85% at 30% 100%,rgba(50,48,45,0.6),transparent 70%),
+      radial-gradient(ellipse 45% 70% at 70% 100%,rgba(40,38,35,0.5),transparent 70%);
+    animation:bfxSmoke 6s ease-in-out infinite alternate;
+  }
+
+  /* hp-popup 상태 효과 (연기/글로우만, 불꽃은 base-fx로) */
+  .hp-popup.state-smoke{
+    box-shadow:0 0 8px rgba(100,95,88,0.4),inset 0 0 12px rgba(60,55,50,0.3) !important;
+    border-color:rgba(110,105,95,0.45) !important;
+  }
+  .hp-popup.state-fire{
+    animation:firePulse 0.9s ease-in-out infinite alternate !important;
+    border-color:rgba(255,100,0,0.8) !important;
+  }
+  @keyframes firePulse{
+    0%  {box-shadow:0 0 8px  rgba(255,80,0,0.5),0 0 18px rgba(255,40,0,0.25),inset 0 0 10px rgba(255,60,0,0.1);}
+    100%{box-shadow:0 0 18px rgba(255,100,0,0.8),0 0 35px rgba(255,60,0,0.45),inset 0 0 18px rgba(255,80,0,0.2);}
+  }
+  .hp-popup.state-dead{
+    filter:grayscale(1) brightness(0.38) !important;
+    border-color:rgba(70,65,60,0.4) !important;
+    box-shadow:none !important;
+    animation:none !important;
+    transition:filter 1.5s,border-color 1.5s !important;
+  }
+  .dead-label{
+    display:none;position:absolute;inset:0;
+    align-items:center;justify-content:center;
+    font-family:'Orbitron',sans-serif;font-size:7px;font-weight:700;
+    letter-spacing:3px;color:rgba(90,82,74,0.7);
+    pointer-events:none;z-index:11;
+  }
+  .hp-popup.state-dead .dead-label{display:flex;}
 </style>
 </head>
 <body>
@@ -635,19 +743,48 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     <div class="battle-bg"></div>
     <div class="battle-fade"></div>
 
+    <!-- 기지 불꽃/연기 — 배경 이미지 위, hp-popup 아래 -->
+    <div class="base-fx protoss" id="basefx-protoss">
+      <div class="bfx-smoke"></div>
+      <div class="bfx-fire">
+        <div class="bf"></div><div class="bf"></div><div class="bf"></div>
+        <div class="bf"></div><div class="bf"></div><div class="bf"></div>
+      </div>
+      <div class="bfx-glow"></div>
+    </div>
+    <div class="base-fx zerg" id="basefx-zerg">
+      <div class="bfx-smoke"></div>
+      <div class="bfx-fire">
+        <div class="bf"></div><div class="bf"></div><div class="bf"></div>
+        <div class="bf"></div><div class="bf"></div><div class="bf"></div>
+      </div>
+      <div class="bfx-glow"></div>
+    </div>
+    <div class="base-fx terran" id="basefx-terran">
+      <div class="bfx-smoke"></div>
+      <div class="bfx-fire">
+        <div class="bf"></div><div class="bf"></div><div class="bf"></div>
+        <div class="bf"></div><div class="bf"></div><div class="bf"></div>
+      </div>
+      <div class="bfx-glow"></div>
+    </div>
+
     <div class="hp-popup protoss" id="popup-protoss" style="cursor:pointer;">
+      <div class="dead-label">DESTROYED</div>
       <div class="pop-race">Protoss</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-protoss"></div>
       <div class="pop-num" id="hp-protoss">8600<span> / 10000</span></div>
     </div>
     <div class="hp-popup zerg" id="popup-zerg" style="cursor:pointer;">
+      <div class="dead-label">DESTROYED</div>
       <div class="pop-race">Zerg</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-zerg"></div>
       <div class="pop-num mid" id="hp-zerg">5200<span> / 10000</span></div>
     </div>
     <div class="hp-popup terran" id="popup-terran" style="cursor:pointer;">
+      <div class="dead-label">DESTROYED</div>
       <div class="pop-race">Terran</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-terran"></div>
@@ -904,11 +1041,34 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       s.className='pseg '+(i<on?'on '+cls:'off');
       el.appendChild(s);
     }
-    // HP 숫자 색상도 업데이트
     const numEl=document.getElementById('hp-'+race);
     if(numEl){
       numEl.className='pop-num '+(pct>0.5?'high':pct>0.25?'mid':'low');
     }
+    updateBaseOverlay(race, hp, max);
+  }
+
+  function updateBaseOverlay(race, hp, max){
+    const pct = hp / max;
+    const isDead  = hp <= 0;
+    const isFire  = pct <= 0.25 && !isDead;
+    const isSmoke = pct <= 0.5  && !isDead && !isFire;
+
+    // 기지 배경 효과
+    const fx = document.getElementById('basefx-'+race);
+    if(fx){
+      fx.classList.remove('fx-smoke','fx-fire','fx-dead');
+      if(isDead)   fx.classList.add('fx-dead');
+      else if(isFire)  fx.classList.add('fx-fire');
+      else if(isSmoke) fx.classList.add('fx-smoke');
+    }
+
+    // 상태창 효과
+    const popup = document.getElementById('popup-'+race);
+    if(!popup) return;
+    popup.classList.toggle('state-smoke', isSmoke);
+    popup.classList.toggle('state-fire',  isFire);
+    popup.classList.toggle('state-dead',  isDead);
   }
   function switchTab(name,btn){
     ['overview','units','battle','weekly','rule'].forEach(t=>{
