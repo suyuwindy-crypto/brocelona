@@ -818,12 +818,44 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   }
   .dead-label{
     display:none;position:absolute;inset:0;
-    align-items:center;justify-content:center;
-    font-family:'Orbitron',sans-serif;font-size:7px;font-weight:700;
-    letter-spacing:3px;color:rgba(90,82,74,0.7);
+    flex-direction:column;
+    align-items:center;justify-content:center;gap:4px;
     pointer-events:none;z-index:11;
+    padding:6px;
+  }
+  .dead-label-title{
+    font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;
+    letter-spacing:2px;color:rgba(180,60,60,0.85);
+    text-shadow:0 0 6px rgba(180,40,40,0.5);
+  }
+  .dead-label-hint{
+    font-family:'Share Tech Mono',monospace;font-size:7px;
+    color:rgba(57,255,20,0.4);letter-spacing:0.5px;
+    text-align:center;line-height:1.4;
+    opacity:0;transition:opacity 0.5s;
   }
   .hp-popup.state-dead .dead-label{display:flex;}
+  .hp-popup.state-dead .dead-label-hint{opacity:1;}
+
+  /* 클릭 카운터 */
+  .dead-click-counter{
+    font-family:'Russo One',sans-serif;font-size:11px;
+    color:rgba(57,255,20,0.5);
+    opacity:0;transition:opacity 0.3s;
+  }
+  .hp-popup.state-dead .dead-click-counter{opacity:1;}
+
+  /* 클릭 시 반짝 */
+  @keyframes clickFlash{
+    0%  {box-shadow:0 0 8px rgba(57,255,20,0.2);}
+    50% {box-shadow:0 0 20px rgba(57,255,20,0.6),inset 0 0 10px rgba(57,255,20,0.1);}
+    100%{box-shadow:0 0 8px rgba(57,255,20,0.2);}
+  }
+  .hp-popup.click-flash{animation:clickFlash 0.15s ease-out !important;}
+
+  /* 1000번 달성 시 */
+  .dead-label-title.revive{color:rgba(255,215,0,0.9) !important;text-shadow:0 0 10px rgba(255,215,0,0.6) !important;}
+  @keyframes revivePulse{0%,100%{opacity:0.8;}50%{opacity:1;}}
 </style>
 </head>
 <body>
@@ -875,21 +907,33 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     </div>
 
     <div class="hp-popup protoss" id="popup-protoss" style="cursor:pointer;">
-      <div class="dead-label">DESTROYED</div>
+      <div class="dead-label">
+        <div class="dead-label-title">DESTROYED</div>
+        <div class="dead-click-counter" id="dead-count-protoss">0 / 1000</div>
+        <div class="dead-label-hint">자신의 기지를 1,000번 누르면<br>1 미네랄이 쌓입니다</div>
+      </div>
       <div class="pop-race">Protoss</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-protoss"></div>
       <div class="pop-num" id="hp-protoss">8600<span> / 10000</span></div>
     </div>
     <div class="hp-popup zerg" id="popup-zerg" style="cursor:pointer;">
-      <div class="dead-label">DESTROYED</div>
+      <div class="dead-label">
+        <div class="dead-label-title">DESTROYED</div>
+        <div class="dead-click-counter" id="dead-count-zerg">0 / 1000</div>
+        <div class="dead-label-hint">자신의 기지를 1,000번 누르면<br>1 미네랄이 쌓입니다</div>
+      </div>
       <div class="pop-race">Zerg</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-zerg"></div>
       <div class="pop-num mid" id="hp-zerg">5200<span> / 10000</span></div>
     </div>
     <div class="hp-popup terran" id="popup-terran" style="cursor:pointer;">
-      <div class="dead-label">DESTROYED</div>
+      <div class="dead-label">
+        <div class="dead-label-title">DESTROYED</div>
+        <div class="dead-click-counter" id="dead-count-terran">0 / 1000</div>
+        <div class="dead-label-hint">자신의 기지를 1,000번 누르면<br>1 미네랄이 쌓입니다</div>
+      </div>
       <div class="pop-race">Terran</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-terran"></div>
@@ -1992,6 +2036,54 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   renderTradeHistory();
   updateTradeBtns();
 
+  // ── 패자부활 히든 기능 ──
+  const REVIVE_CLICKS = 1000;
+  const deadClicks = { protoss:0, zerg:0, terran:0 };
+  const reviveCharged = { protoss:false, zerg:false, terran:false }; // 충전 1회 제한
+
+  function handleDeadClick(race){
+    const popup = document.getElementById('popup-'+race);
+    if(!popup || !popup.classList.contains('state-dead')) return;
+
+    // 이미 충전 완료면 카운터만 멈춤
+    if(reviveCharged[race]) return;
+
+    deadClicks[race]++;
+    const cnt = deadClicks[race];
+    const counterEl = document.getElementById('dead-count-'+race);
+
+    // 카운터 업데이트
+    if(counterEl) counterEl.textContent = cnt + ' / 1000';
+
+    // 클릭 반짝 효과
+    popup.classList.remove('click-flash');
+    void popup.offsetWidth;
+    popup.classList.add('click-flash');
+    setTimeout(()=>popup.classList.remove('click-flash'), 150);
+
+    // 1000번 달성 시 미네랄 +1, 이후 영구 잠금
+    if(cnt >= REVIVE_CLICKS){
+      reviveCharged[race] = true;
+      earnData[race] = (earnData[race]||0) + 1;
+      const earnEl = document.getElementById('earn-'+race);
+      if(earnEl) earnEl.textContent = earnData[race].toLocaleString()+' M';
+
+      // 달성 메시지
+      if(counterEl){
+        counterEl.textContent = '💎 +1M 충전 완료';
+        counterEl.style.color = 'rgba(255,215,0,0.9)';
+      }
+      const titleEl = popup.querySelector('.dead-label-title');
+      const hintEl  = popup.querySelector('.dead-label-hint');
+      if(titleEl){
+        titleEl.textContent = '💎 +1 MINERAL';
+        titleEl.classList.add('revive');
+      }
+      // 힌트 텍스트도 완료 메시지로 영구 교체
+      if(hintEl) hintEl.textContent = '패자부활 완료. 더 이상 쌓이지 않습니다.';
+    }
+  }
+
   // 이벤트 리스너 - DOMContentLoaded 후 안전하게 연결
   document.addEventListener('DOMContentLoaded', function(){
     // 탭 버튼
@@ -2002,7 +2094,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     // 기지 팝업
     ['protoss','zerg','terran'].forEach(race=>{
       const el = document.getElementById('popup-'+race);
-      if(el) el.addEventListener('click', function(){ openRoster(race); });
+      if(el) el.addEventListener('click', function(){
+        if(el.classList.contains('state-dead')) handleDeadClick(race);
+        else openRoster(race);
+      });
     });
     // 충전 버튼
     ['protoss','zerg','terran'].forEach(race=>{
