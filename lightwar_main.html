@@ -965,7 +965,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       <div class="pop-race">Terran</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-terran"></div>
-      <div class="pop-num low" id="hp-terran">2300<span> / 10000</span></div>
+      <div class="pop-num low" id="hp-terran">0<span> / 10000</span></div>
     </div>
   </div>
 
@@ -2067,7 +2067,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   updateTradeBtns();
 
   // ── 패자부활 히든 기능 ──
-  const REVIVE_CLICKS = 1; // 테스트용 (원래 1000)
+  const REVIVE_CLICKS = 5; // 테스트용 (원래 1000)
   const deadClicks = { protoss:0, zerg:0, terran:0 };
   const reviveCharged = { protoss:false, zerg:false, terran:false }; // 충전 1회 제한
 
