@@ -634,6 +634,32 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     font-size:11px;
   }
 
+  /* 탈락 기지 미네랄 클릭 버튼 */
+  .dead-mineral-btn{
+    width:28px;height:28px;object-fit:contain;
+    pointer-events:all;cursor:pointer;
+    animation:mineralPulse 1s ease-in-out infinite;
+    filter:drop-shadow(0 0 4px rgba(57,255,20,0.6));
+    -webkit-tap-highlight-color:transparent;
+  }
+  .dead-mineral-btn:active{transform:scale(0.85);}
+
+  /* 탈락 팀 미네랄 카드 — 클릭 유도 */
+  .mc.dead-mine{
+    border-color:rgba(255,50,50,0.5) !important;
+    cursor:pointer;
+  }
+  .mc.dead-mine .mc-icon img{
+    animation:mineralPulse 1.2s ease-in-out infinite;
+    filter:brightness(0.5) sepia(1) hue-rotate(0deg);
+  }
+  @keyframes mineralPulse{
+    0%,100%{opacity:0.4;transform:scale(1);}
+    50%{opacity:0.9;transform:scale(1.15);}
+  }
+  .mc.dead-mine .charge-btn,
+  .mc.dead-mine .trade-btn{display:none;}
+
   /* 주차별 실점 차트 */
   .chart-wrap{
     padding:8px 4px 4px;
@@ -819,31 +845,30 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   .dead-label{
     display:none;position:absolute;inset:0;
     flex-direction:column;
-    align-items:center;justify-content:center;gap:4px;
+    align-items:center;justify-content:center;gap:5px;
     pointer-events:none;z-index:11;
     padding:6px;
+    background:rgba(0,0,0,0.55);
   }
   .dead-label-title{
-    font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;
-    letter-spacing:2px;color:rgba(180,60,60,0.85);
-    text-shadow:0 0 6px rgba(180,40,40,0.5);
+    font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;
+    letter-spacing:3px;color:rgba(255,50,50,0.95);
+    text-shadow:0 0 8px rgba(255,0,0,0.7), 0 0 16px rgba(255,0,0,0.4);
   }
   .dead-label-hint{
-    font-family:'Share Tech Mono',monospace;font-size:7px;
-    color:rgba(57,255,20,0.4);letter-spacing:0.5px;
-    text-align:center;line-height:1.4;
-    opacity:0;transition:opacity 0.5s;
+    font-family:'Share Tech Mono',monospace;font-size:8px;
+    color:rgba(255,215,0,0.75);letter-spacing:0.5px;
+    text-align:center;line-height:1.5;
+    text-shadow:0 0 6px rgba(255,215,0,0.4);
   }
   .hp-popup.state-dead .dead-label{display:flex;}
-  .hp-popup.state-dead .dead-label-hint{opacity:1;}
 
   /* 클릭 카운터 */
   .dead-click-counter{
-    font-family:'Russo One',sans-serif;font-size:11px;
-    color:rgba(57,255,20,0.5);
-    opacity:0;transition:opacity 0.3s;
+    font-family:'Russo One',sans-serif;font-size:10px;
+    color:rgba(57,255,20,0.7);
+    text-shadow:0 0 6px rgba(57,255,20,0.4);
   }
-  .hp-popup.state-dead .dead-click-counter{opacity:1;}
 
   /* 클릭 시 반짝 */
   @keyframes clickFlash{
@@ -910,7 +935,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       <div class="dead-label">
         <div class="dead-label-title">DESTROYED</div>
         <div class="dead-click-counter" id="dead-count-protoss">0 / 1000</div>
-        <div class="dead-label-hint">자신의 기지를 1,000번 누르면<br>1 미네랄이 쌓입니다</div>
+        <div class="dead-label-hint">미네랄을 1,000번 캐면<br>1 미네랄이 쌓입니다</div>
+        <img class="dead-mineral-btn" id="dead-mineral-protoss" src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" alt="mineral">
       </div>
       <div class="pop-race">Protoss</div>
       <div class="pop-lbl">HP</div>
@@ -921,7 +947,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       <div class="dead-label">
         <div class="dead-label-title">DESTROYED</div>
         <div class="dead-click-counter" id="dead-count-zerg">0 / 1000</div>
-        <div class="dead-label-hint">자신의 기지를 1,000번 누르면<br>1 미네랄이 쌓입니다</div>
+        <div class="dead-label-hint">미네랄을 1,000번 캐면<br>1 미네랄이 쌓입니다</div>
+        <img class="dead-mineral-btn" id="dead-mineral-zerg" src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" alt="mineral">
       </div>
       <div class="pop-race">Zerg</div>
       <div class="pop-lbl">HP</div>
@@ -932,7 +959,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       <div class="dead-label">
         <div class="dead-label-title">DESTROYED</div>
         <div class="dead-click-counter" id="dead-count-terran">0 / 1000</div>
-        <div class="dead-label-hint">자신의 기지를 1,000번 누르면<br>1 미네랄이 쌓입니다</div>
+        <div class="dead-label-hint">미네랄을 1,000번 캐면<br>1 미네랄이 쌓입니다</div>
+        <img class="dead-mineral-btn" id="dead-mineral-terran" src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" alt="mineral">
       </div>
       <div class="pop-race">Terran</div>
       <div class="pop-lbl">HP</div>
@@ -957,21 +985,21 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       <div style="position:relative;z-index:1;">
         <div class="sec-lbl">본리그 미네랄 획득량</div>
         <div class="mineral-row">
-          <div class="mc protoss">
+          <div class="mc protoss" id="mc-protoss">
             <div class="mc-race">PROTOSS</div>
             <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
             <div class="mc-val" id="earn-protoss">320 M</div>
             <button class="charge-btn" id="charge-btn-protoss">⚡ 충전</button>
             <button class="trade-btn" onclick="openTradeModal('protoss')">⇄ 트레이드</button>
           </div>
-          <div class="mc zerg">
+          <div class="mc zerg" id="mc-zerg">
             <div class="mc-race">ZERG</div>
             <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
             <div class="mc-val" id="earn-zerg">410 M</div>
             <button class="charge-btn" id="charge-btn-zerg">⚡ 충전</button>
             <button class="trade-btn" onclick="openTradeModal('zerg')">⇄ 트레이드</button>
           </div>
-          <div class="mc terran">
+          <div class="mc terran" id="mc-terran">
             <div class="mc-race">TERRAN</div>
             <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
             <div class="mc-val" id="earn-terran">280 M</div>
@@ -1214,8 +1242,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       else if(isSmoke) fx.classList.add('fx-smoke');
     }
 
-    // 상태창 효과
-    const popup = document.getElementById('popup-'+race);
+    // 미네랄 카드 상태
+    const mc = document.getElementById('mc-'+race);
+    if(mc) mc.classList.toggle('dead-mine', isDead);
     if(!popup) return;
     popup.classList.toggle('state-smoke', isSmoke);
     popup.classList.toggle('state-fire',  isFire);
@@ -1453,6 +1482,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   async function loadMainLeague(){
     try {
       const res = await fetch(API_URL + '?action=mainleague');
+      if(!res.ok) throw new Error('no data');
       const data = await res.json();
 
       // HP 업데이트
@@ -2097,6 +2127,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       if(el) el.addEventListener('click', function(){
         if(el.classList.contains('state-dead')) handleDeadClick(race);
         else openRoster(race);
+      });
+      // 탈락 기지 미네랄 이미지 클릭
+      const mineral = document.getElementById('dead-mineral-'+race);
+      if(mineral) mineral.addEventListener('click', function(e){
+        e.stopPropagation();
+        handleDeadClick(race);
       });
     });
     // 충전 버튼
