@@ -667,7 +667,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     0%,100%{opacity:0.4;transform:scale(1);}
     50%{opacity:0.9;transform:scale(1.15);}
   }
-  .mc.dead-mine .charge-btn,
   .mc.dead-mine .trade-btn{display:none;}
 
   /* 주차별 실점 차트 */
@@ -837,34 +836,35 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     position:fixed;
     display:none;
     flex-direction:column;
-    align-items:center;justify-content:center;gap:7px;
+    align-items:center;justify-content:center;gap:5px;
     z-index:9999;
-    padding:12px 10px;
-    background:rgba(0,0,0,0.92);
+    padding:10px 8px;
+    background:rgba(0,0,0,0.93);
     border:1.5px solid rgba(255,40,40,0.7);
     box-shadow:0 0 20px rgba(255,0,0,0.5);
+    box-sizing:border-box;
+    overflow:hidden;
   }
   .elim-overlay.active{display:flex;}
-
   .elim-title{
     font-family:'Orbitron',sans-serif;
-    font-size:15px;font-weight:900;
-    letter-spacing:4px;
-    color:#ff2020;
-    text-shadow:0 0 14px rgba(255,0,0,1),0 0 28px rgba(255,0,0,0.6);
+    font-size:13px;font-weight:900;
+    letter-spacing:3px;color:#ff2020;
+    text-shadow:0 0 12px rgba(255,0,0,1);
     white-space:nowrap;
   }
   .elim-counter{
-    font-family:'Russo One',sans-serif;font-size:13px;
+    font-family:'Russo One',sans-serif;font-size:11px;
     color:#39ff14;
-    text-shadow:0 0 8px rgba(57,255,20,0.8);
+    text-shadow:0 0 6px rgba(57,255,20,0.8);
+    white-space:nowrap;
   }
   .elim-hint{
-    font-family:'Share Tech Mono',monospace;font-size:11px;
-    color:#ffd700;
-    letter-spacing:0.5px;
-    text-align:center;line-height:1.7;
-    text-shadow:0 0 8px rgba(255,215,0,0.6);
+    font-family:'Share Tech Mono',monospace;font-size:9px;
+    color:#ffd700;letter-spacing:0;
+    text-align:center;line-height:1.55;
+    text-shadow:0 0 6px rgba(255,215,0,0.5);
+    width:100%;
   }
   .elim-hint b{color:#fff;font-weight:900;}
 
@@ -1015,7 +1015,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       <div class="pop-race">Terran</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-terran"></div>
-      <div class="pop-num high" id="hp-terran">0<span> / 10000</span></div>
+      <div class="pop-num high" id="hp-terran">10000<span> / 10000</span></div>
     </div>
   </div>
 
@@ -1023,19 +1023,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   <div class="elim-overlay protoss" id="elim-protoss">
     <div class="elim-title">ELIMINATED</div>
     <div class="elim-counter" id="dead-count-protoss">0 / 1000</div>
-    <div class="elim-hint">미네랄을 <b>1,000번</b> 캐면<br>1 미네랄이 획득됩니다<br><span style="color:rgba(255,80,80,0.85);font-size:9px;">⚠ 충전은 1회만 가능합니다</span></div>
+    <div class="elim-hint">💎 <b>1,000번</b> 클릭하면 1M 획득<br><span style="color:rgba(255,80,80,0.9);font-size:9px;">⚠ 기지 충전은 1회만 가능</span></div>
     <img class="dead-mineral-btn" id="dead-mineral-protoss" src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" alt="mineral">
   </div>
   <div class="elim-overlay zerg" id="elim-zerg">
     <div class="elim-title">ELIMINATED</div>
     <div class="elim-counter" id="dead-count-zerg">0 / 1000</div>
-    <div class="elim-hint">미네랄을 <b>1,000번</b> 캐면<br>1 미네랄이 획득됩니다<br><span style="color:rgba(255,80,80,0.85);font-size:9px;">⚠ 충전은 1회만 가능합니다</span></div>
+    <div class="elim-hint">💎 <b>1,000번</b> 클릭하면 1M 획득<br><span style="color:rgba(255,80,80,0.9);font-size:9px;">⚠ 기지 충전은 1회만 가능</span></div>
     <img class="dead-mineral-btn" id="dead-mineral-zerg" src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" alt="mineral">
   </div>
   <div class="elim-overlay terran" id="elim-terran">
     <div class="elim-title">ELIMINATED</div>
     <div class="elim-counter" id="dead-count-terran">0 / 1000</div>
-    <div class="elim-hint">미네랄을 <b>1,000번</b> 캐면<br>1 미네랄이 획득됩니다<br><span style="color:rgba(255,80,80,0.85);font-size:9px;">⚠ 충전은 1회만 가능합니다</span></div>
+    <div class="elim-hint">💎 <b>1,000번</b> 클릭하면 1M 획득<br><span style="color:rgba(255,80,80,0.9);font-size:9px;">⚠ 기지 충전은 1회만 가능</span></div>
     <img class="dead-mineral-btn" id="dead-mineral-terran" src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" alt="mineral">
   </div>
 
@@ -1058,21 +1058,21 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
           <div class="mc protoss" id="mc-protoss">
             <div class="mc-race">PROTOSS</div>
             <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
-            <div class="mc-val" id="earn-protoss">320 M</div>
+            <div class="mc-val" id="earn-protoss">0 M</div>
             <button class="charge-btn" id="charge-btn-protoss">⚡ 충전</button>
             <button class="trade-btn" onclick="openTradeModal('protoss')">⇄ 트레이드</button>
           </div>
           <div class="mc zerg" id="mc-zerg">
             <div class="mc-race">ZERG</div>
             <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
-            <div class="mc-val" id="earn-zerg">410 M</div>
+            <div class="mc-val" id="earn-zerg">0 M</div>
             <button class="charge-btn" id="charge-btn-zerg">⚡ 충전</button>
             <button class="trade-btn" onclick="openTradeModal('zerg')">⇄ 트레이드</button>
           </div>
           <div class="mc terran" id="mc-terran">
             <div class="mc-race">TERRAN</div>
             <div class="mc-icon"><img src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"></div>
-            <div class="mc-val" id="earn-terran">280 M</div>
+            <div class="mc-val" id="earn-terran">0 M</div>
             <button class="charge-btn" id="charge-btn-terran">⚡ 충전</button>
             <button class="trade-btn" onclick="openTradeModal('terran')">⇄ 트레이드</button>
           </div>
@@ -1278,7 +1278,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 </div>
 <script>
   const MAX_HP=10000,SEG=10;
-  const teams={protoss:{hp:10000},zerg:{hp:10000},terran:{hp:0}};
+  const teams={protoss:{hp:10000},zerg:{hp:10000},terran:{hp:10000}};
   function renderSeg(race,hp,max){
     const el=document.getElementById('seg-'+race);
     const pct=hp/max;
@@ -1319,9 +1319,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         const popup = document.getElementById('popup-'+race);
         if(popup){
           const r = popup.getBoundingClientRect();
-          elim.style.left   = r.left+'px';
-          elim.style.top    = r.top+'px';
-          elim.style.width  = r.width+'px';
+          const padH = 10;
+          const extraH = r.height + 10; // hp-popup 위로 완전히 올림
+          elim.style.left   = (r.left - padH)+'px';
+          elim.style.width  = (r.width + padH*2)+'px';
+          elim.style.top    = (r.top - extraH)+'px';
           elim.style.height = r.height+'px';
         }
         elim.classList.add('active');
@@ -1329,9 +1331,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         elim.classList.remove('active');
       }
     }
-    // 탈락 시 충전버튼 비활성화 (패자부활 전까지)
+    // 탈락 시 충전버튼 비활성화 (패자부활 미네랄 없을 때만)
     const chargeBtn = document.getElementById('charge-btn-'+race);
-    if(chargeBtn && isDead && !reviveCharged[race]){
+    if(chargeBtn && isDead && !reviveChargeUsed[race] && !(earnData[race] > 0)){
       chargeBtn.disabled = true;
       chargeBtn.textContent = '⚡ 충전';
       chargeBtn.style.opacity = '0.3';
@@ -1550,8 +1552,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       // HP 업데이트
       if(data.hp){
         Object.entries(data.hp).forEach(([race, d])=>{
-          // 패자부활 충전 완료된 팀은 API HP로 덮어쓰지 않음
-          if(reviveCharged[race]) return;
+          // 패자부활 충전 완료팀 → 완전 무시
+          if(reviveChargeUsed[race]) return;
+          // 로컬에서 탈락(hp<=0)으로 세팅된 팀 → API 값 무시, 상태 유지
+          if(teams[race].hp <= 0) return;
           teams[race] = { hp: d.current, mineral: teams[race]?.mineral || 0 };
           renderSeg(race, d.current, d.max);
           const pct = d.current / d.max;
@@ -1862,30 +1866,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   };
 
   const roster = {
-    protoss:[
-      {name:'조광민',  unit:'double', cap:true,  att:5, goal:3, ast:2},
-      {name:'이호진',  unit:'pk',     att:4, goal:1, ast:0},
-      {name:'한태경',  unit:'trade',  att:5, goal:0, ast:1},
-      {name:'정중현',  unit:'worker', att:3, goal:2, ast:1},
-      {name:'김동우',  unit:'worker', att:4, goal:0, ast:0},
-      {name:'박병훈',  unit:'worker', att:5, goal:1, ast:2},
-    ],
-    terran:[
-      {name:'박병훈',  unit:'double', cap:true,  att:5, goal:4, ast:1},
-      {name:'나강욱',  unit:'pk',     att:3, goal:0, ast:2},
-      {name:'유정우',  unit:'trade',  att:4, goal:1, ast:0},
-      {name:'이진원',  unit:'worker', att:5, goal:2, ast:1},
-      {name:'백요셉',  unit:'worker', att:3, goal:0, ast:0},
-      {name:'신성종',  unit:'worker', att:4, goal:1, ast:1},
-    ],
-    zerg:[
-      {name:'박상우',  unit:'double', cap:true,  att:5, goal:5, ast:3},
-      {name:'문현민',  unit:'pk',     att:4, goal:2, ast:0},
-      {name:'나강혁',  unit:'trade',  att:5, goal:1, ast:2},
-      {name:'문정민',  unit:'worker', att:3, goal:0, ast:1},
-      {name:'유신원',  unit:'worker', att:4, goal:2, ast:0},
-      {name:'문준석',  unit:'worker', att:5, goal:0, ast:1},
-    ],
+    protoss:[],
+    terran:[],
+    zerg:[],
   };
 
   function renderRoster(race){
@@ -1925,7 +1908,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   }
 
   // 충전 데이터
-  const earnData = { protoss:320, zerg:410, terran:280 };
+  const earnData = { protoss:0, zerg:0, terran:0 };
 
   // ── 트레이드 시스템 ──
   const TRADE_COST = 1000;
@@ -2154,7 +2137,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   updateTradeBtns();
 
   // ── 패자부활 히든 기능 ──
-  const REVIVE_CLICKS = 10; // 테스트용 (실제: 1000)
+  const REVIVE_CLICKS = 1000; // 패자부활 클릭 수
   const deadClicks = { protoss:0, zerg:0, terran:0 };
   const reviveCharged = { protoss:false, zerg:false, terran:false };
   const reviveChargeUsed = { protoss:false, zerg:false, terran:false }; // 패자부활 충전 1회 제한
