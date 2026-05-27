@@ -638,9 +638,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   .dead-mineral-btn{
     width:36px;height:36px;object-fit:contain;
     pointer-events:all;cursor:pointer;
-    animation:mineralPulse 1s ease-in-out infinite;
     filter:drop-shadow(0 0 8px rgba(57,255,20,0.9)) brightness(1.3);
     -webkit-tap-highlight-color:transparent;
+  }
+  .elim-overlay.active .dead-mineral-btn{
+    animation:mineralPulse 1s ease-in-out infinite;
   }
   .dead-mineral-btn:active{transform:scale(0.75);}
 
@@ -1001,19 +1003,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       <div class="pop-race">Protoss</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-protoss"></div>
-      <div class="pop-num" id="hp-protoss">8600<span> / 10000</span></div>
+      <div class="pop-num high" id="hp-protoss">10000<span> / 10000</span></div>
     </div>
     <div class="hp-popup zerg" id="popup-zerg" style="cursor:pointer;">
       <div class="pop-race">Zerg</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-zerg"></div>
-      <div class="pop-num mid" id="hp-zerg">5200<span> / 10000</span></div>
+      <div class="pop-num high" id="hp-zerg">10000<span> / 10000</span></div>
     </div>
     <div class="hp-popup terran" id="popup-terran" style="cursor:pointer;">
       <div class="pop-race">Terran</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-terran"></div>
-      <div class="pop-num low" id="hp-terran">0<span> / 10000</span></div>
+      <div class="pop-num high" id="hp-terran">0<span> / 10000</span></div>
     </div>
   </div>
 
@@ -1021,19 +1023,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   <div class="elim-overlay protoss" id="elim-protoss">
     <div class="elim-title">ELIMINATED</div>
     <div class="elim-counter" id="dead-count-protoss">0 / 1000</div>
-    <div class="elim-hint">미네랄을 <b>1,000번</b> 캐면<br>1 미네랄이 부활합니다</div>
+    <div class="elim-hint">미네랄을 <b>1,000번</b> 캐면<br>1 미네랄이 획득됩니다<br><span style="color:rgba(255,80,80,0.85);font-size:9px;">⚠ 충전은 1회만 가능합니다</span></div>
     <img class="dead-mineral-btn" id="dead-mineral-protoss" src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" alt="mineral">
   </div>
   <div class="elim-overlay zerg" id="elim-zerg">
     <div class="elim-title">ELIMINATED</div>
     <div class="elim-counter" id="dead-count-zerg">0 / 1000</div>
-    <div class="elim-hint">미네랄을 <b>1,000번</b> 캐면<br>1 미네랄이 부활합니다</div>
+    <div class="elim-hint">미네랄을 <b>1,000번</b> 캐면<br>1 미네랄이 획득됩니다<br><span style="color:rgba(255,80,80,0.85);font-size:9px;">⚠ 충전은 1회만 가능합니다</span></div>
     <img class="dead-mineral-btn" id="dead-mineral-zerg" src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" alt="mineral">
   </div>
   <div class="elim-overlay terran" id="elim-terran">
     <div class="elim-title">ELIMINATED</div>
     <div class="elim-counter" id="dead-count-terran">0 / 1000</div>
-    <div class="elim-hint">미네랄을 <b>1,000번</b> 캐면<br>1 미네랄이 부활합니다</div>
+    <div class="elim-hint">미네랄을 <b>1,000번</b> 캐면<br>1 미네랄이 획득됩니다<br><span style="color:rgba(255,80,80,0.85);font-size:9px;">⚠ 충전은 1회만 가능합니다</span></div>
     <img class="dead-mineral-btn" id="dead-mineral-terran" src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" alt="mineral">
   </div>
 
@@ -1276,7 +1278,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 </div>
 <script>
   const MAX_HP=10000,SEG=10;
-  const teams={protoss:{hp:8600},zerg:{hp:5200},terran:{hp:0}};
+  const teams={protoss:{hp:10000},zerg:{hp:10000},terran:{hp:0}};
   function renderSeg(race,hp,max){
     const el=document.getElementById('seg-'+race);
     const pct=hp/max;
@@ -1327,6 +1329,16 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         elim.classList.remove('active');
       }
     }
+    // 탈락 시 충전버튼 비활성화 (패자부활 전까지)
+    const chargeBtn = document.getElementById('charge-btn-'+race);
+    if(chargeBtn && isDead && !reviveCharged[race]){
+      chargeBtn.disabled = true;
+      chargeBtn.textContent = '⚡ 충전';
+      chargeBtn.style.opacity = '0.3';
+    }
+
+    // 미네랄 카드 상태
+    const mc = document.getElementById('mc-'+race);
     if(mc) mc.classList.toggle('dead-mine', isDead);
 
     // 상태창 효과
@@ -1346,45 +1358,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   const API_URL = 'https://script.google.com/macros/s/AKfycbwu04g4D5FNDzsuBkTQ2bPwdDunGTAt7A1s0YPFXV_O5X5GtqvYoTbg_PLaT_rOaNY-/exec';
 
 
-  let weeklyData = {
-    1: {
-      week: 1,
-      rounds: [
-        { score:{ protoss:3, zerg:1 }, players:{ protoss:['조광민','한태경'], zerg:['박상우','나강혁'] } },
-        { score:{ terran:2, zerg:2 }, players:{ terran:['박병훈','나강욱'], zerg:['문현민','문정민'] } },
-        { score:{ protoss:1, terran:4 }, players:{ protoss:['이호진','정중현'], terran:['유정우','이진원'] } },
-        { score:{ zerg:3, terran:0 }, players:{ zerg:['박상우','문준석'], terran:['신성종','백요셉'] } },
-        { score:{ protoss:2, zerg:1 }, players:{ protoss:['조광민','김동우'], zerg:['나강혁','유신원'] } },
-      ],
-      players:[
-        {name:'조광민',team:'protoss',att:1,goals:3,assists:1,mineral:50},
-        {name:'박상우',team:'zerg',att:1,goals:2,assists:0,mineral:30},
-        {name:'박병훈',team:'terran',att:1,goals:1,assists:2,mineral:40},
-        {name:'나강혁',team:'zerg',att:1,goals:1,assists:1,mineral:30},
-        {name:'한태경',team:'protoss',att:1,goals:0,assists:2,mineral:30},
-        {name:'유정우',team:'terran',att:1,goals:1,assists:0,mineral:20},
-      ],
-      teamMineral:{ protoss:320, zerg:280, terran:200 },
-      hpLoss:{ protoss:100, zerg:300, terran:600 }
-    },
-    2: {
-      week: 2,
-      rounds: [
-        { score:{ zerg:4, protoss:2 }, players:{ zerg:['박상우','문현민'], protoss:['이호진','정중현'] } },
-        { score:{ terran:3, protoss:1 }, players:{ terran:['박병훈','이진원'], protoss:['조광민','김동우'] } },
-        { score:{ zerg:0, terran:2 }, players:{ zerg:['나강혁','문준석'], terran:['나강욱','신성종'] } },
-        { score:{ protoss:3, zerg:3 }, players:{ protoss:['한태경','정중현'], zerg:['유신원','문정민'] } },
-      ],
-      players:[
-        {name:'박상우',team:'zerg',att:1,goals:4,assists:1,mineral:60},
-        {name:'박병훈',team:'terran',att:1,goals:2,assists:1,mineral:40},
-        {name:'조광민',team:'protoss',att:1,goals:1,assists:2,mineral:40},
-        {name:'이진원',team:'terran',att:1,goals:1,assists:1,mineral:30},
-      ],
-      teamMineral:{ protoss:200, zerg:410, terran:310 },
-      hpLoss:{ protoss:500, zerg:200, terran:200 }
-    }
-  };
+  let weeklyData = {};
 
   // 팀 컬러
   const RACE_COLOR = {
@@ -1565,9 +1539,13 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
   async function loadMainLeague(){
     try {
-      const res = await fetch(API_URL + '?action=mainleague');
-      if(!res.ok) throw new Error('no data');
-      const data = await res.json();
+      const res = await fetch(API_URL + '?action=mainleague', {
+        method: 'GET',
+        redirect: 'follow',
+      });
+      const text = await res.text();
+      console.log('API raw:', text.slice(0, 200));
+      const data = JSON.parse(text);
 
       // HP 업데이트
       if(data.hp){
@@ -1955,11 +1933,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   const RACE_COLOR_TEXT = { protoss:'tn-pro', zerg:'tn-zer', terran:'tn-ter' };
   const RACE_FULL = { protoss:'PROTOSS', zerg:'ZERG', terran:'TERRAN' };
   const TRADE_UNIT_NAME = { protoss:'다크아칸', zerg:'퀸', terran:'고스트' };
-  let tradeLog = [
-    { weekLabel:'1주차', raceA:'zerg', nameA:'이호진', raceB:'terran', nameB:'박병훈' },
-  ];
-  // 트레이드된 선수 이름 목록 (재트레이드 방지)
-  let tradedPlayers = new Set(['이호진','박병훈']);
+  let tradeLog = [];
+  let tradedPlayers = new Set();
   let tradeModalRace = null;
 
   function hasTradeUnit(race){
@@ -2102,11 +2077,26 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     const earn = earnData[race];
     if(!earn || earn <= 0) return;
 
+    const isDead = teams[race].hp <= 0;
+
+    // 패자부활 충전 — 확인 팝업 + 1회 제한
+    if(isDead){
+      if(reviveChargeUsed[race]) return;
+      const ok = confirm(
+        '⚠️ 패자부활 충전\n\n' +
+        earn + 'M 을 기지에 충전합니다.\n\n' +
+        '충전 후에는 다시 충전할 수 없습니다.\n' +
+        '정말 충전하시겠습니까?'
+      );
+      if(!ok) return;
+      reviveChargeUsed[race] = true;
+    }
+
     // HP 충전
     teams[race].hp = Math.min(teams[race].hp + earn, MAX_HP);
     earnData[race] = 0;
 
-    // 팝업 세그 + 숫자 업데이트
+    // 팝업 세그 + 숫자 업데이트 (탈락 해제 포함)
     renderSeg(race, teams[race].hp, MAX_HP);
 
     // HP 숫자 업데이트
@@ -2126,13 +2116,24 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     if(earnEl) earnEl.textContent = '0 M';
 
     // 충전 버튼 비활성화
-    const btns = document.querySelectorAll('.charge-btn');
-    btns.forEach(btn => {
-      if(btn.getAttribute('onclick') === "charge('" + race + "')"){
-        btn.disabled = true;
-        btn.textContent = '✓ 충전완료';
+    const chargeBtn = document.getElementById('charge-btn-'+race);
+    if(chargeBtn){
+      chargeBtn.disabled = true;
+      chargeBtn.textContent = isDead ? '🔒 충전 완료 (재충전 불가)' : '✓ 충전완료';
+      chargeBtn.style.color = isDead ? 'rgba(180,60,60,0.8)' : '';
+      chargeBtn.style.borderColor = isDead ? 'rgba(180,60,60,0.4)' : '';
+      chargeBtn.style.opacity = '0.7';
+    }
+
+    // 패자부활 충전이면 ELIMINATED 오버레이 숨김
+    if(isDead){
+      const elim = document.getElementById('elim-'+race);
+      if(elim){
+        elim.style.transition = 'opacity 0.8s';
+        elim.style.opacity = '0';
+        setTimeout(()=>{ elim.classList.remove('active'); elim.style.opacity=''; }, 800);
       }
-    });
+    }
   }
 
   function openRoster(race){
@@ -2153,23 +2154,27 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   updateTradeBtns();
 
   // ── 패자부활 히든 기능 ──
-  const REVIVE_CLICKS = 1000; // 패자부활 클릭 수
+  const REVIVE_CLICKS = 10; // 테스트용 (실제: 1000)
   const deadClicks = { protoss:0, zerg:0, terran:0 };
-  const reviveCharged = { protoss:false, zerg:false, terran:false }; // 충전 1회 제한
+  const reviveCharged = { protoss:false, zerg:false, terran:false };
+  const reviveChargeUsed = { protoss:false, zerg:false, terran:false }; // 패자부활 충전 1회 제한
 
   function handleDeadClick(race){
     const popup = document.getElementById('popup-'+race);
     if(!popup || !popup.classList.contains('state-dead')) return;
 
-    // 이미 충전 완료면 카운터만 멈춤
-    if(reviveCharged[race]) return;
+    // 충전 버튼 1회 사용 완료 후엔 더 이상 클릭 안 됨
+    if(reviveChargeUsed[race]) return;
 
     deadClicks[race]++;
     const cnt = deadClicks[race];
     const counterEl = document.getElementById('dead-count-'+race);
 
     // 카운터 업데이트
-    if(counterEl) counterEl.textContent = cnt + ' / 1000';
+    if(counterEl && cnt % REVIVE_CLICKS !== 0){
+      counterEl.textContent = cnt + ' / ' + REVIVE_CLICKS;
+      counterEl.style.color = '';
+    }
 
     // 클릭 반짝 효과
     popup.classList.remove('click-flash');
@@ -2177,28 +2182,25 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     popup.classList.add('click-flash');
     setTimeout(()=>popup.classList.remove('click-flash'), 150);
 
-    // 1000번 달성 시 미네랄 +1, 이후 영구 잠금
-    if(cnt >= REVIVE_CLICKS){
-      reviveCharged[race] = true;
+    // REVIVE_CLICKS 배수 달성마다 +1M 적립
+    if(cnt % REVIVE_CLICKS === 0){
       earnData[race] = (earnData[race]||0) + 1;
       const earnEl = document.getElementById('earn-'+race);
       if(earnEl) earnEl.textContent = earnData[race].toLocaleString()+' M';
 
-      // 오버레이 숨기고 상태창 정상화
-      const elim = document.getElementById('elim-'+race);
-      if(elim){
-        elim.style.transition = 'opacity 1s';
-        elim.style.opacity = '0';
-        setTimeout(()=>{ elim.classList.remove('active'); elim.style.opacity=''; }, 1000);
+      if(counterEl){
+        counterEl.textContent = cnt + ' 💎 누적 +' + earnData[race] + 'M';
+        counterEl.style.color = 'rgba(255,215,0,0.9)';
       }
-      const popup = document.getElementById('popup-'+race);
-      if(popup){
-        popup.classList.remove('state-dead');
-        // HP를 1로 살짝 올려서 정상화 (실제 부활은 운영진이 시트에서 처리)
-        setTimeout(()=>{
-          const counterEl = document.getElementById('dead-count-'+race);
-          if(counterEl) counterEl.textContent = '💎 충전 완료!';
-        }, 500);
+
+      // 충전 버튼 활성화 (아직 미사용 시)
+      const chargeBtn = document.getElementById('charge-btn-'+race);
+      if(chargeBtn){
+        chargeBtn.disabled = false;
+        chargeBtn.style.opacity = '1';
+        chargeBtn.style.borderColor = 'rgba(255,215,0,0.6)';
+        chargeBtn.style.color = 'var(--yellow)';
+        chargeBtn.textContent = '⚡ 패자부활 충전 (' + earnData[race] + 'M)';
       }
     }
   }
