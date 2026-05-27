@@ -838,12 +838,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     flex-direction:column;
     align-items:center;justify-content:center;gap:5px;
     z-index:9999;
-    padding:10px 8px;
+    padding:10px 8px 14px;
     background:rgba(0,0,0,0.93);
     border:1.5px solid rgba(255,40,40,0.7);
     box-shadow:0 0 20px rgba(255,0,0,0.5);
     box-sizing:border-box;
-    overflow:hidden;
   }
   .elim-overlay.active{display:flex;}
   .elim-title{
@@ -1324,7 +1323,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
           elim.style.left   = (r.left - padH)+'px';
           elim.style.width  = (r.width + padH*2)+'px';
           elim.style.top    = (r.top - extraH)+'px';
-          elim.style.height = r.height+'px';
+          elim.style.height = (r.height + 16)+'px';
         }
         elim.classList.add('active');
       } else {
