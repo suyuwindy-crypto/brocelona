@@ -1259,7 +1259,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
 </div>
 
-<div id="pw-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+<div id="pw-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;">
   <div class="trade-modal-box">
     <div class="tmo-header">
       <span class="tmo-title" id="pw-modal-title">🔐 충전 인증</span>
@@ -2100,6 +2100,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   }
   function confirmPwModal(){
     const pw = document.getElementById('pw-input').value;
+    alert('입력값:'+pw+' / 정답:'+CHARGE_PASSWORD+' / 일치:'+(pw===CHARGE_PASSWORD));
     if(pw !== CHARGE_PASSWORD){
       document.getElementById('pw-error').style.display = 'block';
       document.getElementById('pw-input').value = '';
