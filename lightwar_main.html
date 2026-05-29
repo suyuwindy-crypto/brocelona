@@ -2108,6 +2108,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       return;
     }
     closePwModal();
+    alert('콜백 실행 직전, _pwCallback 존재:'+!!_pwCallback);
     if(_pwCallback) _pwCallback();
   }
 
