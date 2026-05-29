@@ -1359,14 +1359,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         elim.classList.remove('active');
       }
     }
-    // 탈락 시 충전버튼 비활성화 (패자부활 미네랄 없을 때만)
-    const chargeBtn = document.getElementById('charge-btn-'+race);
-    if(chargeBtn && isDead && !reviveChargeUsed[race] && !(earnData[race] > 0)){
-      chargeBtn.disabled = true;
-      chargeBtn.textContent = '⚡ 충전';
-      chargeBtn.style.opacity = '0.3';
-    }
-
     // 미네랄 카드 상태
     const mc = document.getElementById('mc-'+race);
     if(mc) mc.classList.toggle('dead-mine', isDead);
@@ -2120,7 +2112,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
   function charge(race){
     const earn = earnData[race];
-    if(!earn || earn <= 0){ alert('충전할 미네랄이 없습니다.'); return; }
+    alert('DEBUG - race:'+race+' earn:'+earn+' hp:'+teams[race]?.hp);
+    if(!earn || earn <= 0){ alert('충전할 미네랄이 없습니다. (earn='+earn+')'); return; }
 
     const isDead = teams[race].hp <= 0;
 
