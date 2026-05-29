@@ -2113,58 +2113,51 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       // 패자부활 충전 — 1회 제한 확인
       if(isDead){
         if(reviveChargeUsed[race]){ alert('패자부활 충전은 1회만 가능합니다.'); return; }
-        const ok = confirm(
-          '⚠️ 패자부활 충전\n\n' +
-          earn + 'M 을 기지에 충전합니다.\n\n' +
-          '충전 후에는 다시 충전할 수 없습니다.\n' +
-          '정말 충전하시겠습니까?'
-        );
+        const ok = confirm('⚠️ 패자부활 충전\n\n'+earn+'M 을 기지에 충전합니다.\n\n충전 후에는 다시 충전할 수 없습니다.\n정말 충전하시겠습니까?');
         if(!ok) return;
         reviveChargeUsed[race] = true;
       }
 
-    // HP 충전
-    teams[race].hp = Math.min(teams[race].hp + earn, MAX_HP);
-    earnData[race] = 0;
+      // HP 충전
+      teams[race].hp = Math.min(teams[race].hp + earn, MAX_HP);
+      earnData[race] = 0;
 
-    // 팝업 세그 + 숫자 업데이트 (탈락 해제 포함)
-    renderSeg(race, teams[race].hp, MAX_HP);
-
-    // HP 숫자 업데이트
-    const pct = teams[race].hp / MAX_HP;
-    const cls = pct > 0.5 ? 'high' : pct > 0.25 ? 'mid' : 'low';
-    const numEl = document.getElementById('hp-' + race);
-    if(numEl){
-      numEl.className = 'pop-num ' + cls;
-      numEl.innerHTML = teams[race].hp.toLocaleString() + '<span> / ' + MAX_HP.toLocaleString() + '</span>';
-    }
-
-    // 시트에 HP 저장
-    saveHP(race, teams[race].hp);
-
-    // 획득량 0으로 리셋
-    const earnEl = document.getElementById('earn-' + race);
-    if(earnEl) earnEl.textContent = '0 M';
-
-    // 충전 버튼 비활성화
-    const chargeBtn = document.getElementById('charge-btn-'+race);
-    if(chargeBtn){
-      chargeBtn.disabled = true;
-      chargeBtn.textContent = isDead ? '🔒 충전 완료 (재충전 불가)' : '✓ 충전완료';
-      chargeBtn.style.color = isDead ? 'rgba(180,60,60,0.8)' : '';
-      chargeBtn.style.borderColor = isDead ? 'rgba(180,60,60,0.4)' : '';
-      chargeBtn.style.opacity = '0.7';
-    }
-
-    // 패자부활 충전이면 ELIMINATED 오버레이 숨김
-    if(isDead){
-      const elim = document.getElementById('elim-'+race);
-      if(elim){
-        elim.style.transition = 'opacity 0.8s';
-        elim.style.opacity = '0';
-        setTimeout(()=>{ elim.classList.remove('active'); elim.style.opacity=''; }, 800);
+      // 세그 + 숫자 업데이트
+      renderSeg(race, teams[race].hp, MAX_HP);
+      const pct = teams[race].hp / MAX_HP;
+      const cls = pct > 0.5 ? 'high' : pct > 0.25 ? 'mid' : 'low';
+      const numEl = document.getElementById('hp-'+race);
+      if(numEl){
+        numEl.className = 'pop-num '+cls;
+        numEl.innerHTML = teams[race].hp.toLocaleString()+'<span> / '+MAX_HP.toLocaleString()+'</span>';
       }
-    }
+
+      // 시트에 HP 저장
+      saveHP(race, teams[race].hp);
+
+      // 획득량 0으로 리셋
+      const earnEl = document.getElementById('earn-'+race);
+      if(earnEl) earnEl.textContent = '0 M';
+
+      // 충전 버튼 비활성화
+      const chargeBtn = document.getElementById('charge-btn-'+race);
+      if(chargeBtn){
+        chargeBtn.disabled = true;
+        chargeBtn.textContent = isDead ? '🔒 충전 완료 (재충전 불가)' : '✓ 충전완료';
+        chargeBtn.style.color = isDead ? 'rgba(180,60,60,0.8)' : '';
+        chargeBtn.style.borderColor = isDead ? 'rgba(180,60,60,0.4)' : '';
+        chargeBtn.style.opacity = '0.7';
+      }
+
+      // 패자부활이면 ELIMINATED 오버레이 숨김
+      if(isDead){
+        const elim = document.getElementById('elim-'+race);
+        if(elim){
+          elim.style.transition = 'opacity 0.8s';
+          elim.style.opacity = '0';
+          setTimeout(()=>{ elim.classList.remove('active'); elim.style.opacity=''; }, 800);
+        }
+      }
     }); // openPwModal callback 끝
   }
 
