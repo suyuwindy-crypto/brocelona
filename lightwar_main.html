@@ -2100,22 +2100,21 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   }
   function confirmPwModal(){
     const pw = document.getElementById('pw-input').value;
-    alert('입력값:'+pw+' / 정답:'+CHARGE_PASSWORD+' / 일치:'+(pw===CHARGE_PASSWORD));
     if(pw !== CHARGE_PASSWORD){
       document.getElementById('pw-error').style.display = 'block';
       document.getElementById('pw-input').value = '';
       document.getElementById('pw-input').focus();
       return;
     }
-    closePwModal();
-    alert('콜백 실행 직전, _pwCallback 존재:'+!!_pwCallback);
-    if(_pwCallback) _pwCallback();
+    const cb = _pwCallback;
+    _pwCallback = null;
+    document.getElementById('pw-modal').style.display = 'none';
+    if(cb) cb();
   }
 
   function charge(race){
     const earn = earnData[race];
-    alert('DEBUG - race:'+race+' earn:'+earn+' hp:'+teams[race]?.hp);
-    if(!earn || earn <= 0){ alert('충전할 미네랄이 없습니다. (earn='+earn+')'); return; }
+    if(!earn || earn <= 0){ alert('충전할 미네랄이 없습니다.'); return; }
 
     const isDead = teams[race].hp <= 0;
 
