@@ -1250,7 +1250,24 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
 </div>
 
-<!-- 트레이드 모달 -->
+<div id="pw-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+  <div class="trade-modal-box">
+    <div class="tmo-header">
+      <span class="tmo-title" id="pw-modal-title">🔐 충전 인증</span>
+      <span class="tmo-close" onclick="closePwModal()">✕</span>
+    </div>
+    <div style="margin-bottom:14px;">
+      <div class="tmo-side-lbl" style="margin-bottom:8px;">비밀번호를 입력하세요</div>
+      <input id="pw-input" type="password"
+        class="tmo-select"
+        style="width:100%;text-align:center;font-size:18px;letter-spacing:6px;padding:10px;"
+        placeholder="· · · ·"
+        onkeydown="if(event.key==='Enter')confirmPwModal()">
+      <div id="pw-error" style="color:rgba(255,60,60,0.9);font-size:9px;font-family:'Orbitron',sans-serif;letter-spacing:1px;text-align:center;margin-top:6px;display:none;">비밀번호가 틀렸습니다</div>
+    </div>
+    <button class="tmo-confirm-btn" onclick="confirmPwModal()">확인</button>
+  </div>
+</div>
 <div id="trade-modal" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;">
   <div class="trade-modal-box">
     <div class="tmo-header">
@@ -2059,30 +2076,52 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   }
 
   const CHARGE_PASSWORD = '1234'; // 충전 비밀번호 (변경 가능)
+  let _pwCallback = null;
+
+  function openPwModal(title, callback){
+    _pwCallback = callback;
+    document.getElementById('pw-modal-title').textContent = title;
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-error').style.display = 'none';
+    const modal = document.getElementById('pw-modal');
+    modal.style.display = 'flex';
+    setTimeout(()=>document.getElementById('pw-input').focus(), 100);
+  }
+  function closePwModal(){
+    document.getElementById('pw-modal').style.display = 'none';
+    _pwCallback = null;
+  }
+  function confirmPwModal(){
+    const pw = document.getElementById('pw-input').value;
+    if(pw !== CHARGE_PASSWORD){
+      document.getElementById('pw-error').style.display = 'block';
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-input').focus();
+      return;
+    }
+    closePwModal();
+    if(_pwCallback) _pwCallback();
+  }
 
   function charge(race){
     const earn = earnData[race];
     if(!earn || earn <= 0){ alert('충전할 미네랄이 없습니다.'); return; }
 
-    // 비밀번호 확인
-    const pw = prompt('🔐 충전 비밀번호를 입력하세요:');
-    if(pw === null) return; // 취소
-    if(pw !== CHARGE_PASSWORD){ alert('비밀번호가 틀렸습니다.'); return; }
-
     const isDead = teams[race].hp <= 0;
 
-    // 패자부활 충전 — 1회 제한 확인
-    if(isDead){
-      if(reviveChargeUsed[race]){ alert('패자부활 충전은 1회만 가능합니다.'); return; }
-      const ok = confirm(
-        '⚠️ 패자부활 충전\n\n' +
-        earn + 'M 을 기지에 충전합니다.\n\n' +
-        '충전 후에는 다시 충전할 수 없습니다.\n' +
-        '정말 충전하시겠습니까?'
-      );
-      if(!ok) return;
-      reviveChargeUsed[race] = true;
-    }
+    openPwModal('🔐 충전 인증', ()=>{
+      // 패자부활 충전 — 1회 제한 확인
+      if(isDead){
+        if(reviveChargeUsed[race]){ alert('패자부활 충전은 1회만 가능합니다.'); return; }
+        const ok = confirm(
+          '⚠️ 패자부활 충전\n\n' +
+          earn + 'M 을 기지에 충전합니다.\n\n' +
+          '충전 후에는 다시 충전할 수 없습니다.\n' +
+          '정말 충전하시겠습니까?'
+        );
+        if(!ok) return;
+        reviveChargeUsed[race] = true;
+      }
 
     // HP 충전
     teams[race].hp = Math.min(teams[race].hp + earn, MAX_HP);
@@ -2126,6 +2165,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         setTimeout(()=>{ elim.classList.remove('active'); elim.style.opacity=''; }, 800);
       }
     }
+    }); // openPwModal callback 끝
   }
 
   function openRoster(race){
