@@ -57,6 +57,15 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   .loading-hp{font-size:14px;color:var(--text-dim);animation:loadingPulse 1s ease-in-out infinite;}
   @keyframes loadingPulse{0%,100%{opacity:0.3;}50%{opacity:0.8;}}
 
+  /* HP 숫자 라이브 명멸 */
+  .pop-num.high{animation:hpFlicker 3s ease-in-out infinite;}
+  .pop-num.mid {animation:hpFlicker 2s ease-in-out infinite;}
+  .pop-num.low {animation:hpFlicker 1s ease-in-out infinite;}
+  @keyframes hpFlicker{
+    0%,100%{opacity:1;}
+    50%{opacity:0.65;}
+  }
+
 /* ── SC1 패널 공통 ── */
 .sc-panel{
   background:rgba(0,0,0,0.25);
@@ -1625,9 +1634,15 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
           });
         });
         Object.entries(totalMineral).forEach(([race, m])=>{
+          earnData[race] = m;
           const el = document.getElementById('earn-'+race);
           if(el) el.textContent = m.toLocaleString()+' M';
-          earnData[race] = m;
+          // 충전 버튼 활성화 (미네랄 있으면)
+          const btn = document.getElementById('charge-btn-'+race);
+          if(btn && m > 0 && !btn.disabled){
+            btn.disabled = false;
+          }
+          console.log('earnData update:', race, m);
         });
       }
 
