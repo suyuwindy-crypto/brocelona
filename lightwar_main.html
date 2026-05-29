@@ -54,6 +54,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   padding:7px;gap:5px;
 }
 
+  .loading-hp{font-size:14px;color:var(--text-dim);animation:loadingPulse 1s ease-in-out infinite;}
+  @keyframes loadingPulse{0%,100%{opacity:0.3;}50%{opacity:0.8;}}
+
 /* ── SC1 패널 공통 ── */
 .sc-panel{
   background:rgba(0,0,0,0.25);
@@ -1002,19 +1005,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       <div class="pop-race">Protoss</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-protoss"></div>
-      <div class="pop-num high" id="hp-protoss">10000<span> / 10000</span></div>
+      <div class="pop-num high" id="hp-protoss"><span class="loading-hp">···</span></div>
     </div>
     <div class="hp-popup zerg" id="popup-zerg" style="cursor:pointer;">
       <div class="pop-race">Zerg</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-zerg"></div>
-      <div class="pop-num high" id="hp-zerg">10000<span> / 10000</span></div>
+      <div class="pop-num high" id="hp-zerg"><span class="loading-hp">···</span></div>
     </div>
     <div class="hp-popup terran" id="popup-terran" style="cursor:pointer;">
       <div class="pop-race">Terran</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-terran"></div>
-      <div class="pop-num high" id="hp-terran">10000<span> / 10000</span></div>
+      <div class="pop-num high" id="hp-terran"><span class="loading-hp">···</span></div>
     </div>
   </div>
 
@@ -2055,15 +2058,22 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     });
   }
 
+  const CHARGE_PASSWORD = '1234'; // 충전 비밀번호 (변경 가능)
+
   function charge(race){
     const earn = earnData[race];
-    if(!earn || earn <= 0) return;
+    if(!earn || earn <= 0){ alert('충전할 미네랄이 없습니다.'); return; }
+
+    // 비밀번호 확인
+    const pw = prompt('🔐 충전 비밀번호를 입력하세요:');
+    if(pw === null) return; // 취소
+    if(pw !== CHARGE_PASSWORD){ alert('비밀번호가 틀렸습니다.'); return; }
 
     const isDead = teams[race].hp <= 0;
 
-    // 패자부활 충전 — 확인 팝업 + 1회 제한
+    // 패자부활 충전 — 1회 제한 확인
     if(isDead){
-      if(reviveChargeUsed[race]) return;
+      if(reviveChargeUsed[race]){ alert('패자부활 충전은 1회만 가능합니다.'); return; }
       const ok = confirm(
         '⚠️ 패자부활 충전\n\n' +
         earn + 'M 을 기지에 충전합니다.\n\n' +
