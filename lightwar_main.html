@@ -1572,9 +1572,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       // HP 업데이트
       if(data.hp){
         Object.entries(data.hp).forEach(([race, d])=>{
-          // 패자부활 충전 완료팀 → 완전 무시
           if(reviveChargeUsed[race]) return;
-          // 로컬에서 탈락(hp<=0)으로 세팅된 팀 → API 값 무시, 상태 유지
           if(teams[race].hp <= 0) return;
           teams[race] = { hp: d.current, mineral: teams[race]?.mineral || 0 };
           renderSeg(race, d.current, d.max);
@@ -1585,10 +1583,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
             numEl.className = 'pop-num '+cls;
             numEl.innerHTML = d.current.toLocaleString()+'<span> / '+d.max.toLocaleString()+'</span>';
           }
-          const barEl = document.getElementById('bar-'+race);
-          if(barEl) barEl.style.width = (pct*100)+'%';
-          const numEl2 = document.getElementById('tsn-'+race);
-          if(numEl2) numEl2.textContent = d.current.toLocaleString();
+          // 미충전미네랄 반영 (충전 완료 0이면 0으로 표시)
+          earnData[race] = d.unspent || 0;
+          const earnEl = document.getElementById('earn-'+race);
+          if(earnEl) earnEl.textContent = earnData[race].toLocaleString()+' M';
         });
       }
 
@@ -1625,19 +1623,6 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
             totalMineral[race] = (totalMineral[race]||0) + m;
           });
         });
-        Object.entries(totalMineral).forEach(([race, m])=>{
-          earnData[race] = m;
-          const el = document.getElementById('earn-'+race);
-          if(el) el.textContent = m.toLocaleString()+' M';
-          // 충전 버튼 활성화 (미네랄 있으면)
-          const btn = document.getElementById('charge-btn-'+race);
-          if(btn && m > 0 && !btn.disabled){
-            btn.disabled = false;
-          }
-          console.log('earnData update:', race, m);
-        });
-      }
-
       // BATTLE/WEEKLY 탭 렌더
       renderBattle();
       buildWeekBtns();
