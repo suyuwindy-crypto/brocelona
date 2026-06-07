@@ -1412,9 +1412,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     w.rounds.forEach(r=>{
       const sc = r.score||{};
       // 득점 있는 팀만 추출 (0이 아닌 팀, 또는 선수가 있는 팀)
-      const activeTeams = Object.keys(sc).filter(t => sc[t] > 0 || (r.players&&r.players[t]&&r.players[t].length));
+      const activeTeams = ['protoss','zerg','terran'].filter(t => sc[t] > 0 || (r.players&&r.players[t]&&r.players[t].length > 0));
       if(activeTeams.length < 2) return;
-      // 2팀씩 비교 (3팀 중 실제 경기한 2팀)
       const [t1,t2] = activeTeams.slice(0,2);
       const s1 = sc[t1]||0, s2 = sc[t2]||0;
       score[t1].gf += s1; score[t1].ga += s2;
@@ -1461,7 +1460,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       if(w.rounds && w.rounds.length){
         w.rounds.forEach((r,i)=>{
           const sc = r.score||{};
-          const activeTeams = Object.keys(sc).filter(t => sc[t] > 0 || (r.players&&r.players[t]&&r.players[t].length));
+          const activeTeams = ['protoss','zerg','terran'].filter(t => sc[t] > 0 || (r.players&&r.players[t]&&r.players[t].length > 0));
           if(activeTeams.length < 2){ return; }
           const [t1,t2] = activeTeams.slice(0,2);
           const s1=sc[t1]||0, s2=sc[t2]||0;
