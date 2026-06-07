@@ -1407,14 +1407,16 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   const RACE_SHORT = { protoss:'PRO', zerg:'ZER', terran:'TER' };
 
   function calcTeamScore(w){
-    // rounds 배열에서 각 팀의 득점/실점 계산
     const score = { protoss:{gf:0,ga:0,w:0,d:0,l:0}, zerg:{gf:0,ga:0,w:0,d:0,l:0}, terran:{gf:0,ga:0,w:0,d:0,l:0} };
     if(!w.rounds) return score;
     w.rounds.forEach(r=>{
-      const teams = Object.keys(r.score||{});
-      if(teams.length !== 2) return;
-      const [t1,t2] = teams;
-      const s1 = r.score[t1]||0, s2 = r.score[t2]||0;
+      const sc = r.score||{};
+      // 득점 있는 팀만 추출 (0이 아닌 팀, 또는 선수가 있는 팀)
+      const activeTeams = Object.keys(sc).filter(t => sc[t] > 0 || (r.players&&r.players[t]&&r.players[t].length));
+      if(activeTeams.length < 2) return;
+      // 2팀씩 비교 (3팀 중 실제 경기한 2팀)
+      const [t1,t2] = activeTeams.slice(0,2);
+      const s1 = sc[t1]||0, s2 = sc[t2]||0;
       score[t1].gf += s1; score[t1].ga += s2;
       score[t2].gf += s2; score[t2].ga += s1;
       if(s1>s2){ score[t1].w++; score[t2].l++; }
@@ -1458,10 +1460,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       let roundRows = '';
       if(w.rounds && w.rounds.length){
         w.rounds.forEach((r,i)=>{
-          const teams = Object.keys(r.score||{});
-          if(teams.length !== 2){ return; }
-          const [t1,t2] = teams;
-          const s1=r.score[t1]||0, s2=r.score[t2]||0;
+          const sc = r.score||{};
+          const activeTeams = Object.keys(sc).filter(t => sc[t] > 0 || (r.players&&r.players[t]&&r.players[t].length));
+          if(activeTeams.length < 2){ return; }
+          const [t1,t2] = activeTeams.slice(0,2);
+          const s1=sc[t1]||0, s2=sc[t2]||0;
           let res1='', res2='';
           if(s1>s2){res1='W';res2='L';}
           else if(s1<s2){res1='L';res2='W';}
