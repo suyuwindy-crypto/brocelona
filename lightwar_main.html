@@ -1757,7 +1757,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       lastWeek + Math.ceil(lastWeek * 0.8) + 2,
       Math.max(...races.map(r => trends[r]&&trends[r].deathWeek ? Math.ceil(trends[r].deathWeek)+1 : lastWeek+3))
     );
-    const maxHp = MAX_HP;
+    const maxHp = Math.max(...races.map(r => teams[r]?.hp || 0), MAX_HP);
 
     function toX(week){ return PAD.left + (week / maxPredWeek) * cW; }
     function toY(hp)  { return PAD.top  + cH * (1 - Math.max(hp,0)/maxHp); }
