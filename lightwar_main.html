@@ -395,6 +395,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   }
   .bw-sc-race{font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;margin-bottom:4px;}
   .bw-sc-goals{display:flex;align-items:baseline;justify-content:center;gap:3px;margin-bottom:3px;}
+  .bw-lbl{font-size:8px;color:var(--text-dim);font-family:'Orbitron',sans-serif;letter-spacing:1px;align-self:center;}
   .bw-gf{font-family:'Russo One',sans-serif;font-size:22px;color:var(--green);line-height:1;}
   .bw-sep{font-size:12px;color:var(--text-dim);}
   .bw-ga{font-family:'Russo One',sans-serif;font-size:22px;color:rgba(180,60,60,0.85);line-height:1;}
@@ -1411,10 +1412,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     if(!w.rounds) return score;
     w.rounds.forEach(r=>{
       const sc = r.score||{};
-      // 득점 있는 팀만 추출 (0이 아닌 팀, 또는 선수가 있는 팀)
-      const activeTeams = ['protoss','zerg','terran'].filter(t => sc[t] > 0 || (r.players&&r.players[t]&&r.players[t].length > 0));
-      if(activeTeams.length < 2) return;
-      const [t1,t2] = activeTeams.slice(0,2);
+      const activeTeams = r.playingTeams && r.playingTeams.length >= 2
+        ? r.playingTeams
+        : ['protoss','zerg','terran'].filter(t => sc[t] > 0 || (r.players&&r.players[t]&&r.players[t].length > 0));
+      if(activeTeams.length < 1) return;
+      const t1 = activeTeams[0], t2 = activeTeams[1] || null;
+      if(!t2){ score[t1].gf += sc[t1]||0; score[t1].w++; return; }
       const s1 = sc[t1]||0, s2 = sc[t2]||0;
       score[t1].gf += s1; score[t1].ga += s2;
       score[t2].gf += s2; score[t2].ga += s1;
@@ -1447,9 +1450,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         return '<div class="bw-score-card">'+
           '<div class="bw-sc-race" style="color:'+RACE_COLOR[race]+'">'+RACE_SHORT[race]+'</div>'+
           '<div class="bw-sc-goals">'+
+            '<span class="bw-lbl">득점</span>'+
             '<span class="bw-gf">'+s.gf+'</span>'+
             '<span class="bw-sep">:</span>'+
             '<span class="bw-ga">'+s.ga+'</span>'+
+            '<span class="bw-lbl">실점</span>'+
           '</div>'+
           '<div class="bw-sc-wdl">'+wdl+'</div>'+
         '</div>';
@@ -1460,19 +1465,23 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       if(w.rounds && w.rounds.length){
         w.rounds.forEach((r,i)=>{
           const sc = r.score||{};
-          const activeTeams = ['protoss','zerg','terran'].filter(t => sc[t] > 0 || (r.players&&r.players[t]&&r.players[t].length > 0));
-          if(activeTeams.length < 2){ return; }
-          const [t1,t2] = activeTeams.slice(0,2);
-          const s1=sc[t1]||0, s2=sc[t2]||0;
+          // playingTeams 있으면 우선 사용, 없으면 득점/선수 기준
+          const activeTeams = r.playingTeams && r.playingTeams.length >= 2
+            ? r.playingTeams
+            : ['protoss','zerg','terran'].filter(t => sc[t] > 0 || (r.players&&r.players[t]&&r.players[t].length > 0));
+          if(activeTeams.length < 1){ return; }
+          const t1 = activeTeams[0], t2 = activeTeams[1] || null;
+          const s1=sc[t1]||0, s2=t2?(sc[t2]||0):0;
           let res1='', res2='';
-          if(s1>s2){res1='W';res2='L';}
+          if(!t2){res1='W';res2='-';}
+          else if(s1>s2){res1='W';res2='L';}
           else if(s1<s2){res1='L';res2='W';}
           else{res1='D';res2='D';}
           const resClass = v=>v==='W'?'br-w':v==='L'?'br-l':'br-d';
 
           // 선수 목록
           const p1 = (r.players&&r.players[t1]||[]).join(', ');
-          const p2 = (r.players&&r.players[t2]||[]).join(', ');
+          const p2 = t2?(r.players&&r.players[t2]||[]).join(', '):'';
 
           roundRows +=
             '<div class="br-row">'+
@@ -1487,12 +1496,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
                 '<span class="br-s">'+s2+'</span>'+
               '</div>'+
               '<div class="br-team-block br-right">'+
-                '<div class="br-team-name" style="color:'+RACE_COLOR[t2]+'">'+RACE_SHORT[t2]+'</div>'+
+                (t2?'<div class="br-team-name" style="color:'+RACE_COLOR[t2]+'">'+RACE_SHORT[t2]+'</div>':'')+
                 '<div class="br-players">'+p2+'</div>'+
               '</div>'+
               '<div class="br-result-block">'+
                 '<span class="br-res '+resClass(res1)+'">'+res1+'</span>'+
-                '<span class="br-res '+resClass(res2)+'">'+res2+'</span>'+
+                (res2!=='-'?'<span class="br-res '+resClass(res2)+'">'+res2+'</span>':'')+
               '</div>'+
             '</div>';
         });
