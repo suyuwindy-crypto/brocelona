@@ -415,6 +415,16 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   }
   .br-hd-res{text-align:right;}
 
+  /* ── BATTLE 3열 테이블 ── */
+  .bc-header,.bc-row{display:grid;grid-template-columns:24px 1fr 1fr 1fr 36px;gap:2px;align-items:start;padding:4px 2px;border-bottom:1px solid rgba(255,215,0,0.07);}
+  .bc-header{border-bottom:1px solid rgba(255,215,0,0.2);padding-bottom:5px;margin-bottom:2px;font-size:9px;font-family:'Orbitron',sans-serif;letter-spacing:1px;}
+  .bc-rnd{font-size:9px;color:var(--text-dim);font-family:'Orbitron',sans-serif;padding-top:2px;}
+  .bc-cell{font-size:9px;color:var(--green);line-height:1.5;word-break:keep-all;min-height:18px;}
+  .bc-res{display:flex;flex-direction:column;align-items:center;gap:1px;}
+  .bc-goals{font-family:'Russo One',sans-serif;font-size:11px;color:var(--yellow);}
+  .bc-assist{color:rgba(57,255,20,0.4);font-size:8px;}
+  .bc-list{padding:0 2px;}
+
   /* 라운드 행 */
   .br-list{display:flex;flex-direction:column;}
   .br-row{
@@ -1444,7 +1454,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
       const score = calcTeamScore(w);
 
-      // ── 팀 득실점 요약 헤더 ──
+      // 팀 득실점 요약 헤더
       const scoreCards = ['protoss','zerg','terran'].map(race=>{
         const s = score[race];
         const wdl = s.w+'승 '+(s.d?s.d+'무 ':'')+s.l+'패';
@@ -1461,63 +1471,56 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         '</div>';
       }).join('');
 
-      // ── 라운드별 경기 결과 ──
+      // 선수 포맷 함수
+      const formatCell = (r, race) => {
+        const sc = r.score||{};
+        const scorers = (r.scorers&&r.scorers[race])||[];
+        const assists = (r.assists&&r.assists[race])||[];
+        const goals = sc[race]||0;
+        const playing = r.playingTeams&&r.playingTeams.includes(race);
+        if(!playing) return '<span style="color:var(--text-dim);font-size:9px;">대기</span>';
+        if(goals===0 && scorers.length===0){
+          return '<span style="color:var(--text-dim);">0</span>';
+        }
+        const onlyAssists = assists.filter(a=>!scorers.includes(a));
+        let str = '<span class="bc-goals">'+goals+'</span> '+scorers.join(' ');
+        if(onlyAssists.length) str += ' <span class="bc-assist">('+onlyAssists.join(', ')+')</span>';
+        return str;
+      };
+
+      // 라운드 결과 (W/L/D)
+      const getRoundRes = (r, race) => {
+        const sc = r.score||{};
+        const pt = r.playingTeams||[];
+        if(!pt.includes(race)) return '<span style="color:var(--text-dim);">-</span>';
+        const others = pt.filter(t=>t!==race);
+        if(!others.length) return '<span class="br-w">W</span>';
+        const myScore = sc[race]||0;
+        const theirScore = sc[others[0]]||0;
+        if(myScore>theirScore) return '<span class="br-w">W</span>';
+        if(myScore<theirScore) return '<span class="br-l">L</span>';
+        return '<span class="br-d">D</span>';
+      };
+
+      // 라운드 테이블
       let roundRows = '';
-      if(w.rounds && w.rounds.length){
+      if(w.rounds&&w.rounds.length){
         w.rounds.forEach((r,i)=>{
-          const sc = r.score||{};
-          // playingTeams 있으면 우선 사용, 없으면 득점/선수 기준
-          const activeTeams = r.playingTeams && r.playingTeams.length >= 2
-            ? r.playingTeams
-            : ['protoss','zerg','terran'].filter(t => sc[t] > 0 || (r.players&&r.players[t]&&r.players[t].length > 0));
-          if(activeTeams.length < 1){ return; }
-          const t1 = activeTeams[0], t2 = activeTeams[1] || null;
-          const s1=sc[t1]||0, s2=t2?(sc[t2]||0):0;
-          let res1='', res2='';
-          if(!t2){res1='W';res2='-';}
-          else if(s1>s2){res1='W';res2='L';}
-          else if(s1<s2){res1='L';res2='W';}
-          else{res1='D';res2='D';}
-          const resClass = v=>v==='W'?'br-w':v==='L'?'br-l':'br-d';
-
-          // 선수 목록 - 득점자(어시스트) 형태
-          const formatPlayers = (race) => {
-            const scorers = (r.scorers&&r.scorers[race])||[];
-            const assists = (r.assists&&r.assists[race])||[];
-            // 득점자 표시
-            let str = scorers.join(', ');
-            // 어시스트 표시 (엷게)
-            const onlyAssists = assists.filter(a => !scorers.includes(a));
-            if(onlyAssists.length) str += (str?'<span class="br-assist"> ('+onlyAssists.join(', ')+')</span>':'<span class="br-assist">'+onlyAssists.join(', ')+'</span>');
-            return str;
-          };
-          const p1 = formatPlayers(t1);
-          const p2 = t2 ? formatPlayers(t2) : '';
-
           roundRows +=
-            '<div class="br-row">'+
-              '<div class="br-rnd">R'+(i+1)+'</div>'+
-              '<div class="br-team-block">'+
-                '<div class="br-team-name" style="color:'+RACE_COLOR[t1]+'">'+RACE_SHORT[t1]+'</div>'+
-                '<div class="br-players">'+p1+'</div>'+
-              '</div>'+
-              '<div class="br-score-block">'+
-                '<span class="br-s">'+s1+'</span>'+
-                '<span class="br-colon">-</span>'+
-                '<span class="br-s">'+s2+'</span>'+
-              '</div>'+
-              '<div class="br-team-block br-right">'+
-                (t2?'<div class="br-team-name" style="color:'+RACE_COLOR[t2]+'">'+RACE_SHORT[t2]+'</div>':'')+
-                '<div class="br-players">'+p2+'</div>'+
-              '</div>'+
-              '<div class="br-result-block">'+
-                '<span class="br-res '+resClass(res1)+'">'+res1+'</span>'+
-                (res2!=='-'?'<span class="br-res '+resClass(res2)+'">'+res2+'</span>':'')+
+            '<div class="bc-row">'+
+              '<div class="bc-rnd">R'+(i+1)+'</div>'+
+              '<div class="bc-cell">'+formatCell(r,'protoss')+'</div>'+
+              '<div class="bc-cell">'+formatCell(r,'zerg')+'</div>'+
+              '<div class="bc-cell">'+formatCell(r,'terran')+'</div>'+
+              '<div class="bc-res">'+
+                getRoundRes(r,'protoss')+
+                getRoundRes(r,'zerg')+
+                getRoundRes(r,'terran')+
               '</div>'+
             '</div>';
         });
       } else {
-        roundRows = '<div style="color:var(--text-dim);font-size:10px;text-align:center;padding:12px;letter-spacing:1px;">라운드 데이터 없음</div>';
+        roundRows = '<div style="color:var(--text-dim);font-size:10px;text-align:center;padding:12px;">라운드 데이터 없음</div>';
       }
 
       div.innerHTML =
@@ -1526,12 +1529,14 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
           '<div class="bw-hploss">'+((w.rounds&&w.rounds.length)||0)+'R</div>'+
         '</div>'+
         '<div class="bw-score-row">'+scoreCards+'</div>'+
-        '<div class="br-header">'+
-          '<span class="br-hd-rnd">라운드</span>'+
-          '<span class="br-hd-mid">팀 · 선수</span>'+
-          '<span class="br-hd-res">결과</span>'+
+        '<div class="bc-header">'+
+          '<div class="bc-rnd">R</div>'+
+          '<div class="bc-cell" style="color:'+RACE_COLOR.protoss+'">'+RACE_SHORT.protoss+'</div>'+
+          '<div class="bc-cell" style="color:'+RACE_COLOR.zerg+'">'+RACE_SHORT.zerg+'</div>'+
+          '<div class="bc-cell" style="color:'+RACE_COLOR.terran+'">'+RACE_SHORT.terran+'</div>'+
+          '<div class="bc-res">결과</div>'+
         '</div>'+
-        '<div class="br-list">'+roundRows+'</div>';
+        '<div class="bc-list">'+roundRows+'</div>';
 
       el.appendChild(div);
     });
