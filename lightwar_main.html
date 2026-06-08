@@ -1482,8 +1482,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         if(goals===0 && scorers.length===0){
           return '<span style="color:var(--text-dim);">0</span>';
         }
-        const onlyAssists = assists.filter(a=>!scorers.includes(a));
-        let str = '<span class="bc-goals">'+goals+'</span> '+scorers.join(' ');
+        const goalCount = {};
+        scorers.forEach(n => { goalCount[n] = (goalCount[n]||0)+1; });
+        const uniqueScorers = [...new Set(scorers)];
+        const onlyAssists = assists.filter(a=>!uniqueScorers.includes(a));
+        let str = '<span class="bc-goals">'+goals+'</span> ';
+        str += uniqueScorers.map(n => n+(goalCount[n]>1?'<span style="font-size:8px;color:var(--yellow);">×'+goalCount[n]+'</span>':'')).join(' ');
         if(onlyAssists.length) str += ' <span class="bc-assist">('+onlyAssists.join(', ')+')</span>';
         return str;
       };
