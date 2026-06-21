@@ -1448,7 +1448,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     }
     el.innerHTML = '';
 
-    Object.values(weeklyData).sort((a,b)=>a.week-b.week).forEach(w=>{
+    Object.values(weeklyData).sort((a,b)=>b.week-a.week).forEach(w=>{
       const div = document.createElement('div');
       div.className = 'battle-week';
 
@@ -1480,7 +1480,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         const playing = r.playingTeams&&r.playingTeams.includes(race);
         if(!playing) return '<span style="color:var(--text-dim);font-size:9px;">대기</span>';
         if(goals===0 && scorers.length===0){
-          return '<span style="color:var(--text-dim);">0</span>';
+          return '<span class="bc-goals">0</span>';
         }
         const goalCount = {};
         scorers.forEach(n => { goalCount[n] = (goalCount[n]||0)+1; });
