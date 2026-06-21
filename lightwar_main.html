@@ -1287,6 +1287,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
 </div>
 
+<div id="confirm-modal" style="display:none;position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+  <div class="trade-modal-box">
+    <div class="tmo-header">
+      <span class="tmo-title" id="confirm-modal-title">⚠️ 확인</span>
+    </div>
+    <div style="margin-bottom:16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,215,0,0.85);line-height:1.8;text-align:center;" id="confirm-modal-msg"></div>
+    <div style="display:flex;gap:8px;">
+      <button class="tmo-confirm-btn" style="flex:1;background:rgba(255,60,60,0.15);border-color:rgba(255,60,60,0.4);color:rgba(255,100,100,0.9);" onclick="closeConfirmModal()">취소</button>
+      <button class="tmo-confirm-btn" style="flex:1;" id="confirm-modal-ok">확인</button>
+    </div>
+  </div>
+</div>
+
 <div id="pw-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;">
   <div class="trade-modal-box">
     <div class="tmo-header">
@@ -2088,7 +2101,17 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       alert('이미 트레이드된 선수는 재트레이드 불가'); return;
     }
 
-    // 미네랄 차감
+    // 트레이드 모달 닫고 확인 모달 띄우기
+    document.getElementById('trade-modal').style.display = 'none';
+    openConfirmModal('⇄ 트레이드 확인',
+      '사용한 미네랄은 회수할 수 없습니다.<br><br>'+
+      '<span style="color:var(--yellow);">'+nameA+'</span> ↔ <span style="color:var(--yellow);">'+nameB+'</span><br><br>'+
+      '각 팀 <span style="color:rgba(255,80,80,0.9);">'+TRADE_COST+'M</span> 차감 후 트레이드를 진행하시겠습니까?',
+      ()=>{ _executeTrade(raceA, raceB, nameA, nameB); }
+    );
+  }
+
+  function _executeTrade(raceA, raceB, nameA, nameB){
     earnData[raceA] = Math.max((earnData[raceA]||0) - TRADE_COST, 0);
     earnData[raceB] = Math.max((earnData[raceB]||0) - TRADE_COST, 0);
     document.getElementById('earn-'+raceA).textContent = earnData[raceA].toLocaleString()+' M';
@@ -2132,11 +2155,26 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     });
   }
 
-  const CHARGE_PASSWORD = '1234'; // 충전 비밀번호 (변경 가능)
-  let _pwCallback = null;
+  const CHARGE_PASSWORD = { protoss:'7777', zerg:'4444', terran:'6666' }; // P-R-O-T-O-S-S=7 Z-E-R-G=4 T-E-R-R-A-N=6
+  let _confirmCallback = null;
+  function openConfirmModal(title, msg, callback){
+    _confirmCallback = callback;
+    document.getElementById('confirm-modal-title').textContent = title;
+    document.getElementById('confirm-modal-msg').innerHTML = msg;
+    document.getElementById('confirm-modal-ok').onclick = ()=>{ closeConfirmModal(); if(_confirmCallback) _confirmCallback(); };
+    document.getElementById('confirm-modal').style.display = 'flex';
+  }
+  function closeConfirmModal(){
+    document.getElementById('confirm-modal').style.display = 'none';
+    _confirmCallback = null;
+  }
 
-  function openPwModal(title, callback){
+  let _pwCallback = null;
+  let _pwRace = null;
+
+  function openPwModal(title, race, callback){
     _pwCallback = callback;
+    _pwRace = race;
     document.getElementById('pw-modal-title').textContent = title;
     document.getElementById('pw-input').value = '';
     document.getElementById('pw-error').style.display = 'none';
@@ -2147,10 +2185,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   function closePwModal(){
     document.getElementById('pw-modal').style.display = 'none';
     _pwCallback = null;
+    _pwRace = null;
   }
   function confirmPwModal(){
     const pw = document.getElementById('pw-input').value;
-    if(pw !== CHARGE_PASSWORD){
+    const correct = CHARGE_PASSWORD[_pwRace] || CHARGE_PASSWORD;
+    if(pw !== correct){
       document.getElementById('pw-error').style.display = 'block';
       document.getElementById('pw-input').value = '';
       document.getElementById('pw-input').focus();
@@ -2168,7 +2208,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
     const isDead = teams[race].hp <= 0;
 
-    openPwModal('🔐 충전 인증', ()=>{
+    openPwModal('🔐 충전 인증', race, ()=>{
+      openConfirmModal('⚡ 충전 확인',
+        '사용한 미네랄은 회수할 수 없습니다.<br><br>'+
+        '<span style="color:var(--yellow);font-size:12px;">'+earn+'M</span> 을 기지에 충전하시겠습니까?',
+        ()=>{
       // 패자부활 충전 — 1회 제한 확인
       if(isDead){
         if(reviveChargeUsed[race]){ alert('패자부활 충전은 1회만 가능합니다.'); return; }
@@ -2217,6 +2261,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
           setTimeout(()=>{ elim.classList.remove('active'); elim.style.opacity=''; }, 800);
         }
       }
+        }); // confirmModal 끝
     }); // openPwModal callback 끝
   }
 
