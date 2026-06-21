@@ -1654,14 +1654,21 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       // 주차별 미네랄/경기기록 업데이트
       if(data.weekly){
         weeklyData = data.weekly;
-        // 각 선수 기록 roster에 반영
+        // 각 선수 기록 누적 합산해서 roster에 반영
+        const statsMap = {};
         Object.values(data.weekly).forEach(w=>{
           w.players.forEach(p=>{
-            const r = roster[p.team];
-            if(!r) return;
-            const m = r.find(x=>x.name===p.name);
-            if(m){ m.att=p.att; m.goal=p.goals; m.ast=p.assists; }
+            if(!statsMap[p.name]) statsMap[p.name] = {team:p.team, att:0, goals:0, assists:0};
+            statsMap[p.name].att     += p.att     || 0;
+            statsMap[p.name].goals   += p.goals   || 0;
+            statsMap[p.name].assists += p.assists || 0;
           });
+        });
+        Object.entries(statsMap).forEach(([name, s])=>{
+          const r = roster[s.team];
+          if(!r) return;
+          const m = r.find(x=>x.name===name);
+          if(m){ m.att=s.att; m.goal=s.goals; m.ast=s.assists; }
         });
         // 본리그 미네랄 획득량 업데이트
         const totalMineral = {protoss:0, zerg:0, terran:0};
