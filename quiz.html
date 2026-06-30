@@ -124,6 +124,14 @@ html,body{width:100vw;min-height:100vh;background:var(--bg);font-family:'Rajdhan
 .lb-name{font-size:14px;font-weight:700;color:var(--green);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .lb-name .me{font-size:8px;color:var(--yellow);margin-left:5px;font-family:'Orbitron',sans-serif;}
 .lb-correct{font-family:'Russo One',sans-serif;font-size:15px;color:var(--green);text-align:right;}
+.team-score{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:9px;}
+.ts-card{background:rgba(0,0,0,0.6);border:1px solid var(--green-dim);border-radius:3px;padding:10px 4px;text-align:center;position:relative;transition:.2s;}
+.ts-name{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px;color:var(--green);opacity:.8;}
+.ts-pts{font-family:'Russo One',sans-serif;font-size:22px;color:var(--green);text-shadow:0 0 6px var(--green-glow);line-height:1.1;margin-top:4px;}
+.ts-card.lead{border-color:var(--yellow);box-shadow:0 0 12px var(--yellow-glow);background:#1a1500;}
+.ts-card.lead .ts-name{color:var(--yellow);opacity:1;}
+.ts-card.lead .ts-pts{color:var(--yellow);text-shadow:0 0 10px var(--yellow-glow);}
+.ts-card.lead::before{content:'★';position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-size:12px;color:var(--yellow);text-shadow:0 0 8px var(--yellow-glow);}
 .lb-rate{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);text-align:right;}
 .lb-row.me-row{background:rgba(255,215,0,0.06);}
 
@@ -182,6 +190,13 @@ html,body{width:100vw;min-height:100vh;background:var(--bg);font-family:'Rajdhan
   <div id="today-wrap" class="sc-panel" style="padding:0;">
     <div class="c-tr"></div><div class="c-bl"></div>
     <div id="today-list"><div class="empty">문제 불러오는 중…</div></div>
+  </div>
+
+  <div class="sec-lbl">⬡ 팀 점수 <span class="cnt">리워드 기준</span></div>
+  <div class="team-score" id="team-score">
+    <div class="ts-card" data-team="protoss"><div class="ts-name">PROTOSS</div><div class="ts-pts" id="ts-protoss">–</div></div>
+    <div class="ts-card" data-team="zerg"><div class="ts-name">ZERG</div><div class="ts-pts" id="ts-zerg">–</div></div>
+    <div class="ts-card" data-team="terran"><div class="ts-name">TERRAN</div><div class="ts-pts" id="ts-terran">–</div></div>
   </div>
 
   <div class="sec-lbl">⬡ 리더보드</div>
@@ -385,6 +400,15 @@ html,body{width:100vw;min-height:100vh;background:var(--bg);font-family:'Rajdhan
     const list = document.getElementById('lb-list');
     try{
       const r = await api({action:'quizBoard'});
+      const tt = r.teamTotals || {protoss:0, zerg:0, terran:0};
+      const teams = ['protoss','zerg','terran'];
+      const maxT = Math.max(tt.protoss||0, tt.zerg||0, tt.terran||0);
+      teams.forEach(t=>{
+        const card = document.querySelector('.ts-card[data-team="'+t+'"]');
+        const pts = document.getElementById('ts-'+t);
+        if(pts) pts.textContent = tt[t]||0;
+        if(card) card.classList.toggle('lead', maxT>0 && (tt[t]||0)===maxT);
+      });
       const board = r.board || [];
       if(!board.length){ list.innerHTML = '<div class="empty">아직 응답이 없습니다.</div>'; return; }
       list.innerHTML = '';
