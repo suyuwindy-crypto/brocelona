@@ -135,6 +135,14 @@ html,body{width:100vw;min-height:100vh;background:var(--bg);font-family:'Rajdhan
 .lb-rate{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);text-align:right;}
 .lb-row.me-row{background:rgba(255,215,0,0.06);}
 
+/* 주차 블록 */
+.week-block{display:flex;flex-direction:column;gap:8px;}
+.week-block + .week-block{margin-top:18px;padding-top:15px;border-top:1px dashed rgba(57,255,20,0.18);}
+.week-hdr .wk-range{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-dim);letter-spacing:1px;margin-left:7px;}
+.wk-badge.live{color:var(--yellow);}
+.wk-badge.done{color:var(--text-dim);}
+.week-block .team-score{margin-bottom:0;}
+
 .empty{padding:22px;text-align:center;color:var(--text-dim);font-size:11px;letter-spacing:1px;font-family:'Orbitron',sans-serif;}
 .toast{position:fixed;left:50%;bottom:64px;transform:translateX(-50%);z-index:99;
   background:rgba(0,0,0,0.9);border:1px solid rgba(255,215,0,0.5);color:var(--yellow);
@@ -192,19 +200,8 @@ html,body{width:100vw;min-height:100vh;background:var(--bg);font-family:'Rajdhan
     <div id="today-list"><div class="empty">문제 불러오는 중…</div></div>
   </div>
 
-  <div class="sec-lbl">⬡ 팀 점수 <span class="cnt">리워드 기준</span></div>
-  <div class="team-score" id="team-score">
-    <div class="ts-card" data-team="protoss"><div class="ts-name">PROTOSS</div><div class="ts-pts" id="ts-protoss">–</div></div>
-    <div class="ts-card" data-team="zerg"><div class="ts-name">ZERG</div><div class="ts-pts" id="ts-zerg">–</div></div>
-    <div class="ts-card" data-team="terran"><div class="ts-name">TERRAN</div><div class="ts-pts" id="ts-terran">–</div></div>
-  </div>
-
-  <div class="sec-lbl">⬡ 리더보드</div>
-  <div class="sc-panel" style="padding:0;">
-    <div class="c-tr"></div><div class="c-bl"></div>
-    <div class="lb-row head"><div>#</div><div>참가자</div><div style="text-align:right">총점</div><div style="text-align:right">오늘</div></div>
-    <div id="lb-list"><div class="empty">집계 대기 중…</div></div>
-  </div>
+  <div class="sec-lbl">⬡ 주차별 순위 <span class="cnt">최신 주차 ▲</span></div>
+  <div id="weeks-wrap"><div class="empty">집계 대기 중…</div></div>
 
 </div>
 
@@ -220,6 +217,7 @@ html,body{width:100vw;min-height:100vh;background:var(--bg);font-family:'Rajdhan
 <script>
   const API_URL = 'https://script.google.com/macros/s/AKfycbzh4fFD9JafD2hX7ffutEumOGMg8jKojxP3wfpXjT3LmR_ctbN8-AuBmBgWVRa77ke-/exec';
   const NAME_KEY = 'broceQuizName';
+  const SEASON_START = '2026-06-29';   // 시즌 시작(월) — 주차 날짜 범위 표시용
   let myName = '';
   let todayQuestions = [];
   let todayDate = '';
@@ -395,34 +393,68 @@ html,body{width:100vw;min-height:100vh;background:var(--bg);font-family:'Rajdhan
     }catch(e){ console.error('mine fail', e); }
   }
 
-  // ── 리더보드 (누적 총점) ──
-  async function loadBoard(){
-    const list = document.getElementById('lb-list');
-    try{
-      const r = await api({action:'quizBoard'});
-      const tt = r.teamTotals || {protoss:0, zerg:0, terran:0};
-      const teams = ['protoss','zerg','terran'];
-      const maxT = Math.max(tt.protoss||0, tt.zerg||0, tt.terran||0);
-      teams.forEach(t=>{
-        const card = document.querySelector('.ts-card[data-team="'+t+'"]');
-        const pts = document.getElementById('ts-'+t);
-        if(pts) pts.textContent = tt[t]||0;
-        if(card) card.classList.toggle('lead', maxT>0 && (tt[t]||0)===maxT);
-      });
-      const board = r.board || [];
-      if(!board.length){ list.innerHTML = '<div class="empty">아직 응답이 없습니다.</div>'; return; }
-      list.innerHTML = '';
-      board.forEach((row,i)=>{
-        const div = document.createElement('div');
-        div.className = 'lb-row' + (row.name===myName ? ' me-row' : '');
-        div.innerHTML =
+  // ── 주차별 리더보드 (최신 주차가 맨 위, 지난 주차 아래로 적층) ──
+  function weekRange(wk){
+    const s = SEASON_START.split('-').map(Number);
+    const base = Date.UTC(s[0], s[1]-1, s[2]);
+    const mon = new Date(base + (wk-1)*7*86400000);         // 월
+    const fri = new Date(base + ((wk-1)*7+4)*86400000);     // 금
+    const f = d => String(d.getUTCMonth()+1).padStart(2,'0')+'.'+String(d.getUTCDate()).padStart(2,'0');
+    return f(mon)+'–'+f(fri);
+  }
+
+  function renderWeekBlock(wkData, isCurrent){
+    const block = document.createElement('div');
+    block.className = 'week-block';
+
+    const tt = wkData.teamTotals || {protoss:0, zerg:0, terran:0};
+    const teams = ['protoss','zerg','terran'];
+    const maxT = Math.max(tt.protoss||0, tt.zerg||0, tt.terran||0);
+    const tsCards = teams.map(t=>{
+      const lead = maxT>0 && (tt[t]||0)===maxT;
+      return '<div class="ts-card'+(lead?' lead':'')+'" data-team="'+t+'">'+
+               '<div class="ts-name">'+t.toUpperCase()+'</div>'+
+               '<div class="ts-pts">'+(tt[t]||0)+'</div></div>';
+    }).join('');
+
+    const board = wkData.board || [];
+    let rows;
+    if(!board.length){
+      rows = '<div class="empty">'+(isCurrent?'아직 응답이 없습니다.':'기록 없음')+'</div>';
+    } else {
+      rows = board.map((row,i)=>
+        '<div class="lb-row'+(row.name===myName?' me-row':'')+'">'+
           '<div class="lb-rank'+(i<3?' top':'')+'">'+(i+1)+'</div>'+
           '<div class="lb-name">'+row.name+(row.name===myName?'<span class="me">ME</span>':'')+'</div>'+
           '<div class="lb-correct">'+row.total+'</div>'+
-          '<div class="lb-rate">'+(row.today>0?'+'+row.today:'–')+'</div>';
-        list.appendChild(div);
-      });
-    }catch(e){ list.innerHTML = '<div class="empty">리더보드를 불러오지 못했습니다.</div>'; }
+          '<div class="lb-rate">'+(row.today>0?'+'+row.today:'–')+'</div>'+
+        '</div>').join('');
+    }
+
+    block.innerHTML =
+      '<div class="sec-lbl week-hdr">'+
+        '<span>⬡ WEEK '+wkData.week+'<span class="wk-range">'+weekRange(wkData.week)+'</span></span>'+
+        '<span class="cnt wk-badge '+(isCurrent?'live':'done')+'">'+(isCurrent?'진행중':'확정')+'</span>'+
+      '</div>'+
+      '<div class="team-score">'+tsCards+'</div>'+
+      '<div class="sc-panel" style="padding:0;">'+
+        '<div class="c-tr"></div><div class="c-bl"></div>'+
+        '<div class="lb-row head"><div>#</div><div>참가자</div><div style="text-align:right">총점</div><div style="text-align:right">오늘</div></div>'+
+        rows+
+      '</div>';
+    return block;
+  }
+
+  async function loadBoard(){
+    const wrap = document.getElementById('weeks-wrap');
+    try{
+      const r = await api({action:'quizBoardWk'});
+      const weeks = r.weeks || [];
+      const cur = r.currentWeek;
+      if(!weeks.length){ wrap.innerHTML = '<div class="empty">아직 시즌이 시작되지 않았습니다.</div>'; return; }
+      wrap.innerHTML = '';
+      weeks.forEach(wk=>{ wrap.appendChild(renderWeekBlock(wk, wk.week===cur)); });
+    }catch(e){ wrap.innerHTML = '<div class="empty">리더보드를 불러오지 못했습니다.</div>'; }
   }
 
   // ── init ──
