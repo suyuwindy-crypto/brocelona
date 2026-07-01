@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서범종의 야너두 풋살 레슨 2기</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c0a;
+    --card: #0e1512;
+    --green: #00e676;
+    --green2: #69f0ae;
+    --border: #1a2e20;
+    --text: #ffffff;
+    --muted: #7a9a82;
+    --yellow: #ffd740;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    overflow-x: hidden;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 24px 52px;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 60% 25%, #0a2e14 0%, #080c0a 65%);
+  }
+
+  .hero-bg-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,230,118,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,230,118,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(0,230,118,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-ball {
+    position: absolute;
+    top: 56px; right: 28px;
+    font-size: 80px;
+    opacity: 0.15;
+    transform: rotate(-15deg);
+    animation: float 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes float {
+    0%,100% { transform: rotate(-15deg) translateY(0); }
+    50%      { transform: rotate(-15deg) translateY(-12px); }
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,230,118,0.1);
+    border: 1px solid rgba(0,230,118,0.28);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 0.5px;
+    margin-bottom: 22px;
+    width: fit-content;
+  }
+
+  .hero-badge .yl { color: var(--yellow); }
+
+  .hero-title {
+    font-size: clamp(42px, 11vw, 56px);
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -2.5px;
+    color: #ffffff;
+    margin-bottom: 18px;
+  }
+
+  .hero-title .accent { color: var(--green); }
+
+  .hero-sub {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted);
+    line-height: 1.75;
+    margin-bottom: 30px;
+  }
+
+  .hero-sub strong { color: #ffffff; font-weight: 700; }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .stat-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 8px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--green);
+    line-height: 1;
+    margin-bottom: 5px;
+    letter-spacing: -1px;
+  }
+
+  .stat-label { font-size: 10px; color: var(--muted); letter-spacing: 0.3px; }
+
+  .cta-btn {
+    display: block;
+    width: 100%;
+    background: var(--green);
+    color: #000;
+    font-family: 'Pretendard', sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+    text-align: center;
+    padding: 18px;
+    border-radius: 14px;
+    text-decoration: none;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 0 28px rgba(0,230,118,0.22);
+  }
+
+  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 32px rgba(0,230,118,0.35); }
+
+  .cta-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    font-size: 11px; color: var(--muted);
+    animation: bounce 2s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(6px); }
+  }
+
+  /* ── PROOF BANNER ── */
+  .proof-banner {
+    background: linear-gradient(135deg,#001a09,#002810);
+    border-top: 1px solid rgba(0,230,118,0.18);
+    border-bottom: 1px solid rgba(0,230,118,0.18);
+    padding: 20px 24px;
+    display: flex; align-items: center; gap: 16px;
+  }
+
+  .proof-icon { font-size: 32px; flex-shrink: 0; }
+
+  .proof-text strong {
+    display: block;
+    font-size: 15px; font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 3px;
+  }
+
+  .proof-text span { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── SECTIONS ── */
+  section { padding: 56px 24px; }
+
+  .section-eyebrow {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 3px; color: var(--green);
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+
+  .section-title {
+    font-size: clamp(26px,7vw,34px);
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -1.2px;
+    color: #ffffff;
+    margin-bottom: 8px;
+  }
+
+  .section-desc {
+    font-size: 14px; color: var(--muted);
+    line-height: 1.7; margin-bottom: 36px;
+  }
+
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+  /* ── REVIEWS ── */
+  .reviews-section { background: #090e0b; }
+
+  .review-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 14px;
+    position: relative; overflow: hidden;
+  }
+
+  .review-card::before {
+    content: '"';
+    position: absolute; top: -8px; right: 16px;
+    font-size: 72px;
+    color: rgba(0,230,118,0.06);
+    font-family: Georgia, serif;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .review-stars { color: var(--yellow); font-size: 13px; letter-spacing: 2px; margin-bottom: 10px; }
+
+  .review-text {
+    font-size: 14px; font-weight: 400;
+    line-height: 1.78; color: #e0ece3;
+    margin-bottom: 16px;
+  }
+
+  .review-text .em {
+    background: rgba(0,230,118,0.12);
+    color: var(--green2);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-weight: 600;
+  }
+
+  .review-text strong { color: #ffffff; font-weight: 700; }
+
+  .review-meta {
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .review-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #1a2e20;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+  }
+
+  .review-name { font-size: 12px; color: var(--muted); }
+
+  .review-score {
+    margin-left: auto;
+    font-size: 10px; font-weight: 700;
+    color: var(--green);
+    background: rgba(0,230,118,0.08);
+    border: 1px solid rgba(0,230,118,0.15);
+    border-radius: 4px;
+    padding: 2px 8px;
+  }
+
+  /* ── CURRICULUM ── */
+  .week-item {
+    display: flex; gap: 16px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+
+  .week-num {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: rgba(0,230,118,0.08);
+    border: 1px solid rgba(0,230,118,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800;
+    color: var(--green); flex-shrink: 0; margin-top: 2px;
+  }
+
+  .week-content h4 {
+    font-size: 15px; font-weight: 700;
+    color: #ffffff; margin-bottom: 5px;
+  }
+
+  .week-content p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+  /* ── TARGET ── */
+  .target-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .target-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 14px;
+  }
+
+  .target-card .icon { font-size: 22px; margin-bottom: 8px; display: block; }
+  .target-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* ── INSTRUCTOR ── */
+  .instructor-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 22px;
+  }
+
+  .instructor-top {
+    display: flex; gap: 16px; align-items: center;
+    margin-bottom: 18px;
+  }
+
+  .instructor-avatar {
+    width: 68px; height: 68px; border-radius: 50%;
+    background: linear-gradient(135deg,#00c853,#00796b);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; flex-shrink: 0;
+    border: 2px solid rgba(0,230,118,0.25);
+  }
+
+  .instructor-name {
+    font-size: 22px; font-weight: 900;
+    letter-spacing: -0.8px; color: #ffffff;
+    margin-bottom: 4px;
+  }
+
+  .instructor-role { font-size: 12px; color: var(--green); font-weight: 600; }
+
+  .instructor-desc {
+    font-size: 14px; color: var(--muted); line-height: 1.78;
+  }
+
+  .instructor-desc strong { color: #ffffff; }
+
+  /* ── PRICE ── */
+  .price-section { background: #060a07; }
+
+  .price-card {
+    background: linear-gradient(160deg,#0c1f0f,#071309);
+    border: 1px solid rgba(0,230,118,0.22);
+    border-radius: 20px;
+    padding: 32px 24px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+
+  .price-card::before {
+    content: '';
+    position: absolute; top: -80px; left: 50%;
+    transform: translateX(-50%);
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(0,230,118,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .price-label {
+    font-size: 11px; font-weight: 700;
+    color: var(--muted); letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+
+  .price-original {
+    font-size: 14px; color: var(--muted);
+    text-decoration: line-through; margin-bottom: 4px;
+  }
+
+  .price-main {
+    font-size: 58px; font-weight: 900;
+    color: var(--green); line-height: 1;
+    letter-spacing: -3px; margin-bottom: 4px;
+  }
+
+  .price-main span { font-size: 26px; letter-spacing: 0; }
+
+  .price-period {
+    font-size: 12px; color: var(--muted); margin-bottom: 28px; line-height: 1.6;
+  }
+
+  .price-includes { text-align: left; margin-bottom: 28px; }
+
+  .price-includes li {
+    list-style: none;
+    font-size: 14px; color: #e0ece3;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .price-includes li::before {
+    content: '✓'; color: var(--green);
+    font-weight: 800; font-size: 13px; flex-shrink: 0;
+  }
+
+  .price-includes li:last-child { border-bottom: none; }
+
+  /* ── FAQ ── */
+  .faq-item { border-bottom: 1px solid var(--border); padding: 18px 0; }
+
+  .faq-q {
+    font-size: 14px; font-weight: 700; color: #ffffff;
+    margin-bottom: 8px;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+
+  .faq-q .q-mark {
+    color: var(--green); font-weight: 900; font-size: 15px; flex-shrink: 0;
+  }
+
+  .faq-a { font-size: 13px; color: var(--muted); line-height: 1.7; padding-left: 24px; }
+
+  /* ── FINAL CTA ── */
+  .final-cta {
+    background: linear-gradient(180deg,#060a07 0%,#001a09 100%);
+    padding: 64px 24px 88px;
+    text-align: center;
+  }
+
+  .spots-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,215,64,0.08);
+    border: 1px solid rgba(255,215,64,0.22);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px; font-weight: 700; color: var(--yellow);
+    margin-bottom: 24px;
+  }
+
+  .pulse {
+    width: 7px; height: 7px;
+    background: var(--yellow); border-radius: 50%;
+    display: inline-block;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:.35; transform:scale(.75); }
+  }
+
+  .final-title {
+    font-size: clamp(34px,9vw,50px);
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -2px;
+    color: #ffffff;
+    margin-bottom: 16px;
+  }
+
+  .final-title span { color: var(--green); }
+
+  .final-desc {
+    font-size: 14px; color: var(--muted);
+    line-height: 1.75; margin-bottom: 32px;
+  }
+
+  .apply-note {
+    font-size: 12px; color: var(--muted); margin-top: 14px;
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    display: flex; align-items: flex-end; justify-content: center;
+    z-index: 999;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal-sheet {
+    background: #0e1512;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 24px 24px 0 0;
+    padding: 32px 24px 48px;
+    width: 100%; max-width: 480px;
+    transform: translateY(40px);
+    transition: transform .3s cubic-bezier(.22,.61,.36,1);
+  }
+
+  .modal-overlay.open .modal-sheet { transform: translateY(0); }
+
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 24px;
+  }
+
+  .modal-title {
+    font-size: 22px; font-weight: 900;
+    color: #ffffff; letter-spacing: -0.8px;
+    margin-bottom: 6px;
+  }
+
+  .modal-sub {
+    font-size: 13px; color: var(--muted);
+    margin-bottom: 28px; line-height: 1.6;
+  }
+
+  .modal-options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+
+  .modal-btn {
+    display: flex; align-items: center; gap: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    text-decoration: none;
+    color: #ffffff;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 15px; font-weight: 700;
+    transition: background .15s, border-color .15s;
+    cursor: pointer;
+  }
+
+  .modal-btn:hover { background: rgba(0,230,118,0.06); border-color: rgba(0,230,118,0.3); }
+
+  .modal-btn .btn-icon { font-size: 22px; flex-shrink: 0; }
+
+  .modal-btn .btn-sub {
+    font-size: 11px; font-weight: 400;
+    color: var(--muted); display: block; margin-top: 2px;
+  }
+
+  .modal-close {
+    display: block; width: 100%;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    color: var(--muted);
+    font-family: 'Pretendard', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-bg-lines"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-ball">⚽</div>
+
+  <div class="hero-badge">⚡ 1기 수강생 5명 <span class="yl">전원 2기 희망</span></div>
+
+  <h1 class="hero-title">
+    야, 너도<br>
+    <span class="accent">풋살</span><br>
+    할 수 있어
+  </h1>
+
+  <p class="hero-sub">
+    <strong>서범종의 야너두 풋살 레슨 2기</strong><br>
+    완전 기초부터 — 경기에서 바로 쓰는 실전 트레이닝<br>
+    4주 · 주 1회 · 소수 정예
+  </p>
+
+  <div class="hero-stats">
+    <div class="stat-box">
+      <div class="stat-num">4.8</div>
+      <div class="stat-label">평균 만족도</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">5/5</div>
+      <div class="stat-label">2기 재희망</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">4주</div>
+      <div class="stat-label">완성 커리큘럼</div>
+    </div>
+  </div>
+
+  <a href="#" class="cta-btn" onclick="openModal(event)">2기 신청하기 →</a>
+  <p class="cta-note">👀 소수 정예 모집 · 자리 마감 시 조기 종료</p>
+
+  <div class="scroll-hint"><span>스크롤</span><span>↓</span></div>
+</section>
+
+<!-- ── PROOF ── -->
+<div class="proof-banner">
+  <div class="proof-icon">💬</div>
+  <div class="proof-text">
+    <strong>1기 수강생 5명 전원이 2기를 희망했습니다</strong>
+    <span>"너무 짧아서 아쉬웠다" — 1기 수강생 익명 후기</span>
+  </div>
+</div>
+
+<!-- ── REVIEWS ── -->
+<section class="reviews-section">
+  <div class="section-eyebrow">REAL REVIEWS</div>
+  <h2 class="section-title">수강생 솔직 후기</h2>
+  <p class="section-desc">1기 수강생 5명의 익명 구글 폼 후기입니다.</p>
+
+  <div class="review-card">
+    <div class="review-stars">★★★★☆</div>
+    <p class="review-text">경기 전에 미리 와서 하는 <span class="em">30분 스트레칭 기본기</span>가 워밍업 준비 및 부상방지에도 참 좋습니다. <strong>꾸준히 계속했으면 좋겠어요.</strong></p>
+    <div class="review-meta">
+      <div class="review-avatar">⚽</div>
+      <span class="review-name">익명 수강생 A</span>
+      <span class="review-score">만족도 4점</span>
+    </div>
+  </div>
+
+  <div class="review-card">
+    <div class="review-stars">★★★★★</div>
+    <p class="review-text"><span class="em">기본 볼터치, 볼감각 훈련</span> 좋았습니다.</p>
+    <div class="review-meta">
+      <div class="review-avatar">⚽</div>
+      <span class="review-name">익명 수강생 B</span>
+      <span class="review-score">만족도 5점</span>
+    </div>
+  </div>
+
+  <div class="review-card">
+    <div class="review-stars">★★★★★</div>
+    <p class="review-text">매 수업 후 <span class="em">그 날 경기에서 적용할 수 있는 걸 한 가지씩</span> 말씀해주셨습니다. 워밍업 스트레칭도 꽤나 유용했어요. <strong>다른 데에서도 써먹고 있어요.</strong> 이전 시간에 배운 것도 복습시켜주시는 게 잊어버리지 않도록 하는 방법도 되고 지속적인 훈련이 되었습니다.</p>
+    <div class="review-meta">
+      <div class="review-avatar">⚽</div>
+      <span class="review-name">익명 수강생 C</span>
+      <span class="review-score">만족도 5점</span>
+    </div>
+  </div>
+
+  <div class="review-card">
+    <div class="review-stars">★★★★★</div>
+    <p class="review-text"><span class="em">경기 전 몸 풀기</span>와 <span class="em">이해하기 쉬운 설명!</span> <strong>너무 짧아서 아쉬웠다ㅜㅜ</strong></p>
+    <div class="review-meta">
+      <div class="review-avatar">⚽</div>
+      <span class="review-name">익명 수강생 D</span>
+      <span class="review-score">만족도 5점</span>
+    </div>
+  </div>
+
+  <div class="review-card">
+    <div class="review-stars">★★★★★</div>
+    <p class="review-text">선생님께서 정말 <span class="em">친절하게 잘 알려주셔서</span> <strong>배우러 갈 때 기대감이 생기고 배우는 동안 즐거웠습니다.</strong> 주중에 배운 것을 복습하는 챌린지 같은 걸 하면 카톡방에 활력도 생기고 실력도 더 늘 것 같아요!</p>
+    <div class="review-meta">
+      <div class="review-avatar">⚽</div>
+      <span class="review-name">익명 수강생 E</span>
+      <span class="review-score">만족도 5점</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── CURRICULUM ── -->
+<section>
+  <div class="section-eyebrow">CURRICULUM</div>
+  <h2 class="section-title">4주 커리큘럼</h2>
+  <p class="section-desc">매주 경기에서 바로 써먹을 수 있는 한 가지에 집중합니다.</p>
+
+  <div class="week-item">
+    <div class="week-num">1주</div>
+    <div class="week-content">
+      <h4>기본기 &amp; 워밍업 루틴</h4>
+      <p>스트레칭·준비 운동부터 — 부상 없이 오래 즐기는 몸 만들기. 발바닥 볼 감각 기초 훈련.</p>
+    </div>
+  </div>
+  <div class="week-item">
+    <div class="week-num">2주</div>
+    <div class="week-content">
+      <h4>드리블 &amp; 볼 컨트롤</h4>
+      <p>첫 터치 안정화, 볼 컨트롤. 경기 중 당황하지 않는 볼 소유 감각.</p>
+    </div>
+  </div>
+  <div class="week-item">
+    <div class="week-num">3주</div>
+    <div class="week-content">
+      <h4>패스 &amp; 포지셔닝</h4>
+      <p>패스 정확도 + 공간 읽기. 어디에 서야 하는지를 배웁니다.</p>
+    </div>
+  </div>
+  <div class="week-item">
+    <div class="week-num">4주</div>
+    <div class="week-content">
+      <h4>실전 적용 &amp; 개인 피드백</h4>
+      <p>1~3주 총복습 + 실전 경기 적용. 개인별 성장 포인트 1:1 피드백.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── TARGET ── -->
+<section>
+  <div class="section-eyebrow">FOR WHO</div>
+  <h2 class="section-title">이런 분께<br>딱 맞아요</h2>
+  <p class="section-desc">레벨 무관, 처음부터 친절하게 알려드립니다.</p>
+  <div class="target-grid">
+    <div class="target-card"><span class="icon">🌱</span><p>풋살이 처음이거나 기초가 부족한 분</p></div>
+    <div class="target-card"><span class="icon">😅</span><p>경기는 하는데 뭘 배워야 할지 모르는 분</p></div>
+    <div class="target-card"><span class="icon">💪</span><p>부상 없이 오래 즐기고 싶은 분</p></div>
+    <div class="target-card"><span class="icon">🏃</span><p>당장 다음 경기에서 써먹고 싶은 분</p></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── INSTRUCTOR ── -->
+<section>
+  <div class="section-eyebrow">INSTRUCTOR</div>
+  <h2 class="section-title">강사 소개</h2>
+  <div class="instructor-card">
+    <div class="instructor-top">
+      <div class="instructor-avatar">⚽</div>
+      <div>
+        <div class="instructor-name">서범종</div>
+        <div class="instructor-role">풋살 레슨 강사 · 브로셀로나 리그 운영</div>
+      </div>
+    </div>
+    <p class="instructor-desc">브로셀로나 풋살 리그를 직접 기획·운영하며 다양한 실력의 플레이어와 함께 뛰어온 경험. 가르치는 것보다 <strong>같이 즐기는 것</strong>을 더 좋아하고, 매 수업마다 그날 경기에 바로 쓸 수 있는 것 하나씩을 전달하는 게 목표입니다. 1기 수강생 전원이 "매우 이해하기 쉬웠어요"라고 답했습니다.</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── PRICE ── -->
+<section class="price-section">
+  <div class="section-eyebrow">PRICING</div>
+  <h2 class="section-title">수강료</h2>
+  <p class="section-desc">배움의 문턱을 낮추는 게 목표입니다.</p>
+  <div class="price-card">
+    <p class="price-label">4주 과정 전체</p>
+    <p class="price-original">시중 풋살 레슨 50,000~100,000원</p>
+    <div class="price-main">10,000<span>원</span></div>
+    <p class="price-period">4주 총액 · 1기 피드백 반영 소폭 인상</p>
+    <ul class="price-includes">
+      <li>주 1회 × 4주 레슨 (경기 전 30분)</li>
+      <li>매 수업 실전 적용 포인트 전달</li>
+      <li>워밍업·스트레칭 루틴 공유</li>
+      <li>수강생 단톡방 (복습 자료)</li>
+      <li>4주차 개인 성장 피드백</li>
+    </ul>
+    <a href="#" class="cta-btn" onclick="openModal(event)">지금 신청하기 →</a>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── FAQ ── -->
+<section>
+  <div class="section-eyebrow">FAQ</div>
+  <h2 class="section-title">자주 묻는 질문</h2>
+  <div class="faq-item">
+    <div class="faq-q"><span class="q-mark">Q</span>완전 초보여도 괜찮나요?</div>
+    <p class="faq-a">네. 1기 수강생 중에도 처음인 분이 계셨고 5점 만점을 주셨어요. 처음이라 오히려 빠르게 늡니다.</p>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q"><span class="q-mark">Q</span>레슨은 어디서 하나요?</div>
+    <p class="faq-a">기존 경기 당일, 경기 시작 30분 전 같은 구장에서 진행됩니다. 별도 이동 없이 바로 참여 가능해요.</p>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q"><span class="q-mark">Q</span>1기와 내용이 겹치나요?</div>
+    <p class="faq-a">2기는 개인 피드백 시간 확대 + 복습 챌린지가 추가됩니다. 1기 수강생도 새롭게 배울 수 있어요.</p>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q"><span class="q-mark">Q</span>중간에 빠지는 날이 있어도 되나요?</div>
+    <p class="faq-a">경기 참석 일정에 맞춰 유연하게 조율 가능합니다. 빠진 날 내용은 다음 수업 복습에 포함됩니다.</p>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ── -->
+<section class="final-cta">
+  <div class="spots-badge"><span class="pulse"></span>소수 정예 모집 중</div>
+  <h2 class="final-title">이번엔<br><span>진짜 한다</span></h2>
+  <p class="final-desc">1기가 남긴 솔직한 후기가 2기를 만들었습니다.<br>자리는 빠르게 찰 수 있어요.</p>
+  <a href="#" class="cta-btn" onclick="openModal(event)">신청하기 →</a>
+  <p class="apply-note">카카오톡 또는 문자로 신청 · 선착순 마감</p>
+</section>
+
+<!-- ── MODAL ── -->
+<div class="modal-overlay" id="applyModal" onclick="closeModalOutside(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">2기 신청하기</div>
+    <p class="modal-sub">아래 방법으로 서범종에게 연락해 주세요.<br>이름 + "야너두 2기 신청" 메시지만 보내시면 됩니다.</p>
+    <div class="modal-options">
+      <a class="modal-btn" href="sms:010-8483-1455">
+        <span class="btn-icon">💬</span>
+        <span>
+          문자로 신청
+          <span class="btn-sub">010-8483-1455 · 이름 + "야너두 2기 신청"</span>
+        </span>
+      </a>
+      <a class="modal-btn" href="https://open.kakao.com/o/gMULlHRg" target="_blank">
+        <span class="btn-icon">🟡</span>
+        <span>
+          빛진 풋살방 오픈채팅 입장
+          <span class="btn-sub">빛진 풋살방 · 입장 후 신청 메시지 남기기</span>
+        </span>
+      </a>
+      <a class="modal-btn" href="https://naver.me/FG3yBftA" target="_blank">
+        <span class="btn-icon">📋</span>
+        <span>
+          신청서 작성하기
+          <span class="btn-sub">네이버 폼 · 간단 정보 입력 후 제출</span>
+        </span>
+      </a>
+    </div>
+    <button class="modal-close" onclick="closeModal()">닫기</button>
+  </div>
+</div>
+
+<script>
+  function openModal(e) {
+    e.preventDefault();
+    document.getElementById('applyModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('applyModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('applyModal')) closeModal();
+  }
+</script>
+
+</body>
+</html>
