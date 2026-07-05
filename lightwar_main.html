@@ -1735,6 +1735,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         if(cnt) cnt.textContent = roster[race].length+'명';
       });
 
+      // 로스터가 채워졌으니 트레이드 버튼 활성화 상태 재평가 (트레이드 유닛 보유 팀만 활성)
+      updateTradeBtns();
+
     } catch(e){
       console.error('mainleague load error', e);
       // API 실패해도 기본값으로 화면 표시
