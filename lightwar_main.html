@@ -1377,6 +1377,25 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   </div>
 </div>
 <script>
+  // ── 디버그 수집기 (?debug=1 로 열면 화면에 표시) ──
+  const QZDBG = { errors:[], notes:[] };
+  window.addEventListener('error', e => { QZDBG.errors.push((e.message||'?')+' @'+(e.filename||'').split('/').pop()+':'+e.lineno); qzDbgRender(); });
+  window.addEventListener('unhandledrejection', e => { QZDBG.errors.push('Promise: '+(e.reason&&e.reason.message||e.reason)); qzDbgRender(); });
+  function qzDbgNote(s){ QZDBG.notes.push(s); qzDbgRender(); }
+  function qzDbgRender(){
+    if(!/[?&]debug=1/.test(location.search)) return;
+    let el = document.getElementById('qz-debug');
+    if(!el){
+      el = document.createElement('div');
+      el.id = 'qz-debug';
+      el.style.cssText = 'position:fixed;left:4px;right:4px;bottom:48px;z-index:999999;background:rgba(0,0,0,0.92);border:1px solid #ffd700;color:#39ff14;font:10px/1.5 monospace;padding:8px;max-height:40vh;overflow-y:auto;white-space:pre-wrap;word-break:break-all;';
+      document.body.appendChild(el);
+    }
+    el.textContent =
+      '[NOTES]\n' + QZDBG.notes.join('\n') +
+      '\n\n[ERRORS]\n' + (QZDBG.errors.length ? QZDBG.errors.join('\n') : '(none)');
+  }
+
   const MAX_HP=10000,SEG=10;
   const teams={protoss:{hp:10000},zerg:{hp:10000},terran:{hp:10000}};
   function renderSeg(race,hp,max){
@@ -1693,6 +1712,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
             att:0, goal:0, ast:0
           }));
         });
+        // ★ 로스터 수신 즉시 트레이드 버튼 재평가 — 이후 렌더링이 실패해도 버튼은 살아있게
+        try { updateTradeBtns(); qzDbgNote('roster loaded → updateTradeBtns OK | trade유닛: P='+hasTradeUnit('protoss')+' Z='+hasTradeUnit('zerg')+' T='+hasTradeUnit('terran')); }
+        catch(e){ QZDBG.errors.push('updateTradeBtns: '+e.message); qzDbgRender(); }
       }
 
       // 주차별 미네랄/경기기록 업데이트
@@ -1723,23 +1745,30 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         });
       }
 
-      // BATTLE/WEEKLY 탭 렌더
-      renderBattle();
-      buildWeekBtns();
-      renderHpLossChart();
+      // BATTLE/WEEKLY 탭 렌더 — 단계별 보호: 하나가 실패해도 나머지는 진행
+      try { renderBattle(); } catch(e){ QZDBG.errors.push('renderBattle: '+e.message); qzDbgRender(); }
+      try { buildWeekBtns(); } catch(e){ QZDBG.errors.push('buildWeekBtns: '+e.message); qzDbgRender(); }
+      try { renderHpLossChart(); } catch(e){ QZDBG.errors.push('renderHpLossChart: '+e.message); qzDbgRender(); }
 
       // 팀원 목록 다시 렌더
-      ['protoss','zerg','terran'].forEach(race=>{
-        renderRoster(race);
-        const cnt = document.getElementById('roster-count-'+race);
-        if(cnt) cnt.textContent = roster[race].length+'명';
-      });
+      try {
+        ['protoss','zerg','terran'].forEach(race=>{
+          renderRoster(race);
+          const cnt = document.getElementById('roster-count-'+race);
+          if(cnt) cnt.textContent = roster[race].length+'명';
+        });
+      } catch(e){ QZDBG.errors.push('renderRoster: '+e.message); qzDbgRender(); }
 
       // 로스터가 채워졌으니 트레이드 버튼 활성화 상태 재평가 (트레이드 유닛 보유 팀만 활성)
       updateTradeBtns();
+      qzDbgNote('loadMainLeague 완료 | 버튼 disabled: '+['protoss','zerg','terran'].map(r=>{
+        const b=document.querySelector('.trade-btn[onclick="openTradeModal(\''+r+'\')"]');
+        return r.slice(0,3).toUpperCase()+'='+(b?b.disabled:'?');
+      }).join(' '));
 
     } catch(e){
       console.error('mainleague load error', e);
+      QZDBG.errors.push('loadMainLeague: '+(e&&e.message||e)); qzDbgRender();
       // API 실패해도 기본값으로 화면 표시
       ['protoss','zerg','terran'].forEach(race=>{
         const numEl = document.getElementById('hp-'+race);
