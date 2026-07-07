@@ -2076,6 +2076,22 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     return roster[race] && roster[race].some(m=>m.unit==='trade');
   }
 
+  // ── 트레이드 가능 요일: 일(0)·월(1), KST 기준 ──
+  // 화요일 경기 신청(선착순) 이후 명단 확정 기간이라 화~토 선수 변동 불가
+  function isTradeDay(){
+    const kstDay = new Date(Date.now() + 9*3600*1000).getUTCDay();
+    return kstDay === 0 || kstDay === 1;
+  }
+  function showTradeDayNotice(){
+    openConfirmModal('⇄ 트레이드 안내',
+      '트레이딩은 <span style="color:var(--yellow);">일 · 월요일</span>에만 가능합니다.<br><br>'+
+      '<span style="font-size:9px;color:rgba(57,255,20,0.6);">화~토요일은 경기 신청 및 명단 확정 기간으로<br>선수 변동이 제한됩니다.</span>',
+      null);
+    // 안내 전용 — 취소 버튼 숨기고 확인만 표시
+    const btns = document.querySelectorAll('#confirm-modal .tmo-confirm-btn');
+    if(btns.length === 2){ btns[0].style.display = 'none'; }
+  }
+
   function updateTradeBtns(){
     ['protoss','zerg','terran'].forEach(race=>{
       const btn = document.querySelector(`.trade-btn[onclick="openTradeModal('${race}')"]`);
@@ -2091,6 +2107,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
   function openTradeModal(race){
     if(!hasTradeUnit(race)){ return; }
+    if(!isTradeDay()){ showTradeDayNotice(); return; }
     tradeModalRace = race;
     const modal = document.getElementById('trade-modal');
     modal.style.display = 'flex';
@@ -2149,6 +2166,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   }
 
   function confirmTrade(){
+    // 자정 넘겨 모달을 열어둔 경우 대비 — 확정 시점에도 요일 재검사
+    if(!isTradeDay()){
+      document.getElementById('trade-modal').style.display = 'none';
+      showTradeDayNotice();
+      return;
+    }
     const raceA = tradeModalRace;
     const raceB = document.getElementById('tmo-race-b').value;
     const nameA = document.getElementById('tmo-player-a').value;
@@ -2227,6 +2250,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     _confirmCallback = callback;
     document.getElementById('confirm-modal-title').textContent = title;
     document.getElementById('confirm-modal-msg').innerHTML = msg;
+    // 취소 버튼 표시 복원 (안내 전용 모달에서 숨겼을 수 있음)
+    const btns = document.querySelectorAll('#confirm-modal .tmo-confirm-btn');
+    if(btns.length === 2){ btns[0].style.display = ''; }
     document.getElementById('confirm-modal-ok').onclick = ()=>{ closeConfirmModal(); if(_confirmCallback) _confirmCallback(); };
     document.getElementById('confirm-modal').style.display = 'flex';
   }
