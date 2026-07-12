@@ -175,7 +175,7 @@ body{overflow-x:hidden;}
       <div class="my-row">
         <div class="my-cell"><div class="my-lbl">남은 도전</div><div class="my-val hl" id="my-remaining">–</div></div>
         <div class="my-cell"><div class="my-lbl">오늘 최고</div><div class="my-val" id="my-today">–</div></div>
-        <div class="my-cell"><div class="my-lbl">누적 점수</div><div class="my-val" id="my-total">–</div></div>
+        <div class="my-cell"><div class="my-lbl">최고 기록</div><div class="my-val" id="my-total">–</div></div>
       </div>
     </div>
 
@@ -196,7 +196,7 @@ body{overflow-x:hidden;}
       </div>
     </div>
 
-    <div class="sec-lbl">⬡ 팀 점수 <span class="cnt">전원 합산 · 시즌 누적</span></div>
+    <div class="sec-lbl">⬡ 팀 점수 <span class="cnt">팀원 최고기록 합산</span></div>
     <div class="team-score">
       <div class="ts-card" data-team="protoss"><div class="ts-name">PROTOSS</div><div class="ts-pts" id="ts-protoss">–</div></div>
       <div class="ts-card" data-team="zerg"><div class="ts-name">ZERG</div><div class="ts-pts" id="ts-zerg">–</div></div>
@@ -205,7 +205,7 @@ body{overflow-x:hidden;}
 
     <div class="sc-panel" style="padding:0;">
       <div class="c-tr"></div><div class="c-bl"></div>
-      <div class="lb-row head"><div>#</div><div>참가자</div><div style="text-align:right">누적</div><div style="text-align:right">오늘</div></div>
+      <div class="lb-row head"><div>#</div><div>참가자</div><div style="text-align:right">최고</div><div style="text-align:right">오늘</div></div>
       <div id="lb-list"><div class="empty">집계 대기 중…</div></div>
     </div>
 
