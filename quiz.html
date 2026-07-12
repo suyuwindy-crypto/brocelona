@@ -328,7 +328,7 @@ html,body{width:100vw;min-height:100vh;background:var(--bg);font-family:'Rajdhan
         '<div class="qc-result" id="res-'+q.id+'"></div>';
       wrap.appendChild(card);
 
-      if(answered){ lockCard(q, answered.answer, answered.correct, null, null, true); }
+      if(answered){ lockCard(q, answered.answer, answered.correct, answered.correctAnswer||null, answered.explain||null, true, answered.source||null); }
     });
   }
 
