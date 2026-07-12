@@ -225,6 +225,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbzh4fFD9JafD2hX7ffutEum
 const NAME_KEY = 'broceQuizName';
 let myName = localStorage.getItem(NAME_KEY) || '';
 let remaining = null;
+let isWeekend = false;
 
 async function api(params){
   const q = new URLSearchParams(params).toString();
@@ -260,6 +261,7 @@ async function loadBoard(){
   try{
     const r = await api({ action:'shootBoard', name:myName });
     remaining = r.remaining;
+    isWeekend = !!r.weekend;
     document.getElementById('my-remaining').textContent = r.remaining + '/' + r.maxAttempts;
 
     const me = (r.board||[]).find(x=>x.name===myName);
@@ -300,6 +302,15 @@ async function loadBoard(){
 function updateStartBtn(){
   const btn = document.getElementById('ov-btn');
   const note = document.getElementById('ov-note');
+  if(isWeekend){
+    document.getElementById('ov-title').textContent = '💤 주말 휴식';
+    document.getElementById('ov-sub').innerHTML = '슈팅 게임은 퀴즈와 동일하게<br><b style="color:var(--yellow)">월~금요일</b>에만 진행됩니다.';
+    document.getElementById('my-remaining').textContent = '휴식';
+    btn.disabled = true;
+    btn.textContent = '월요일에 만나요';
+    note.textContent = '';
+    return;
+  }
   if(remaining !== null && remaining <= 0){
     btn.disabled = true;
     btn.textContent = '내일 다시 도전';
@@ -408,6 +419,7 @@ function diffLabel(round){
 }
 
 function startGame(){
+  if(isWeekend) return;
   if(remaining !== null && remaining <= 0) return;
   const g = geo();
   const d = difficulty(1);
@@ -583,6 +595,9 @@ async function showEndOverlay(msg){
     if(r.error==='limit'){
       document.getElementById('ov-sub').innerHTML='오늘 도전 횟수를 모두 사용했습니다.';
       remaining = 0;
+    } else if(r.error==='weekend'){
+      document.getElementById('ov-sub').innerHTML='주말에는 기록이 저장되지 않습니다.<br>월~금요일에 다시 도전해주세요.';
+      isWeekend = true;
     } else {
       remaining = r.remaining;
       document.getElementById('ov-sub').innerHTML =
