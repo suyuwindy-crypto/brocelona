@@ -123,6 +123,17 @@ html,body{width:100vw;min-height:100vh;background:var(--bg);font-family:'Rajdhan
 .lb-rank.top{color:var(--yellow);text-shadow:0 0 8px var(--yellow-glow);}
 .lb-name{font-size:14px;font-weight:700;color:var(--green);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .lb-name .me{font-size:8px;color:var(--yellow);margin-left:5px;font-family:'Orbitron',sans-serif;}
+/* 팀 태그 */
+.team-tag{font-size:7px;font-family:'Orbitron',sans-serif;margin-left:5px;vertical-align:middle;letter-spacing:1px;}
+.team-tag.protoss{color:rgba(242,199,68,0.85);}
+.team-tag.zerg{color:rgba(220,80,80,0.85);}
+.team-tag.terran{color:rgba(94,200,230,0.85);}
+/* 팀 내 순위 뱃지 (1~3위) */
+.t-rank{font-size:7px;font-weight:700;font-family:'Orbitron',sans-serif;margin-left:4px;padding:0 4px;border-radius:2px;vertical-align:middle;letter-spacing:0.5px;}
+.t-rank.protoss{color:rgba(242,199,68,0.95);border:1px solid rgba(242,199,68,0.45);background:rgba(242,199,68,0.07);}
+.t-rank.zerg{color:rgba(220,80,80,0.95);border:1px solid rgba(220,80,80,0.45);background:rgba(220,80,80,0.07);}
+.t-rank.terran{color:rgba(94,200,230,0.95);border:1px solid rgba(94,200,230,0.45);background:rgba(94,200,230,0.07);}
+.t-rank.r1{box-shadow:0 0 6px rgba(255,215,0,0.35);border-color:rgba(255,215,0,0.7);}
 .lb-correct{font-family:'Russo One',sans-serif;font-size:15px;color:var(--green);text-align:right;}
 .team-score{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:9px;}
 .ts-card{background:rgba(0,0,0,0.6);border:1px solid var(--green-dim);border-radius:3px;padding:10px 4px;text-align:center;position:relative;transition:.2s;}
@@ -423,13 +434,24 @@ html,body{width:100vw;min-height:100vh;background:var(--bg);font-family:'Rajdhan
     if(!board.length){
       rows = '<div class="empty">'+(isCurrent?'아직 응답이 없습니다.':'기록 없음')+'</div>';
     } else {
-      rows = board.map((row,i)=>
-        '<div class="lb-row'+(row.name===myName?' me-row':'')+'">'+
+      // 팀 내 순위 계산 (전체 정렬 순서대로 팀별 1·2·3위 부여, 0점 제외)
+      const teamRankCnt = {protoss:0, zerg:0, terran:0};
+      rows = board.map((row,i)=>{
+        let trBadge = '';
+        if(row.team && teamRankCnt[row.team] !== undefined && row.total > 0){
+          teamRankCnt[row.team]++;
+          if(teamRankCnt[row.team] <= 3){
+            trBadge = '<span class="t-rank '+row.team+' r'+teamRankCnt[row.team]+'">'+teamRankCnt[row.team]+'위</span>';
+          }
+        }
+        const tag = row.team ? '<span class="team-tag '+row.team+'">'+row.team.slice(0,3).toUpperCase()+'</span>' : '';
+        return '<div class="lb-row'+(row.name===myName?' me-row':'')+'">'+
           '<div class="lb-rank'+(i<3?' top':'')+'">'+(i+1)+'</div>'+
-          '<div class="lb-name">'+row.name+(row.name===myName?'<span class="me">ME</span>':'')+'</div>'+
+          '<div class="lb-name">'+row.name+tag+trBadge+(row.name===myName?'<span class="me">ME</span>':'')+'</div>'+
           '<div class="lb-correct">'+row.total+'</div>'+
           '<div class="lb-rate">'+(row.today>0?'+'+row.today:'–')+'</div>'+
-        '</div>').join('');
+        '</div>';
+      }).join('');
     }
 
     block.innerHTML =
