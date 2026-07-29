@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BROCELONA — DROPSHIP 카풀 출격 보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Orbitron:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04080a;
+  --panel:#0a1410;
+  --panel2:#0d1a13;
+  --line:#1c3a2a;
+  --line-hi:#2e5c42;
+  --neon:#2bff88;
+  --neon-dim:#9df5c2;
+  --amber:#ffb84d;
+  --red:#ff4d5e;
+  --text:#d8efe2;
+  --muted:#7ba38c;
+  --disp:'Russo One',sans-serif;
+  --num:'Orbitron',monospace;
+  --body:'Rajdhani',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--body);
+  min-height:100vh;
+  background-image:
+    linear-gradient(rgba(43,255,136,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(43,255,136,.03) 1px, transparent 1px);
+  background-size:36px 36px;
+}
+.wrap{max-width:720px;margin:0 auto;padding:20px 14px 120px}
+
+/* ── 헤더 ── */
+.hud-top{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:11px;letter-spacing:.2em;color:var(--muted);
+  text-transform:uppercase;margin-bottom:10px;
+}
+.hud-top .live{color:var(--neon)}
+.hud-top .live::before{
+  content:'';display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--neon);margin-right:6px;
+  animation:blink 1.6s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+h1{
+  font-family:var(--disp);
+  font-size:clamp(24px,6vw,34px);
+  letter-spacing:.04em;
+  color:#fff;
+  text-shadow:0 0 18px rgba(43,255,136,.45);
+}
+h1 .accent{color:var(--neon)}
+.sub{color:var(--muted);font-size:14px;font-weight:500;letter-spacing:.06em;margin-top:4px}
+
+/* ── 작전 브리핑 ── */
+.briefing{
+  margin-top:18px;
+  border:1px solid var(--line-hi);
+  background:linear-gradient(180deg,var(--panel2),var(--panel));
+  position:relative;
+  padding:16px 16px 14px;
+}
+.briefing::before{
+  content:'AWAY MISSION BRIEFING';
+  position:absolute;top:-9px;left:12px;
+  background:var(--bg);padding:0 8px;
+  font-family:var(--num);font-size:10px;letter-spacing:.25em;color:var(--amber);
+}
+.briefing .venue{
+  font-family:var(--disp);font-size:20px;color:var(--amber);
+  text-shadow:0 0 12px rgba(255,184,77,.35);
+}
+.briefing .meta{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:8px;font-size:15px;font-weight:600}
+.briefing .meta span{color:var(--muted);font-weight:500;font-size:12px;letter-spacing:.12em;margin-right:6px}
+.briefing .addr{margin-top:8px;font-size:14px;color:var(--neon-dim)}
+.briefing .addr a{color:var(--neon-dim)}
+
+/* ── 요약 바 ── */
+.statbar{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border:1px solid var(--line);border-top:none;
+  background:var(--panel);
+}
+.statbar div{
+  padding:10px 6px;text-align:center;border-right:1px solid var(--line);
+}
+.statbar div:last-child{border-right:none}
+.statbar b{font-family:var(--num);font-size:20px;color:var(--neon);display:block}
+.statbar small{font-size:11px;letter-spacing:.15em;color:var(--muted)}
+.statbar .breakdown{font-size:11px;color:var(--muted);letter-spacing:.05em;display:block;margin-top:2px}
+
+/* ── 드랍쉽 카드 ── */
+.fleet{margin-top:26px;display:flex;flex-direction:column;gap:16px}
+.section-label{
+  font-family:var(--num);font-size:11px;letter-spacing:.3em;color:var(--muted);
+  display:flex;align-items:center;gap:10px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--line)}
+.ship{
+  border:1px solid var(--line-hi);
+  background:linear-gradient(180deg,#0e1c14,var(--panel));
+  position:relative;
+  clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));
+  transition:border-color .2s,opacity .2s;
+}
+.ship:hover{border-color:var(--neon)}
+.ship.full{border-color:#5c4a26}
+.ship.departed{opacity:.5}
+.ship.departed:hover{border-color:var(--line-hi)}
+
+/* 출발 상태 스트립 */
+.status-strip{
+  font-family:var(--num);font-size:11px;letter-spacing:.2em;
+  text-align:center;padding:5px 0;
+}
+.status-strip.standby{
+  background:rgba(255,184,77,.12);color:var(--amber);
+  border-bottom:1px solid rgba(255,184,77,.4);
+}
+.status-strip.imminent{
+  background:rgba(255,77,94,.14);color:#ff8a96;
+  border-bottom:1px solid rgba(255,77,94,.45);
+  animation:strobe 1.2s infinite;
+}
+@keyframes strobe{0%,100%{opacity:1}50%{opacity:.55}}
+.status-strip.departed-strip{
+  background:rgba(123,163,140,.1);color:var(--muted);
+  border-bottom:1px solid var(--line);
+  animation:none;
+}
+.ship-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  padding:12px 14px 8px;border-bottom:1px dashed var(--line);
+}
+.pilot{font-family:var(--disp);font-size:18px;color:#fff}
+.pilot::before{content:'▸ ';color:var(--neon)}
+.depart{font-family:var(--num);font-size:15px;color:var(--neon);white-space:nowrap}
+.ship.departed .depart{color:var(--muted)}
+.ship-body{padding:10px 14px 12px}
+.route{font-size:15px;font-weight:600}
+.route span{color:var(--muted);font-size:12px;letter-spacing:.12em;margin-right:6px}
+.note{margin-top:4px;font-size:13px;color:var(--muted)}
+
+/* 슬롯 레일 */
+.slots{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.slot{
+  flex:1;min-width:64px;max-width:110px;
+  border:1px solid var(--line);
+  padding:6px 4px;text-align:center;
+  font-size:13px;font-weight:600;
+  background:rgba(43,255,136,.04);
+  cursor:default;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.slot.filled{
+  border-color:var(--neon);color:var(--neon);
+  background:rgba(43,255,136,.10);
+  cursor:pointer;
+}
+.slot.empty{color:var(--muted);border-style:dashed}
+.slot.empty:hover{border-color:var(--neon-dim);color:var(--neon-dim);cursor:pointer}
+.ship.departed .slot{cursor:default;pointer-events:none}
+.ship.departed .slot.filled{border-color:var(--line-hi);color:var(--muted);background:rgba(123,163,140,.06)}
+.slot.closed{color:#4a6355;border-style:dashed;cursor:default;pointer-events:none}
+.ship-foot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 14px 12px;font-size:12px;color:var(--muted);letter-spacing:.08em;
+}
+.cap{font-family:var(--num)}
+.cap b{color:var(--neon)}
+.ship.full .cap b{color:var(--amber)}
+.ship.departed .cap b{color:var(--muted)}
+.stamp{
+  font-family:var(--disp);font-size:12px;letter-spacing:.2em;
+  color:var(--amber);border:1px solid var(--amber);padding:2px 8px;
+  transform:rotate(-3deg);
+}
+.del-btn{
+  background:none;border:none;color:#5c7a68;font-family:var(--body);
+  font-size:12px;letter-spacing:.1em;cursor:pointer;padding:2px 4px;
+}
+.del-btn:hover{color:var(--red)}
+
+.empty-fleet{
+  border:1px dashed var(--line-hi);padding:36px 20px;text-align:center;
+  color:var(--muted);font-size:15px;
+}
+.empty-fleet b{color:var(--neon-dim)}
+
+/* ── 등록 버튼 ── */
+.fab{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+  width:min(420px,calc(100% - 28px));
+  font-family:var(--disp);font-size:16px;letter-spacing:.1em;
+  color:#04120a;background:var(--neon);
+  border:none;padding:15px 0;cursor:pointer;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));
+  box-shadow:0 0 24px rgba(43,255,136,.4);
+}
+.fab:active{transform:translateX(-50%) scale(.98)}
+
+/* ── 모달 ── */
+.overlay{
+  position:fixed;inset:0;background:rgba(2,6,4,.82);
+  display:none;align-items:center;justify-content:center;z-index:50;padding:16px;
+}
+.overlay.open{display:flex}
+.modal{
+  width:min(440px,100%);
+  border:1px solid var(--neon);
+  background:var(--panel2);
+  padding:20px 18px;
+  clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+}
+.modal h2{font-family:var(--disp);font-size:18px;color:var(--neon);letter-spacing:.06em;margin-bottom:14px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;letter-spacing:.15em;color:var(--muted);margin-bottom:4px}
+.field input,.field select{
+  width:100%;background:#07100b;border:1px solid var(--line-hi);
+  color:var(--text);font-family:var(--body);font-size:16px;font-weight:600;
+  padding:10px 10px;outline:none;
+}
+.field input:focus{border-color:var(--neon)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-btns{display:flex;gap:10px;margin-top:16px}
+.btn{
+  flex:1;font-family:var(--disp);font-size:14px;letter-spacing:.08em;
+  padding:12px 0;cursor:pointer;border:1px solid var(--line-hi);
+  background:none;color:var(--muted);
+}
+.btn.primary{background:var(--neon);border-color:var(--neon);color:#04120a}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+
+/* ── 토스트 ── */
+.toast{
+  position:fixed;top:18px;left:50%;transform:translateX(-50%);
+  background:#0d1a13;border:1px solid var(--neon);color:var(--neon-dim);
+  font-size:14px;font-weight:600;padding:10px 18px;z-index:60;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+  max-width:calc(100% - 28px);text-align:center;
+}
+.toast.err{border-color:var(--red);color:#ffb3ba}
+.toast.show{opacity:1}
+.loading{color:var(--muted);text-align:center;padding:30px 0;font-size:14px;letter-spacing:.1em}
+@media (prefers-reduced-motion:reduce){
+  .hud-top .live::before{animation:none}
+  .status-strip.imminent{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hud-top">
+    <span>FC BROCELONA · STARLEAGUE</span>
+    <span class="live" id="liveDot">LIVE</span>
+  </div>
+  <h1>DROPSHIP <span class="accent">카풀 출격 보드</span></h1>
+  <div class="sub">구장 변경 원정 — 수송선을 띄우거나, 빈 슬롯에 탑승하세요.</div>
+
+  <div class="briefing">
+    <div class="venue" id="venueName"></div>
+    <div class="meta">
+      <div><span>일시</span><span id="matchTime" style="color:var(--text)"></span></div>
+    </div>
+    <div class="addr" id="venueAddr"></div>
+  </div>
+
+  <div class="statbar">
+    <div><b id="statShips">0</b><small>수송선</small></div>
+    <div><b id="statSeats">0</b><small>잔여 슬롯</small></div>
+    <div><b id="statMovers">0</b><small>총 이동인원</small><span class="breakdown" id="moversDetail"></span></div>
+  </div>
+
+  <div class="fleet">
+    <div class="section-label">FLEET STATUS — 운행 예정 수송선</div>
+    <div id="fleetList"><div class="loading">위성 링크 연결 중...</div></div>
+  </div>
+
+</div>
+
+<button class="fab" onclick="openRegister()">+ 수송선 등록 (운전자)</button>
+
+<!-- 수송선 등록 모달 -->
+<div class="overlay" id="regOverlay">
+  <div class="modal">
+    <h2>NEW DROPSHIP — 수송선 등록</h2>
+    <div class="field"><label>파일럿 (운전자 이름)</label><input id="regDriver" maxlength="12" placeholder="예: 김테란"></div>
+    <div class="field"><label>출발지</label><input id="regPlace" maxlength="30" placeholder="예: 야탑역 3번 출구"></div>
+    <div class="row2">
+      <div class="field"><label>출발 시간</label><input id="regTime" type="time"></div>
+      <div class="field"><label>탑승 슬롯 (본인 제외)</label>
+        <select id="regSeats">
+          <option value="1">1석</option><option value="2">2석</option>
+          <option value="3" selected>3석</option><option value="4">4석</option>
+          <option value="5">5석</option><option value="6">6석</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>메모 (선택)</label><input id="regNote" maxlength="40" placeholder="예: 흰색 카니발 / 톨비 N빵"></div>
+    <div class="field"><label>삭제용 PIN (숫자 4자리)</label><input id="regPin" inputmode="numeric" maxlength="4" placeholder="운행 취소 시 필요">
+      <div class="hint">운행을 취소할 때 본인 확인용으로 사용됩니다.</div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn" onclick="closeRegister()">취소</button>
+      <button class="btn primary" onclick="submitCar()">출격 등록</button>
+    </div>
+  </div>
+</div>
+
+<!-- 탑승 모달 -->
+<div class="overlay" id="joinOverlay">
+  <div class="modal">
+    <h2>BOARDING — 탑승 신청</h2>
+    <div class="hint" id="joinShipInfo" style="margin:-6px 0 12px"></div>
+    <div class="field"><label>이름</label><input id="joinName" maxlength="12" placeholder="탑승자 이름"></div>
+    <div class="modal-btns">
+      <button class="btn" onclick="closeJoin()">취소</button>
+      <button class="btn primary" onclick="submitJoin()">탑승 확정</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════ 설정 — 여기만 수정하면 됩니다 ═══════════ */
+const CONFIG = {
+  GAS_URL: "https://script.google.com/macros/s/AKfycbwhaBNdV1yKLIhSEGKg_8W32XvHlwSIFElU9mQrUs_FzhcFj2s6avLAqS2bpKkbwj1q/exec",
+  VENUE:   "성북토모 블랙피치 (야외)",
+  TIME:    "매주 토요일 오후 10시 KICK-OFF",
+  ADDR:    "서울 성북구 월계로 32 삼성스토어 강북점 3,4층",
+  MAP_URL: "",                               // 네이버지도 링크 (선택)
+  MATCH_DAY: 6                               // 경기 요일 (0=일 ~ 6=토) — 이 요일에만 출발 상태 표시
+};
+/* ═══════════════════════════════════════════════════ */
+
+let state = { cars: [], riders: [] };
+let joinTargetId = null;
+const DEMO = !CONFIG.GAS_URL;
+
+document.getElementById('venueName').textContent = CONFIG.VENUE;
+document.getElementById('matchTime').textContent = CONFIG.TIME;
+document.getElementById('venueAddr').innerHTML =
+  CONFIG.MAP_URL ? `📍 <a href="${CONFIG.MAP_URL}" target="_blank" rel="noopener">${CONFIG.ADDR}</a>` : `📍 ${CONFIG.ADDR}`;
+if (DEMO) document.getElementById('liveDot').textContent = 'DEMO';
+
+function toast(msg, isErr){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(()=> t.className='toast', 2600);
+}
+
+async function api(payload){
+  if (DEMO) return demoApi(payload);
+  try{
+    const res = payload
+      ? await fetch(CONFIG.GAS_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify(payload) })
+      : await fetch(CONFIG.GAS_URL);
+    const data = await res.json();
+    if (data.ok === false){ toast(data.error || '요청 실패', true); return null; }
+    return data;
+  }catch(e){
+    toast('서버 연결 실패 — GAS URL을 확인해주세요.', true);
+    return null;
+  }
+}
+
+/* 데모 모드: 로컬에서 미리보기용 (출발 상태 3단계를 보여주도록 시간 자동 세팅) */
+function demoApi(payload){
+  if (!payload){
+    if (!state.cars.length){
+      const fmt = d => String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+      const t1 = new Date(Date.now() + 22*60000);  // 22분 후 → 출발 준비
+      const t2 = new Date(Date.now() + 9*60000);   // 9분 후  → 출발 임박
+      const t3 = new Date(Date.now() - 12*60000);  // 12분 전 → 출발 완료
+      state.cars = [
+        {id:'d1', driver:'김테란', place:'야탑역 3번 출구', time:fmt(t1), seats:3, note:'흰색 카니발 / 톨비 N빵'},
+        {id:'d2', driver:'박프로토스', place:'서현역 AK 앞', time:fmt(t2), seats:4, note:''},
+        {id:'d3', driver:'이저그', place:'모란역 2번 출구', time:fmt(t3), seats:2, note:'먼저 출발'}
+      ];
+      state.riders = [
+        {id:'r1', carId:'d1', name:'최마린'},
+        {id:'r2', carId:'d1', name:'정메딕'},
+        {id:'r3', carId:'d3', name:'한드라군'},
+        {id:'r4', carId:'d3', name:'오럴커'}
+      ];
+    }
+    return { ok:true, cars:state.cars, riders:state.riders };
+  }
+  const uid = () => Math.random().toString(36).slice(2,10);
+  if (payload.action==='addCar'){
+    state.cars.push({id:uid(), driver:payload.driver, place:payload.place, time:payload.time, seats:Number(payload.seats), note:payload.note, pin:payload.pin});
+  }
+  if (payload.action==='joinCar'){
+    const boarded = state.riders.filter(r=>r.carId===payload.carId);
+    const car = state.cars.find(c=>c.id===payload.carId);
+    if (boarded.length >= car.seats){ toast('만석입니다.', true); return null; }
+    state.riders.push({id:uid(), carId:payload.carId, name:payload.name});
+  }
+  if (payload.action==='leaveCar'){
+    state.riders = state.riders.filter(r=>r.id!==payload.riderId);
+  }
+  if (payload.action==='removeCar'){
+    const car = state.cars.find(c=>c.id===payload.carId);
+    if (!car || String(car.pin)!==String(payload.pin)){ toast('PIN이 일치하지 않습니다.', true); return null; }
+    state.cars = state.cars.filter(c=>c.id!==payload.carId);
+    state.riders = state.riders.filter(r=>r.carId!==payload.carId);
+  }
+  return { ok:true, cars:state.cars, riders:state.riders };
+}
+
+function esc(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* 출발 상태: 경기 요일에만 계산 (데모 모드는 항상 표시)
+   - 출발 30분 전 ~ 15분 전 : 출발 준비 (amber)
+   - 출발 15분 전 ~ 출발     : 출발 임박 (red, 점멸)
+   - 출발 시간 경과          : 출발 완료 (dim) */
+function shipStatus(timeStr){
+  if (!DEMO && new Date().getDay() !== CONFIG.MATCH_DAY) return null;
+  const m = /^(\d{1,2}):(\d{2})$/.exec(String(timeStr).trim());
+  if (!m) return null;
+  const dep = new Date();
+  dep.setHours(+m[1], +m[2], 0, 0);
+  const diffMin = Math.floor((dep - new Date()) / 60000);
+  if (diffMin < 0)   return { cls:'departed-strip', shipCls:'departed', label:'▣ 출발 완료' };
+  if (diffMin <= 15) return { cls:'imminent', shipCls:'', label:`⚠ 출발 임박 · ${diffMin <= 0 ? '곧 출발' : diffMin + '분 전'}` };
+  if (diffMin <= 30) return { cls:'standby', shipCls:'', label:`◈ 출발 준비 · ${diffMin}분 전` };
+  return null;
+}
+
+function render(){
+  const list = document.getElementById('fleetList');
+  const { cars, riders } = state;
+
+  let totalSeats = 0;
+  cars.forEach(c => totalSeats += c.seats);
+  const drivers = cars.length;
+  const passengers = riders.length;
+  document.getElementById('statShips').textContent  = drivers;
+  document.getElementById('statSeats').textContent  = Math.max(0, totalSeats - passengers);
+  document.getElementById('statMovers').textContent = drivers + passengers;
+  document.getElementById('moversDetail').textContent = drivers ? `운전 ${drivers} · 탑승 ${passengers}` : '';
+
+  if (!cars.length){
+    list.innerHTML = `<div class="empty-fleet">아직 등록된 수송선이 없습니다.<br><b>첫 번째 드랍쉽 파일럿</b>이 되어주세요!</div>`;
+    return;
+  }
+
+  list.innerHTML = cars.map(car=>{
+    const boarded = riders.filter(r=>r.carId===car.id);
+    const isFull = boarded.length >= car.seats;
+    const st = shipStatus(car.time);
+    const departed = st && st.shipCls === 'departed';
+    const slots = [];
+    for (let i=0;i<car.seats;i++){
+      const r = boarded[i];
+      if (r){
+        slots.push(`<div class="slot filled" onclick="leave('${r.id}','${esc(r.name)}')" title="탭하여 탑승 취소">${esc(r.name)}</div>`);
+      } else if (departed){
+        slots.push(`<div class="slot closed">마감</div>`);
+      } else {
+        slots.push(`<div class="slot empty" onclick="openJoin('${car.id}')">+ 탑승</div>`);
+      }
+    }
+    return `
+    <div class="ship${isFull?' full':''}${departed?' departed':''}">
+      ${st ? `<div class="status-strip ${st.cls}">${st.label}</div>` : ''}
+      <div class="ship-head">
+        <div class="pilot">${esc(car.driver)}</div>
+        <div class="depart">${esc(car.time)} 출발</div>
+      </div>
+      <div class="ship-body">
+        <div class="route"><span>출발지</span>${esc(car.place)}</div>
+        ${car.note ? `<div class="note">✦ ${esc(car.note)}</div>` : ''}
+        <div class="slots">${slots.join('')}</div>
+      </div>
+      <div class="ship-foot">
+        <div class="cap">SLOTS <b>${boarded.length}</b> / ${car.seats}${isFull && !departed ? ' &nbsp;<span class="stamp">FULL</span>':''}</div>
+        ${departed ? '' : `<button class="del-btn" onclick="removeShip('${car.id}')">운행 취소 ✕</button>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function load(){
+  const data = await api(null);
+  if (data){ state = { cars:data.cars, riders:data.riders }; render(); }
+}
+
+/* ── 등록 ── */
+function openRegister(){ document.getElementById('regOverlay').classList.add('open'); }
+function closeRegister(){ document.getElementById('regOverlay').classList.remove('open'); }
+async function submitCar(){
+  const driver = document.getElementById('regDriver').value.trim();
+  const place  = document.getElementById('regPlace').value.trim();
+  const time   = document.getElementById('regTime').value;
+  const seats  = document.getElementById('regSeats').value;
+  const note   = document.getElementById('regNote').value.trim();
+  const pin    = document.getElementById('regPin').value.trim();
+  if (!driver || !place || !time){ toast('운전자·출발지·출발시간을 입력해주세요.', true); return; }
+  if (!/^\d{4}$/.test(pin)){ toast('PIN은 숫자 4자리로 입력해주세요.', true); return; }
+  const data = await api({ action:'addCar', driver, place, time, seats, note, pin });
+  if (data){
+    state = { cars:data.cars, riders:data.riders };
+    render(); closeRegister();
+    ['regDriver','regPlace','regNote','regPin'].forEach(id=>document.getElementById(id).value='');
+    toast('수송선 출격 등록 완료! 🚀');
+  }
+}
+
+/* ── 탑승 ── */
+function openJoin(carId){
+  joinTargetId = carId;
+  const car = state.cars.find(c=>c.id===carId);
+  document.getElementById('joinShipInfo').textContent = `${car.driver} 파일럿 · ${car.time} · ${car.place} 출발`;
+  document.getElementById('joinOverlay').classList.add('open');
+  document.getElementById('joinName').focus();
+}
+function closeJoin(){ document.getElementById('joinOverlay').classList.remove('open'); }
+async function submitJoin(){
+  const name = document.getElementById('joinName').value.trim();
+  if (!name){ toast('이름을 입력해주세요.', true); return; }
+  const data = await api({ action:'joinCar', carId:joinTargetId, name });
+  if (data){
+    state = { cars:data.cars, riders:data.riders };
+    render(); closeJoin();
+    document.getElementById('joinName').value='';
+    toast(`${name} 탑승 확정!`);
+  }
+}
+
+/* ── 탑승 취소 ── */
+async function leave(riderId, name){
+  if (!confirm(`${name} 님의 탑승을 취소할까요?`)) return;
+  const data = await api({ action:'leaveCar', riderId });
+  if (data){ state = { cars:data.cars, riders:data.riders }; render(); toast('탑승이 취소되었습니다.'); }
+}
+
+/* ── 운행 취소 ── */
+async function removeShip(carId){
+  const pin = prompt('등록 시 설정한 PIN 4자리를 입력해주세요.');
+  if (pin === null) return;
+  const data = await api({ action:'removeCar', carId, pin });
+  if (data){ state = { cars:data.cars, riders:data.riders }; render(); toast('운행이 취소되었습니다.'); }
+}
+
+load();
+if (!DEMO) setInterval(load, 30000);  // 30초마다 서버 동기화
+setInterval(render, 30000);           // 출발 상태 카운트다운 갱신
+</script>
+</body>
+</html>
