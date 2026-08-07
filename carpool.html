@@ -516,7 +516,7 @@ function render(){
 
 function ingest(data){
   data.cars.forEach(c => { c.time = normTime(c.time); });
-  ingest(data);
+  state = { cars: data.cars, riders: data.riders };
 }
 async function load(){
   const data = await api(null);
