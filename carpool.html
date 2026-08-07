@@ -138,9 +138,10 @@ h1 .accent{color:var(--neon)}
 }
 .ship-head{
   display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  flex-wrap:wrap;
   padding:12px 14px 8px;border-bottom:1px dashed var(--line);
 }
-.pilot{font-family:var(--disp);font-size:18px;color:#fff}
+.pilot{font-family:var(--disp);font-size:18px;color:#fff;word-break:keep-all;min-width:0}
 .pilot::before{content:'▸ ';color:var(--neon)}
 .depart{font-family:var(--num);font-size:15px;color:var(--neon);white-space:nowrap}
 .ship.departed .depart{color:var(--muted)}
@@ -422,6 +423,26 @@ function demoApi(payload){
 
 function esc(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
+/* 시트가 시간값을 날짜 문자열("Sat Dec 30 1899 21:20:00 ...")로 돌려주는 경우 HH:MM만 추출 */
+function normTime(v){
+  const s = String(v).trim();
+  let m = /^(\d{1,2}):(\d{2})$/.exec(s);
+  if (m) return m[1].padStart(2,'0') + ':' + m[2];
+  m = /(\d{1,2}):(\d{2}):\d{2}/.exec(s);
+  if (m) return m[1].padStart(2,'0') + ':' + m[2];
+  return s;
+}
+
+/* HH:MM → "오후 9:20" 형태로 표시 */
+function fmtK(t){
+  const m = /^(\d{1,2}):(\d{2})$/.exec(String(t).trim());
+  if (!m) return t;
+  let h = +m[1];
+  const ampm = h < 12 ? '오전' : '오후';
+  h = h % 12; if (h === 0) h = 12;
+  return `${ampm} ${h}:${m[2]}`;
+}
+
 /* 출발 상태: 경기 요일에만 계산 (데모 모드는 항상 표시)
    - 출발 30분 전 ~ 15분 전 : 출발 준비 (amber)
    - 출발 15분 전 ~ 출발     : 출발 임박 (red, 점멸)
@@ -478,7 +499,7 @@ function render(){
       ${st ? `<div class="status-strip ${st.cls}">${st.label}</div>` : ''}
       <div class="ship-head">
         <div class="pilot">${esc(car.driver)}</div>
-        <div class="depart">${esc(car.time)} 출발</div>
+        <div class="depart">${fmtK(car.time)} 출발</div>
       </div>
       <div class="ship-body">
         <div class="route"><span>출발지</span>${esc(car.place)}</div>
@@ -493,9 +514,13 @@ function render(){
   }).join('');
 }
 
+function ingest(data){
+  data.cars.forEach(c => { c.time = normTime(c.time); });
+  ingest(data);
+}
 async function load(){
   const data = await api(null);
-  if (data){ state = { cars:data.cars, riders:data.riders }; render(); }
+  if (data){ ingest(data); render(); }
 }
 
 /* ── 등록 ── */
@@ -512,7 +537,7 @@ async function submitCar(){
   if (!/^\d{4}$/.test(pin)){ toast('PIN은 숫자 4자리로 입력해주세요.', true); return; }
   const data = await api({ action:'addCar', driver, place, time, seats, note, pin });
   if (data){
-    state = { cars:data.cars, riders:data.riders };
+    ingest(data);
     render(); closeRegister();
     ['regDriver','regPlace','regNote','regPin'].forEach(id=>document.getElementById(id).value='');
     toast('수송선 출격 등록 완료! 🚀');
@@ -523,7 +548,7 @@ async function submitCar(){
 function openJoin(carId){
   joinTargetId = carId;
   const car = state.cars.find(c=>c.id===carId);
-  document.getElementById('joinShipInfo').textContent = `${car.driver} 파일럿 · ${car.time} · ${car.place} 출발`;
+  document.getElementById('joinShipInfo').textContent = `${car.driver} 파일럿 · ${fmtK(car.time)} · ${car.place} 출발`;
   document.getElementById('joinOverlay').classList.add('open');
   document.getElementById('joinName').focus();
 }
@@ -533,7 +558,7 @@ async function submitJoin(){
   if (!name){ toast('이름을 입력해주세요.', true); return; }
   const data = await api({ action:'joinCar', carId:joinTargetId, name });
   if (data){
-    state = { cars:data.cars, riders:data.riders };
+    ingest(data);
     render(); closeJoin();
     document.getElementById('joinName').value='';
     toast(`${name} 탑승 확정!`);
@@ -544,7 +569,7 @@ async function submitJoin(){
 async function leave(riderId, name){
   if (!confirm(`${name} 님의 탑승을 취소할까요?`)) return;
   const data = await api({ action:'leaveCar', riderId });
-  if (data){ state = { cars:data.cars, riders:data.riders }; render(); toast('탑승이 취소되었습니다.'); }
+  if (data){ ingest(data); render(); toast('탑승이 취소되었습니다.'); }
 }
 
 /* ── 운행 취소 ── */
@@ -552,7 +577,7 @@ async function removeShip(carId){
   const pin = prompt('등록 시 설정한 PIN 4자리를 입력해주세요.');
   if (pin === null) return;
   const data = await api({ action:'removeCar', carId, pin });
-  if (data){ state = { cars:data.cars, riders:data.riders }; render(); toast('운행이 취소되었습니다.'); }
+  if (data){ ingest(data); render(); toast('운행이 취소되었습니다.'); }
 }
 
 load();
