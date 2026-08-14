@@ -1241,6 +1241,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
             <div class="rule-sub">3-4. 퇴장성 반칙</div>
             <div class="rule-list">
               <div class="rule-li">상대가 <span class="rule-hi">골을 향해 움직이는 명백한 득점 기회</span>를, 프리킥·페널티킥감 반칙으로 저지한 경우</div>
+              <div class="rule-li">퇴장 처리(친선 완화) — 해당 라운드 <span class="rule-hi">즉시 퇴장(팀 수적 열세)</span> + <span class="rule-hi">다음 1라운드 출전 정지</span>, 이후 복귀 가능</div>
             </div>
           </div>
         </div>
@@ -1292,7 +1293,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
             <div class="rule-sub">S-4. 트레이딩 규정</div>
             <div class="rule-list">
               <div class="rule-li">발동 조건 — <span class="rule-hi">트레이드 유닛(다크아칸·퀸·고스트)</span> 보유 팀만 가능</div>
-              <div class="rule-li">비용 — 팀 미네랄 <span class="rule-hi">-1,000M</span></div>
+              <div class="rule-li">비용 — <span class="rule-hi">발동 팀</span> 미네랄 <span class="rule-hi">-1,000M</span> (상대 팀 부담 없음)</div>
               <div class="rule-li">대상 — 상대 팀 일꾼만, 특수 유닛 제외</div>
               <div class="rule-li">최대 <span class="rule-hi">3회</span>까지 가능</div>
               <div class="rule-li">트레이딩된 선수는 <span class="rule-hi">재트레이딩 불가</span></div>
@@ -1535,14 +1536,35 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         '</div>';
       }).join('');
 
-      // 선수 포맷 함수
+      // 선수 포맷 함수 — 골 단위 득점자(어시스트) 짝 표시
       const formatCell = (r, race) => {
         const sc = r.score||{};
-        const scorers = (r.scorers&&r.scorers[race])||[];
-        const assists = (r.assists&&r.assists[race])||[];
         const goals = sc[race]||0;
         const playing = r.playingTeams&&r.playingTeams.includes(race);
         if(!playing) return '<span style="color:var(--text-dim);font-size:9px;">대기</span>';
+
+        const pairs = (r.goalsDetail && r.goalsDetail[race]) || null;
+        if(pairs && pairs.length){
+          // 동일한 (득점자, 어시스트) 짝은 ×N으로 묶음 — 입력 순서 보존
+          const cnt = {}, order = [];
+          pairs.forEach(p=>{
+            const k = p.s + '|' + (p.a||'');
+            if(cnt[k]===undefined){ cnt[k]=0; order.push({k, p}); }
+            cnt[k]++;
+          });
+          let str = '<span class="bc-goals">'+goals+'</span> ';
+          str += order.map(({k,p})=>{
+            let t = p.s;
+            if(cnt[k]>1) t += '<span style="font-size:8px;color:var(--yellow);">×'+cnt[k]+'</span>';
+            if(p.a) t += '<span class="bc-assist">('+p.a+')</span>';
+            return t;
+          }).join(' ');
+          return str;
+        }
+
+        // 폴백: goalsDetail 없는 구버전 데이터
+        const scorers = (r.scorers&&r.scorers[race])||[];
+        const assists = (r.assists&&r.assists[race])||[];
         if(goals===0 && scorers.length===0){
           return '<span class="bc-goals">0</span>';
         }
@@ -2194,17 +2216,16 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       openConfirmModal('⇄ 트레이드 확인',
         '사용한 미네랄은 회수할 수 없습니다.<br><br>'+
         '<span style="color:var(--yellow);">'+nameA+'</span> ↔ <span style="color:var(--yellow);">'+nameB+'</span><br><br>'+
-        '각 팀 <span style="color:rgba(255,80,80,0.9);">'+TRADE_COST+'M</span> 차감 후 트레이드를 진행하시겠습니까?',
+        '발동 팀 미네랄 <span style="color:rgba(255,80,80,0.9);">'+TRADE_COST+'M</span> 차감 후 트레이드를 진행하시겠습니까?',
         ()=>{ _executeTrade(raceA, raceB, nameA, nameB); }
       );
     });
   }
 
   function _executeTrade(raceA, raceB, nameA, nameB){
+    // 비용은 발동 팀(raceA)만 부담
     earnData[raceA] = Math.max((earnData[raceA]||0) - TRADE_COST, 0);
-    earnData[raceB] = Math.max((earnData[raceB]||0) - TRADE_COST, 0);
     document.getElementById('earn-'+raceA).textContent = earnData[raceA].toLocaleString()+' M';
-    document.getElementById('earn-'+raceB).textContent = earnData[raceB].toLocaleString()+' M';
 
     // 트레이드된 선수 등록
     tradedPlayers.add(nameA);
