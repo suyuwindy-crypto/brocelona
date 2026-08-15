@@ -1543,6 +1543,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         const playing = r.playingTeams&&r.playingTeams.includes(race);
         if(!playing) return '<span style="color:var(--text-dim);font-size:9px;">대기</span>';
 
+        const hcap = (r.handicap && r.handicap[race]) || 0;
+        const hcapBadge = hcap > 0
+          ? ' <span style="font-size:8px;color:rgba(255,90,90,0.85);border:1px solid rgba(255,90,90,0.4);padding:0 3px;border-radius:2px;">핸디 -'+hcap+'</span>'
+          : '';
+
         const pairs = (r.goalsDetail && r.goalsDetail[race]) || null;
         if(pairs && pairs.length){
           // 동일한 (득점자, 어시스트) 짝은 ×N으로 묶음 — 입력 순서 보존
@@ -1559,7 +1564,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
             if(p.a) t += '<span class="bc-assist">('+p.a+')</span>';
             return t;
           }).join(' ');
-          return str;
+          return str + hcapBadge;
+        }
+        if(hcap > 0){
+          // 핸디만 있고 득점자 없는 경우
+          return '<span class="bc-goals">'+goals+'</span>'+hcapBadge;
         }
 
         // 폴백: goalsDetail 없는 구버전 데이터
@@ -1575,7 +1584,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         let str = '<span class="bc-goals">'+goals+'</span> ';
         str += uniqueScorers.map(n => n+(goalCount[n]>1?'<span style="font-size:8px;color:var(--yellow);">×'+goalCount[n]+'</span>':'')).join(' ');
         if(onlyAssists.length) str += ' <span class="bc-assist">('+onlyAssists.join(', ')+')</span>';
-        return str;
+        return str + hcapBadge;
       };
 
       // 라운드 결과 (W/L/D)
