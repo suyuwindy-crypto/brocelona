@@ -356,7 +356,15 @@ html,body{width:100vw;min-height:100vh;background:var(--bg);font-family:'Rajdhan
     card.querySelectorAll('.opt').forEach(b=>b.classList.add('locked'));
     try{
       const r = await api({action:'quizSubmit', name:myName, id:id, answer:val});
-      if(!r.ok){ toast('제출 실패'); card.querySelectorAll('.opt').forEach(b=>b.classList.remove('locked')); return; }
+      if(!r.ok){
+        if(r.error==='closed_today'){
+          toast('오늘 퀴즈는 점검을 위해 오후 9시에 마감되었습니다. 내일 다시 만나요! 🌙');
+        } else {
+          toast('제출 실패');
+        }
+        card.querySelectorAll('.opt').forEach(b=>b.classList.remove('locked'));
+        return;
+      }
       const q = todayQuestions.find(x=>x.id===id);
       lockCard(q, val, r.correct, r.correctAnswer, r.explain, false, r.source, r.already);
       if(r.already) toast('이미 푼 문제예요');
