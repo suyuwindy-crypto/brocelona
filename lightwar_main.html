@@ -1375,7 +1375,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         <select class="tmo-select" id="tmo-player-b" style="margin-top:6px;display:none;"></select>
       </div>
     </div>
-    <div class="tmo-cost">💎 각 팀 -1,000M 차감</div>
+    <div class="tmo-cost">💎 발동 팀만 -1,000M 차감 (상대 팀 부담 없음)</div>
     <button class="tmo-confirm-btn" onclick="confirmTrade()">트레이드 확정</button>
   </div>
 </div>
@@ -2308,7 +2308,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     // 취소 버튼 표시 복원 (안내 전용 모달에서 숨겼을 수 있음)
     const btns = document.querySelectorAll('#confirm-modal .tmo-confirm-btn');
     if(btns.length === 2){ btns[0].style.display = ''; }
-    document.getElementById('confirm-modal-ok').onclick = ()=>{ closeConfirmModal(); if(_confirmCallback) _confirmCallback(); };
+    document.getElementById('confirm-modal-ok').onclick = ()=>{ const cb = _confirmCallback; closeConfirmModal(); if(cb) cb(); };
     document.getElementById('confirm-modal').style.display = 'flex';
   }
   function closeConfirmModal(){
