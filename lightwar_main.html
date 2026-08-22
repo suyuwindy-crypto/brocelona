@@ -1765,10 +1765,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
           });
         });
         Object.entries(statsMap).forEach(([name, s])=>{
-          const r = roster[s.team];
-          if(!r) return;
-          const m = r.find(x=>x.name===name);
-          if(m){ m.att=s.att; m.goal=s.goals; m.ast=s.assists; }
+          // 이름 기준으로 세 팀 명단 전체에서 탐색 — 트레이드로 팀이 바뀌어도 기록은 선수를 따라감
+          for(const race of ['protoss','zerg','terran']){
+            const m = roster[race] && roster[race].find(x=>x.name===name);
+            if(m){ m.att=s.att; m.goal=s.goals; m.ast=s.assists; break; }
+          }
         });
         // 본리그 미네랄 획득량 업데이트
         const totalMineral = {protoss:0, zerg:0, terran:0};
@@ -2293,7 +2294,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
           '<span class="trade-arrow">⇄</span>'+
           '<span class="'+RACE_COLOR_TEXT[t.raceB]+'">'+t.nameB+'</span>'+
         '</div>'+
-        '<div class="trade-meta">'+(i+1)+' · '+t.weekLabel+' · -1000M×2</div>';
+        '<div class="trade-meta">'+(i+1)+' · '+t.weekLabel+' · 발동팀 -1,000M</div>';
       list.appendChild(div);
     });
   }
