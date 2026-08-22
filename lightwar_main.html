@@ -1295,6 +1295,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
               <div class="rule-li">발동 조건 — <span class="rule-hi">트레이드 유닛(다크아칸·퀸·고스트)</span> 보유 팀만 가능</div>
               <div class="rule-li">비용 — <span class="rule-hi">발동 팀</span> 미네랄 <span class="rule-hi">-1,000M</span> (상대 팀 부담 없음)</div>
               <div class="rule-li">대상 — 상대 팀 일꾼만, 특수 유닛 제외</div>
+              <div class="rule-li">시기 — <span class="rule-hi">토요일(경기일) 제외 매일</span> 가능</div>
               <div class="rule-li">최대 <span class="rule-hi">3회</span>까지 가능</div>
               <div class="rule-li">트레이딩된 선수는 <span class="rule-hi">재트레이딩 불가</span></div>
             </div>
@@ -1747,6 +1748,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         // ★ 로스터 수신 즉시 트레이드 버튼 재평가 — 이후 렌더링이 실패해도 버튼은 살아있게
         try { updateTradeBtns(); qzDbgNote('roster loaded → updateTradeBtns OK | trade유닛: P='+hasTradeUnit('protoss')+' Z='+hasTradeUnit('zerg')+' T='+hasTradeUnit('terran')); }
         catch(e){ QZDBG.errors.push('updateTradeBtns: '+e.message); qzDbgRender(); }
+        try { loadTrades(); } catch(e) {}
       }
 
       // 주차별 미네랄/경기기록 업데이트
@@ -2102,6 +2104,20 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   const TRADE_UNIT_NAME = { protoss:'다크아칸', zerg:'퀸', terran:'고스트' };
   let tradeLog = [];
   let tradedPlayers = new Set();
+
+  async function loadTrades(){
+    try{
+      const res = await fetch(API_URL + '?action=tradeList', { redirect:'follow' });
+      const r = JSON.parse(await res.text());
+      if(r && r.trades){
+        tradeLog = r.trades;
+        tradedPlayers = new Set();
+        r.trades.forEach(t=>{ tradedPlayers.add(t.nameA); tradedPlayers.add(t.nameB); });
+        renderTradeHistory();
+        updateTradeBtns();
+      }
+    }catch(e){ /* 이력 로드 실패해도 보드 동작엔 지장 없음 */ }
+  }
   let tradeModalRace = null;
 
   function hasTradeUnit(race){
@@ -2112,12 +2128,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   // 화요일 경기 신청(선착순) 이후 명단 확정 기간이라 화~토 선수 변동 불가
   function isTradeDay(){
     const kstDay = new Date(Date.now() + 9*3600*1000).getUTCDay();
-    return kstDay === 0 || kstDay === 1;
+    return kstDay !== 6;   // 토요일(경기일)만 제외
   }
   function showTradeDayNotice(){
     openConfirmModal('⇄ 트레이드 안내',
-      '트레이딩은 <span style="color:var(--yellow);">일 · 월요일</span>에만 가능합니다.<br><br>'+
-      '<span style="font-size:9px;color:rgba(57,255,20,0.6);">화~토요일은 경기 신청 및 명단 확정 기간으로<br>선수 변동이 제한됩니다.</span>',
+      '<span style="color:var(--yellow);">토요일(경기일)</span>에는 트레이드할 수 없습니다.<br><br>'+
+      '<span style="font-size:9px;color:rgba(57,255,20,0.6);">경기 당일 명단 고정을 위한 규정입니다.<br>일~금요일에는 언제든 가능해요.</span>',
       null);
     // 안내 전용 — 취소 버튼 숨기고 확인만 표시
     const btns = document.querySelectorAll('#confirm-modal .tmo-confirm-btn');
@@ -2219,36 +2235,44 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       alert('이미 트레이드된 선수는 재트레이드 불가'); return;
     }
 
-    // 트레이드 모달 닫고 → 발동 팀 비번 인증 → 확인 모달
+    // 트레이드 모달 닫고 → 비번 입력(서버 검증) → 확인 모달 → 서버 실행
     document.getElementById('trade-modal').style.display = 'none';
-    openPwModal('🔐 트레이드 인증', TRADE_PASSWORD[raceA], ()=>{
+    openPwCapture('🔐 트레이드 인증', (pw)=>{
       openConfirmModal('⇄ 트레이드 확인',
         '사용한 미네랄은 회수할 수 없습니다.<br><br>'+
         '<span style="color:var(--yellow);">'+nameA+'</span> ↔ <span style="color:var(--yellow);">'+nameB+'</span><br><br>'+
         '발동 팀 미네랄 <span style="color:rgba(255,80,80,0.9);">'+TRADE_COST+'M</span> 차감 후 트레이드를 진행하시겠습니까?',
-        ()=>{ _executeTrade(raceA, raceB, nameA, nameB); }
+        ()=>{ _submitTrade(raceA, pw, nameA, raceB, nameB); }
       );
     });
   }
 
-  function _executeTrade(raceA, raceB, nameA, nameB){
-    // 비용은 발동 팀(raceA)만 부담
-    earnData[raceA] = Math.max((earnData[raceA]||0) - TRADE_COST, 0);
-    document.getElementById('earn-'+raceA).textContent = earnData[raceA].toLocaleString()+' M';
-
-    // 트레이드된 선수 등록
-    tradedPlayers.add(nameA);
-    tradedPlayers.add(nameB);
-
-    // 로그 기록
-    const wk = weeklyData && Object.keys(weeklyData).length
-      ? Math.max(...Object.keys(weeklyData).map(Number))+'주차' : '진행중';
-    tradeLog.push({ weekLabel:wk, raceA, nameA, raceB, nameB });
-
-    closeTradeModal();
-    renderTradeHistory();
-    updateTradeBtns();
+  async function _submitTrade(raceA, pw, nameA, raceB, nameB){
+    try{
+      const q = new URLSearchParams({ action:'trade', race:raceA, pw, nameA, raceB, nameB }).toString();
+      const res = await fetch(API_URL + '?' + q, { redirect:'follow' });
+      const r = JSON.parse(await res.text());
+      if(!r.ok){
+        const msg = {
+          pw:'비밀번호가 올바르지 않습니다.',
+          notday:'토요일(경기일)에는 트레이드할 수 없습니다.',
+          traded:'이미 트레이드된 선수는 재트레이드할 수 없습니다.',
+          limit:'트레이드는 팀당 최대 3회까지만 가능합니다.',
+          notworker:'일꾼만 트레이드할 수 있습니다 (특수 유닛 제외).',
+          notfound:'선수를 로스터에서 찾을 수 없습니다.',
+          sameteam:'같은 팀끼리는 트레이드할 수 없습니다.'
+        }[r.error] || '트레이드에 실패했습니다. 잠시 후 다시 시도해주세요.';
+        alert(msg);
+        return;
+      }
+      alert('✅ 트레이드가 완료되었습니다!\n'+nameA+' ↔ '+nameB);
+      location.reload();
+    }catch(e){
+      alert('네트워크 오류로 트레이드를 완료하지 못했습니다.');
+    }
   }
+
+  // (구 클라이언트 전용 _executeTrade 제거 — 서버 처리로 대체)
 
   function renderTradeHistory(){
     const section = document.getElementById('trade-history-section');
@@ -2275,7 +2299,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   }
 
   const CHARGE_PASSWORD = { protoss:'7777', zerg:'4444', terran:'6666' }; // P-R-O-T-O-S-S=7 Z-E-R-G=4 T-E-R-R-A-N=6
-  const TRADE_PASSWORD  = { protoss:'1111', zerg:'2222', terran:'3333' }; // 트레이드 발동 팀(다크아칸·퀸·고스트 보유 팀) 인증
+  // 트레이드 비밀번호는 서버(GAS)에서만 검증 — 공개 리포에 노출되지 않음
   let _confirmCallback = null;
   function openConfirmModal(title, msg, callback){
     _confirmCallback = callback;
@@ -2311,8 +2335,24 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     _pwCallback = null;
     _pwExpected = null;
   }
+  function openPwCapture(title, callback){
+    // 서버 검증용: 입력한 비번을 그대로 콜백에 전달 (클라이언트에 정답 비번 없음)
+    _pwCallback = callback;
+    _pwExpected = '__CAPTURE__';
+    document.getElementById('pw-modal-title').textContent = title;
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-error').style.display = 'none';
+    document.getElementById('pw-modal').style.display = 'flex';
+    setTimeout(()=>document.getElementById('pw-input').focus(), 100);
+  }
   function confirmPwModal(){
     const pw = document.getElementById('pw-input').value;
+    if(_pwExpected === '__CAPTURE__'){
+      const cb = _pwCallback;
+      closePwModal();
+      cb(pw);
+      return;
+    }
     const correct = _pwExpected;
     if(pw !== correct){
       document.getElementById('pw-error').style.display = 'block';
