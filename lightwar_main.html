@@ -1376,6 +1376,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       </div>
     </div>
     <div class="tmo-cost">💎 발동 팀만 -1,000M 차감 (상대 팀 부담 없음)</div>
+    <div class="tmo-cost" id="tmo-initiator" style="margin-top:-6px;"></div>
     <button class="tmo-confirm-btn" onclick="confirmTrade()">트레이드 확정</button>
   </div>
 </div>
@@ -2166,6 +2167,14 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     lbl.textContent = RACE_FULL[race]+' · '+TRADE_UNIT_NAME[race];
     lbl.style.color = raceColors[race];
 
+    // 발동 주체 + 잔여 횟수 안내
+    const used = tradeLog.filter(t=>t.raceA===race).length;
+    const initEl = document.getElementById('tmo-initiator');
+    if(initEl){
+      initEl.innerHTML = '발동 주체: <span style="color:'+raceColors[race]+';font-weight:700;">'+RACE_FULL[race].toUpperCase()+'</span>'+
+        ' · 남은 트레이드 <span style="color:'+(MAX_TRADE-used>0?'var(--green)':'rgba(255,90,90,0.9)')+';font-weight:700;">'+(MAX_TRADE-used)+'회</span> ('+used+'/'+MAX_TRADE+' 사용)';
+    }
+
     // 내 팀 일꾼만 (이미 트레이드된 선수 제외)
     const selA = document.getElementById('tmo-player-a');
     selA.innerHTML = '';
@@ -2231,7 +2240,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       alert('트레이드 가능한 상대 선수가 없습니다'); return;
     }
     if(raceA === raceB){ alert('같은 팀끼리는 트레이드 불가'); return; }
-    if(tradeLog.length >= MAX_TRADE){ alert('트레이드는 최대 3회까지만 가능합니다'); return; }
+    const myInitiations = tradeLog.filter(t=>t.raceA===raceA).length;
+    if(myInitiations >= MAX_TRADE){ alert('트레이드는 팀당 최대 3회(발동 기준)까지만 가능합니다'); return; }
     if(tradedPlayers.has(nameA)||tradedPlayers.has(nameB)){
       alert('이미 트레이드된 선수는 재트레이드 불가'); return;
     }
@@ -2282,7 +2292,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     if(!tradeLog.length){ section.style.display='none'; return; }
 
     section.style.display = 'block';
-    countEl.textContent = tradeLog.length+'/'+MAX_TRADE+'회';
+    const cnt = {protoss:0, zerg:0, terran:0};
+    tradeLog.forEach(t=>{ if(cnt[t.raceA]!==undefined) cnt[t.raceA]++; });
+    countEl.textContent = 'P '+cnt.protoss+'/3 · Z '+cnt.zerg+'/3 · T '+cnt.terran+'/3';
     list.innerHTML = '';
 
     tradeLog.forEach((t,i)=>{
