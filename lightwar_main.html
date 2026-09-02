@@ -1716,6 +1716,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       // HP 업데이트
       if(data.hp){
         Object.entries(data.hp).forEach(([race, d])=>{
+          hpMaxData[race] = d.max;
           if(reviveChargeUsed[race]) return;
           if(teams[race].hp <= 0) return;
           teams[race] = { hp: d.current, mineral: teams[race]?.mineral || 0 };
@@ -1732,6 +1733,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
           const earnEl = document.getElementById('earn-'+race);
           if(earnEl) earnEl.textContent = earnData[race].toLocaleString()+' M';
         });
+        computeFirstEliminated();
       }
 
       // 팀구성 업데이트
@@ -2461,6 +2463,37 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   updateTradeBtns();
 
   // ── 패자부활 히든 기능 ──
+  // 부활 자격: 최초 탈락팀 1팀에게만. 라운드 순서대로 실점을 재생해 가장 먼저 HP 0에 도달한 팀 판정.
+  // 수동 지정이 필요하면 REVIVAL_OVERRIDE 에 'protoss'|'zerg'|'terran' 기입 (자동 판정 무시)
+  const REVIVAL_OVERRIDE = '';
+  const hpMaxData = { protoss:0, zerg:0, terran:0 };
+  let firstEliminated = null;
+
+  function computeFirstEliminated(){
+    if(REVIVAL_OVERRIDE){ firstEliminated = REVIVAL_OVERRIDE; return; }
+    if(!weeklyData || !hpMaxData.protoss) return;
+    const cum = { protoss:0, zerg:0, terran:0 };
+    const weeks = Object.keys(weeklyData).map(Number).sort((a,b)=>a-b);
+    for(const wk of weeks){
+      const rounds = (weeklyData[wk] && weeklyData[wk].rounds) || [];
+      for(const r of rounds){
+        const pt = r.playingTeams || [];
+        if(pt.length !== 2) continue;
+        const sc = r.score || {};
+        // 각 팀 실점 = 상대 득점
+        cum[pt[0]] += (sc[pt[1]]||0) * 100;
+        cum[pt[1]] += (sc[pt[0]]||0) * 100;
+        for(const race of pt){
+          if(cum[race] >= hpMaxData[race]){
+            firstEliminated = race;
+            return;   // 가장 먼저 0 도달한 팀에서 즉시 종료
+          }
+        }
+      }
+    }
+    firstEliminated = null;   // 아직 탈락 팀 없음
+  }
+
   const REVIVE_CLICKS = 1000; // 패자부활 클릭 수
   const deadClicks = { protoss:0, zerg:0, terran:0 };
   const reviveCharged = { protoss:false, zerg:false, terran:false };
@@ -2469,6 +2502,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   function handleDeadClick(race){
     const popup = document.getElementById('popup-'+race);
     if(!popup || !popup.classList.contains('state-dead')) return;
+
+    // 부활 자격: 최초 탈락팀에게만 (이후 탈락팀은 클릭해도 반응 없음)
+    if(firstEliminated && race !== firstEliminated) return;
 
     // 충전 버튼 1회 사용 완료 후엔 더 이상 클릭 안 됨
     if(reviveChargeUsed[race]) return;
