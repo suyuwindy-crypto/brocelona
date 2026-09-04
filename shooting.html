@@ -215,7 +215,17 @@ body{overflow-x:hidden;}
       <div id="game-overlay">
         <div class="ov-title" id="ov-title">🎯 PASS GAME</div>
         <div class="ov-score" id="ov-score" style="display:none;">0</div>
-        <div class="ov-sub" id="ov-sub">드래그로 롱킥을 조종하세요!<br>갈 때: 수비를 전부 피해 멀리 (단계마다 배율 UP)<br>올 때: 아군 가슴의 포인트를 맞춰 수집 — 합계 × 배율!</div>
+        <div class="ov-sub" id="ov-sub" style="text-align:left;max-width:300px;">
+          <b style="color:var(--yellow);">⚽ 한 판 = 롱킥 한 번</b><br>
+          손가락 <b>드래그</b>로 공을 좌우 조종합니다.<br><br>
+          <b style="color:var(--green);">▲ 전진</b> — 수비를 피해 최대한 멀리!<br>
+          STAGE 라인을 지날 때마다 <b style="color:var(--yellow);">배율 ×1→×6</b><br>
+          단, 깊이 갈수록 공이 빨라지고 수비가 촘촘해요.<br>
+          수비에 걸리면 그 지점에서 즉시 리턴.<br><br>
+          <b style="color:var(--green);">▼ 리턴</b> — 아군 가슴의 <b>포인트(5~50)</b>를 맞춰 수집!<br><br>
+          <b style="color:#fff;">최종 점수 = 수집 합계 × 도달 배율</b><br>
+          <span style="color:var(--text-dim);">안전하게 ×3에서 돌 것인가, ×6까지 갈 것인가.</span>
+        </div>
         <button class="ov-btn" id="ov-btn" onclick="startGame()">게임 시작</button>
         <div class="ov-note" id="ov-note"></div>
       </div>
@@ -652,7 +662,7 @@ function draw(){
   ctx.clearRect(-20,-20,W+40,H+40);
 
   // 카메라: 공을 화면 y 기준점에 고정
-  const camAnchor = G.phase==='back' ? H*0.35 : H*0.65;
+  const camAnchor = G.phase==='back' ? H*0.30 : H*0.80;
   const camY = G.worldY;  // 월드 y=camY 가 화면 camAnchor에 오도록
   const toScreen = wy => camAnchor + (camY - wy);
 
@@ -734,8 +744,26 @@ function draw(){
     ctx.globalAlpha=1;
   });
 
+  // 킥커 (출발 지점)
+  {
+    const ky = toScreen(0);
+    if(ky > -30 && ky < H+30){
+      ctx.strokeStyle='#5ec8e6'; ctx.lineWidth=3.5; ctx.lineCap='round';
+      ctx.beginPath();
+      ctx.moveTo(W/2, ky+6); ctx.lineTo(W/2, ky-W*0.05);
+      ctx.moveTo(W/2, ky-W*0.04); ctx.lineTo(W/2-W*0.02, ky-W*0.02);
+      ctx.moveTo(W/2, ky+6); ctx.lineTo(W/2+W*0.018, ky+12);
+      ctx.stroke();
+      ctx.fillStyle='#f0c8a0';
+      ctx.beginPath(); ctx.arc(W/2, ky-W*0.062, W*0.014, 0, 6.28); ctx.fill();
+      ctx.fillStyle='rgba(94,200,230,0.5)';
+      ctx.font='7px Orbitron, sans-serif'; ctx.textAlign='center';
+      ctx.fillText('KICK OFF', W/2, ky+24);
+    }
+  }
+
   // 공 + 궤적
-  const bx=G.ballX, by = G.phase==='back'?H*0.35:H*0.65;
+  const bx=G.ballX, by = G.phase==='back'?H*0.30:H*0.80;
   G.trail.push({x:bx,y:by}); if(G.trail.length>8) G.trail.shift();
   G.trail.forEach((p,i)=>{
     ctx.globalAlpha=(i/G.trail.length)*0.3;
