@@ -987,9 +987,42 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   /* 1000번 달성 시 */
   .dead-label-title.revive{color:rgba(255,215,0,0.9) !important;text-shadow:0 0 10px rgba(255,215,0,0.6) !important;}
   @keyframes revivePulse{0%,100%{opacity:0.8;}50%{opacity:1;}}
+
+/* ── 부팅 로더 ── */
+#boot-loader{position:fixed;inset:0;z-index:9999;background:#020204;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  transition:opacity 0.45s ease;font-family:'Orbitron','Russo One',sans-serif;}
+#boot-loader.done{opacity:0;pointer-events:none;}
+.bt-logo{font-size:16px;font-weight:800;letter-spacing:5px;color:#ffd700;
+  text-shadow:0 0 16px rgba(255,215,0,0.4);}
+.bt-sub{font-size:8px;letter-spacing:3px;color:#1a7a00;}
+.bt-bar-wrap{width:min(72vw,280px);height:14px;border:1px solid rgba(57,255,20,0.4);
+  background:rgba(0,10,0,0.6);padding:2px;box-shadow:0 0 10px rgba(57,255,20,0.12);}
+.bt-bar{height:100%;width:0%;background:repeating-linear-gradient(90deg,
+  #39ff14 0px,#39ff14 8px,rgba(57,255,20,0.35) 8px,rgba(57,255,20,0.35) 10px);
+  box-shadow:0 0 8px rgba(57,255,20,0.6);transition:width 0.25s ease;}
+.bt-pct{font-family:'Share Tech Mono',monospace;font-size:12px;color:#39ff14;}
+.bt-msg{font-size:9px;letter-spacing:1px;color:rgba(57,255,20,0.65);min-height:14px;text-align:center;}
+.bt-slow{display:none;flex-direction:column;align-items:center;gap:8px;margin-top:4px;}
+.bt-slow.show{display:flex;}
+.bt-slow-txt{font-size:9px;color:rgba(255,215,0,0.7);letter-spacing:1px;text-align:center;line-height:1.7;}
+.bt-retry{padding:8px 22px;font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;
+  letter-spacing:2px;color:#000;background:#ffd700;border:none;cursor:pointer;}
 </style>
 </head>
 <body>
+<div id="boot-loader">
+  <div class="bt-logo">LIGHTWAR</div>
+  <div class="bt-sub">STAR LEAGUE LOADING</div>
+  <div class="bt-bar-wrap"><div class="bt-bar" id="bt-bar"></div></div>
+  <div class="bt-pct" id="bt-pct">0%</div>
+  <div class="bt-msg" id="bt-msg">게이트웨이 접속 중…</div>
+  <div class="bt-slow" id="bt-slow">
+    <div class="bt-slow-txt">서버가 절전 모드에서 깨어나는 중입니다.<br>멈춘 게 아니에요 — 첫 접속은 최대 10초쯤 걸릴 수 있어요.</div>
+    <button class="bt-retry" onclick="location.reload()">새로고침</button>
+  </div>
+</div>
+
 <div class="bg"></div>
 <div class="app">
 
@@ -1381,6 +1414,53 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   </div>
 </div>
 <script>
+/* ── 부팅 로더 제어 ── */
+const BOOT = { p:0, done:false, t0:Date.now() };
+const BOOT_MSGS = ['게이트웨이 접속 중…','사이오닉 매트릭스 동기화…','미네랄 시세 수신 중…','전장 데이터 다운로드…','유닛 명단 정렬 중…','거의 다 왔습니다…'];
+let bootMsgIdx = 0;
+const bootMsgTimer = setInterval(()=>{
+  if(BOOT.done) return;
+  bootMsgIdx = (bootMsgIdx+1) % BOOT_MSGS.length;
+  const el = document.getElementById('bt-msg');
+  if(el) el.textContent = BOOT_MSGS[bootMsgIdx];
+}, 1400);
+const bootBarTimer = setInterval(()=>{
+  if(BOOT.done) return;
+  // 실제 진행률을 알 수 없으므로 90%까지 점근 — 데이터 도착 시 100%로 점프
+  const target = 90;
+  BOOT.p += (target - BOOT.p) * 0.06;
+  const bar = document.getElementById('bt-bar');
+  const pct = document.getElementById('bt-pct');
+  if(bar) bar.style.width = BOOT.p.toFixed(1)+'%';
+  if(pct) pct.textContent = Math.round(BOOT.p)+'%';
+  if(Date.now() - BOOT.t0 > 9000){
+    const slow = document.getElementById('bt-slow');
+    if(slow) slow.classList.add('show');
+  }
+}, 120);
+function bootDone(){
+  if(BOOT.done) return;
+  BOOT.done = true;
+  clearInterval(bootMsgTimer); clearInterval(bootBarTimer);
+  const bar = document.getElementById('bt-bar');
+  const pct = document.getElementById('bt-pct');
+  if(bar) bar.style.width = '100%';
+  if(pct) pct.textContent = '100%';
+  const msg = document.getElementById('bt-msg');
+  if(msg) msg.textContent = '접속 완료!';
+  setTimeout(()=>{
+    const l = document.getElementById('boot-loader');
+    if(l) l.classList.add('done');
+  }, 280);
+}
+function bootFail(){
+  const msg = document.getElementById('bt-msg');
+  if(msg){ msg.textContent = '연결에 실패했습니다'; msg.style.color = 'rgba(255,90,90,0.9)'; }
+  const slow = document.getElementById('bt-slow');
+  if(slow) slow.classList.add('show');
+}
+setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
+
   // ── 디버그 수집기 (?debug=1 로 열면 화면에 표시) ──
   const QZDBG = { errors:[], notes:[] };
   window.addEventListener('error', e => { QZDBG.errors.push((e.message||'?')+' @'+(e.filename||'').split('/').pop()+':'+e.lineno); qzDbgRender(); });
@@ -1760,7 +1840,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         // 각 선수 기록 누적 합산해서 roster에 반영
         const statsMap = {};
         Object.values(data.weekly).forEach(w=>{
-          w.players.forEach(p=>{
+          (w.players||[]).forEach(p=>{
             if(!statsMap[p.name]) statsMap[p.name] = {team:p.team, att:0, goals:0, assists:0};
             statsMap[p.name].att     += p.att     || 0;
             statsMap[p.name].goals   += p.goals   || 0;
@@ -1777,7 +1857,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
         // 본리그 미네랄 획득량 업데이트
         const totalMineral = {protoss:0, zerg:0, terran:0};
         Object.values(data.weekly).forEach(w=>{
-          Object.entries(w.teamMineral).forEach(([race, m])=>{
+          Object.entries(w.teamMineral||{}).forEach(([race, m])=>{
             totalMineral[race] = (totalMineral[race]||0) + m;
           });
         });
@@ -1799,6 +1879,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
       // 로스터가 채워졌으니 트레이드 버튼 활성화 상태 재평가 (트레이드 유닛 보유 팀만 활성)
       updateTradeBtns();
+      bootDone();
       qzDbgNote('loadMainLeague 완료 | 버튼 disabled: '+['protoss','zerg','terran'].map(r=>{
         const b=document.querySelector('.trade-btn[onclick="openTradeModal(\''+r+'\')"]');
         return r.slice(0,3).toUpperCase()+'='+(b?b.disabled:'?');
@@ -1807,6 +1888,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     } catch(e){
       console.error('mainleague load error', e);
       QZDBG.errors.push('loadMainLeague: '+(e&&e.message||e)); qzDbgRender();
+      bootFail();
       // API 실패해도 기본값으로 화면 표시
       ['protoss','zerg','terran'].forEach(race=>{
         const numEl = document.getElementById('hp-'+race);
