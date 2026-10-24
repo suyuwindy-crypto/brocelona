@@ -1008,6 +1008,12 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 .bt-slow-txt{font-size:9px;color:rgba(255,215,0,0.7);letter-spacing:1px;text-align:center;line-height:1.7;}
 .bt-retry{padding:8px 22px;font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;
   letter-spacing:2px;color:#000;background:#ffd700;border:none;cursor:pointer;}
+
+  /* ── OVERKILL: 최초 탈락 이후 0 이하 팀 (마이너스 HP 집계) ── */
+  .hp-popup.state-overkill{ border-color:rgba(255,60,60,0.7)!important; box-shadow:0 0 14px rgba(255,40,40,0.35)!important; }
+  .hp-popup.state-overkill .pop-num{ color:#ff4a4a!important; text-shadow:0 0 10px rgba(255,40,40,0.6)!important; }
+  .ok-badge{ display:none; margin-left:6px; padding:1px 5px; font-size:8px; letter-spacing:1px;
+    font-family:'Orbitron',sans-serif; color:#ff4a4a; border:1px solid rgba(255,74,74,0.6); vertical-align:middle; }
 </style>
 </head>
 <body>
@@ -1074,19 +1080,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
       <div class="pop-race">Protoss</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-protoss"></div>
-      <div class="pop-num high" id="hp-protoss"><span class="loading-hp">···</span></div>
+      <div class="pop-num high" id="hp-protoss"><span class="loading-hp">···</span></div><span class="ok-badge" id="ok-protoss">OVERKILL</span>
     </div>
     <div class="hp-popup zerg" id="popup-zerg" style="cursor:pointer;">
       <div class="pop-race">Zerg</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-zerg"></div>
-      <div class="pop-num high" id="hp-zerg"><span class="loading-hp">···</span></div>
+      <div class="pop-num high" id="hp-zerg"><span class="loading-hp">···</span></div><span class="ok-badge" id="ok-zerg">OVERKILL</span>
     </div>
     <div class="hp-popup terran" id="popup-terran" style="cursor:pointer;">
       <div class="pop-race">Terran</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-terran"></div>
-      <div class="pop-num high" id="hp-terran"><span class="loading-hp">···</span></div>
+      <div class="pop-num high" id="hp-terran"><span class="loading-hp">···</span></div><span class="ok-badge" id="ok-terran">OVERKILL</span>
     </div>
   </div>
   <div class="battle-toggle" id="battle-toggle" onclick="toggleBattleZone()">▲</div>
@@ -1338,6 +1344,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
             <div class="rule-sub">S-5. 기지 HP 시스템</div>
             <div class="rule-text">남은 미네랄 → 팀 기지 HP 전환.</div>
             <div class="rule-text">실점 <span class="rule-hi">1점 = -100 HP</span>. 매주 경기 후 HP 0 이하 시 <span class="rule-hi">탈락</span>.</div>
+            <div class="rule-list">
+              <div class="rule-li"><span class="rule-hi">최초로</span> HP 0 이하가 된 팀 → ELIMINATED</div>
+              <div class="rule-li">이후 0 이하가 된 팀 → <span class="rule-hi">마이너스 HP</span>로 계속 집계 (OVERKILL)</div>
+              <div class="rule-li">여러 팀이 0 이하일 때 순위는 <span class="rule-hi">HP가 0에 가까운 팀이 상위</span> (예: -200 > -900)</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1502,7 +1513,10 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
 
   function updateBaseOverlay(race, hp, max){
     const pct = hp / max;
-    const isDead  = hp <= 0;
+    const below0  = hp <= 0;
+    // 최초 탈락팀만 ELIMINATED(히든룰 대상). 이후 0 이하 팀은 OVERKILL — 마이너스 HP로 계속 집계
+    const isDead  = below0 && (!firstEliminated || race === firstEliminated);
+    const isOverkill = below0 && !isDead;
     const isFire  = pct <= 0.25 && !isDead;
     const isSmoke = pct <= 0.5  && !isDead && !isFire;
 
@@ -1544,6 +1558,17 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
     popup.classList.toggle('state-smoke', isSmoke);
     popup.classList.toggle('state-fire',  isFire);
     popup.classList.toggle('state-dead',  isDead);
+    popup.classList.toggle('state-overkill', isOverkill);
+    const okBadge = document.getElementById('ok-'+race);
+    if(okBadge) okBadge.style.display = isOverkill ? 'inline-block' : 'none';
+  }
+
+  // 데이터 로드 후 탈락 상태 재판정 (최초 탈락팀 확정 뒤 전 팀 오버레이 갱신)
+  function refreshEliminationStates(){
+    computeFirstEliminated();
+    ['protoss','zerg','terran'].forEach(r=>{
+      if(hpMaxData[r]) updateBaseOverlay(r, teams[r].hp, hpMaxData[r]);
+    });
   }
   function switchTab(name,btn){
     ['overview','units','battle','weekly','rule'].forEach(t=>{
@@ -1797,8 +1822,6 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
       if(data.hp){
         Object.entries(data.hp).forEach(([race, d])=>{
           hpMaxData[race] = d.max;
-          if(reviveChargeUsed[race]) return;
-          if(teams[race].hp <= 0) return;
           teams[race] = { hp: d.current, mineral: teams[race]?.mineral || 0 };
           renderSeg(race, d.current, d.max);
           const pct = d.current / d.max;
@@ -1879,6 +1902,7 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
 
       // 로스터가 채워졌으니 트레이드 버튼 활성화 상태 재평가 (트레이드 유닛 보유 팀만 활성)
       updateTradeBtns();
+      refreshEliminationStates();
       bootDone();
       qzDbgNote('loadMainLeague 완료 | 버튼 disabled: '+['protoss','zerg','terran'].map(r=>{
         const b=document.querySelector('.trade-btn[onclick="openTradeModal(\''+r+'\')"]');
