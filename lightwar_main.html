@@ -872,11 +872,11 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
   /* ── ELIMINATED 오버레이 ── */
   .elim-overlay{
-    position:fixed;
+    position:absolute;
     display:none;
     flex-direction:column;
     align-items:center;justify-content:center;gap:5px;
-    z-index:9999;
+    z-index:20;
     padding:10px 8px 14px;
     background:rgba(0,0,0,0.93);
     border:1.5px solid rgba(255,40,40,0.7);
@@ -1014,6 +1014,14 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   .hp-popup.state-overkill .pop-num{ color:#ff4a4a!important; text-shadow:0 0 10px rgba(255,40,40,0.6)!important; }
   .ok-badge{ display:none; margin-left:6px; padding:1px 5px; font-size:8px; letter-spacing:1px;
     font-family:'Orbitron',sans-serif; color:#ff4a4a; border:1px solid rgba(255,74,74,0.6); vertical-align:middle; }
+
+  /* ── 우승 타이틀: HP(마이너스 포함) 최고 팀 ── */
+  .win-title{ display:none; position:absolute; left:50%; top:-22px; transform:translateX(-50%);
+    white-space:nowrap; padding:2px 8px; font-family:'Orbitron','Russo One',sans-serif; font-size:10px; font-weight:900;
+    letter-spacing:2px; color:#000; background:linear-gradient(180deg,#ffe66b,#ffb800);
+    border:1px solid #fff3a0; box-shadow:0 0 12px rgba(255,215,0,0.8); z-index:6; animation:winPulse 1.6s ease-in-out infinite; }
+  .win-title.show{ display:block; }
+  @keyframes winPulse{0%,100%{box-shadow:0 0 8px rgba(255,215,0,0.6);}50%{box-shadow:0 0 18px rgba(255,215,0,1);}}
 </style>
 </head>
 <body>
@@ -1077,22 +1085,25 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     </div>
 
     <div class="hp-popup protoss" id="popup-protoss" style="cursor:pointer;">
+      <div class="win-title" id="win-protoss">🏆 우승!</div>
       <div class="pop-race">Protoss</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-protoss"></div>
-      <div class="pop-num high" id="hp-protoss"><span class="loading-hp">···</span></div><span class="ok-badge" id="ok-protoss">OVERKILL</span>
+      <div class="pop-num high" id="hp-protoss"><span class="loading-hp">···</span></div><span class="ok-badge" id="ok-protoss">탈락</span>
     </div>
     <div class="hp-popup zerg" id="popup-zerg" style="cursor:pointer;">
+      <div class="win-title" id="win-zerg">🏆 우승!</div>
       <div class="pop-race">Zerg</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-zerg"></div>
-      <div class="pop-num high" id="hp-zerg"><span class="loading-hp">···</span></div><span class="ok-badge" id="ok-zerg">OVERKILL</span>
+      <div class="pop-num high" id="hp-zerg"><span class="loading-hp">···</span></div><span class="ok-badge" id="ok-zerg">탈락</span>
     </div>
     <div class="hp-popup terran" id="popup-terran" style="cursor:pointer;">
+      <div class="win-title" id="win-terran">🏆 우승!</div>
       <div class="pop-race">Terran</div>
       <div class="pop-lbl">HP</div>
       <div class="pop-seg" id="seg-terran"></div>
-      <div class="pop-num high" id="hp-terran"><span class="loading-hp">···</span></div><span class="ok-badge" id="ok-terran">OVERKILL</span>
+      <div class="pop-num high" id="hp-terran"><span class="loading-hp">···</span></div><span class="ok-badge" id="ok-terran">탈락</span>
     </div>
   </div>
   <div class="battle-toggle" id="battle-toggle" onclick="toggleBattleZone()">▲</div>
@@ -1101,19 +1112,19 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
   <div class="elim-overlay protoss" id="elim-protoss">
     <div class="elim-title">ELIMINATED</div>
     <div class="elim-counter" id="dead-count-protoss">0 / 1000</div>
-    <div class="elim-hint">💎 <b>1,000번</b> 클릭하면 1M 획득<br><span style="color:rgba(255,80,80,0.9);font-size:9px;">⚠ 기지 충전은 1회만 가능</span></div>
+    <div class="elim-hint">⛏ 숨겨진 자원이 남아있을지도…<br><span style="color:rgba(255,215,0,0.7);font-size:9px;">기지를 계속 두드려보세요</span></div>
     <img class="dead-mineral-btn" id="dead-mineral-protoss" src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" alt="mineral">
   </div>
   <div class="elim-overlay zerg" id="elim-zerg">
     <div class="elim-title">ELIMINATED</div>
     <div class="elim-counter" id="dead-count-zerg">0 / 1000</div>
-    <div class="elim-hint">💎 <b>1,000번</b> 클릭하면 1M 획득<br><span style="color:rgba(255,80,80,0.9);font-size:9px;">⚠ 기지 충전은 1회만 가능</span></div>
+    <div class="elim-hint">⛏ 숨겨진 자원이 남아있을지도…<br><span style="color:rgba(255,215,0,0.7);font-size:9px;">기지를 계속 두드려보세요</span></div>
     <img class="dead-mineral-btn" id="dead-mineral-zerg" src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" alt="mineral">
   </div>
   <div class="elim-overlay terran" id="elim-terran">
     <div class="elim-title">ELIMINATED</div>
     <div class="elim-counter" id="dead-count-terran">0 / 1000</div>
-    <div class="elim-hint">💎 <b>1,000번</b> 클릭하면 1M 획득<br><span style="color:rgba(255,80,80,0.9);font-size:9px;">⚠ 기지 충전은 1회만 가능</span></div>
+    <div class="elim-hint">⛏ 숨겨진 자원이 남아있을지도…<br><span style="color:rgba(255,215,0,0.7);font-size:9px;">기지를 계속 두드려보세요</span></div>
     <img class="dead-mineral-btn" id="dead-mineral-terran" src="https://suyuwindy-crypto.github.io/brocelona/mineral.webp" alt="mineral">
   </div>
 
@@ -1345,9 +1356,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
             <div class="rule-text">남은 미네랄 → 팀 기지 HP 전환.</div>
             <div class="rule-text">실점 <span class="rule-hi">1점 = -100 HP</span>. 매주 경기 후 HP 0 이하 시 <span class="rule-hi">탈락</span>.</div>
             <div class="rule-list">
-              <div class="rule-li"><span class="rule-hi">최초로</span> HP 0 이하가 된 팀 → ELIMINATED</div>
-              <div class="rule-li">이후 0 이하가 된 팀 → <span class="rule-hi">마이너스 HP</span>로 계속 집계 (OVERKILL)</div>
-              <div class="rule-li">여러 팀이 0 이하일 때 순위는 <span class="rule-hi">HP가 0에 가까운 팀이 상위</span> (예: -200 > -900)</div>
+              <div class="rule-li">HP 0 이하가 된 팀은 <span class="rule-hi">순서대로 탈락</span>하며, 마이너스 HP도 그대로 기록</div>
+              <div class="rule-li">시즌 순위·우승은 <span class="rule-hi">HP가 가장 높은 팀</span> (마이너스 포함, 예: -200 > -900)</div>
             </div>
           </div>
         </div>
@@ -1514,8 +1524,9 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
   function updateBaseOverlay(race, hp, max){
     const pct = hp / max;
     const below0  = hp <= 0;
-    // 최초 탈락팀만 ELIMINATED(히든룰 대상). 이후 0 이하 팀은 OVERKILL — 마이너스 HP로 계속 집계
-    const isDead  = below0 && (!firstEliminated || race === firstEliminated);
+    // 최초 탈락팀 + 몰래멀티 미사용 → ELIMINATED(숫자 숨김, 1,000클릭 히든룰)
+    // 그 외 0 이하 팀(부활 후 재탈락 포함) → 마이너스 HP 표시 + '탈락' 뱃지, 순차 탈락
+    const isDead  = below0 && !reviveChargeUsed[race] && (!firstEliminated || race === firstEliminated);
     const isOverkill = below0 && !isDead;
     const isFire  = pct <= 0.25 && !isDead;
     const isSmoke = pct <= 0.5  && !isDead && !isFire;
@@ -1535,13 +1546,16 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
       if(isDead){
         const popup = document.getElementById('popup-'+race);
         if(popup){
-          const r = popup.getBoundingClientRect();
+          // 기지 팝업과 같은 컨테이너에 넣어 스크롤·접기와 함께 움직이게 (화면 고정 X)
+          const host = popup.offsetParent || popup.parentElement;
+          if(host && elim.parentElement !== host) host.appendChild(elim);
           const padH = 10;
-          const extraH = r.height + 10; // hp-popup 위로 완전히 올림
-          elim.style.left   = (r.left - padH)+'px';
-          elim.style.width  = (r.width + padH*2)+'px';
-          elim.style.top    = (r.top - extraH)+'px';
-          elim.style.height = (r.height + 16)+'px';
+          const w = popup.offsetWidth, hgt = popup.offsetHeight;
+          const extraH = hgt + 10; // hp-popup 바로 위에 배치
+          elim.style.left   = (popup.offsetLeft - padH)+'px';
+          elim.style.width  = (w + padH*2)+'px';
+          elim.style.top    = Math.max(4, popup.offsetTop - extraH)+'px';
+          elim.style.height = (hgt + 16)+'px';
         }
         elim.classList.add('active');
       } else {
@@ -1550,7 +1564,7 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
     }
     // 미네랄 카드 상태
     const mc = document.getElementById('mc-'+race);
-    if(mc) mc.classList.toggle('dead-mine', isDead);
+    if(mc) mc.classList.toggle('dead-mine', below0);
 
     // 상태창 효과
     const popup = document.getElementById('popup-'+race);
@@ -1564,8 +1578,21 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
   }
 
   // 데이터 로드 후 탈락 상태 재판정 (최초 탈락팀 확정 뒤 전 팀 오버레이 갱신)
+  window.addEventListener('resize', ()=>{ try{ refreshEliminationStates(); }catch(e){} });
+  // 우승 타이틀: 마이너스 포함 HP가 가장 높은 팀 (동점이면 모두)
+  const SHOW_WINNER_TITLE = true;
+  function renderWinnerTitle(){
+    const races = ['protoss','zerg','terran'].filter(r=>hpMaxData[r]);
+    if(!races.length) return;
+    const top = Math.max(...races.map(r=>teams[r].hp));
+    ['protoss','zerg','terran'].forEach(r=>{
+      const el = document.getElementById('win-'+r);
+      if(el) el.classList.toggle('show', SHOW_WINNER_TITLE && races.includes(r) && teams[r].hp === top);
+    });
+  }
   function refreshEliminationStates(){
     computeFirstEliminated();
+    try{ renderWinnerTitle(); }catch(e){}
     ['protoss','zerg','terran'].forEach(r=>{
       if(hpMaxData[r]) updateBaseOverlay(r, teams[r].hp, hpMaxData[r]);
     });
@@ -1831,7 +1858,9 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
           const numEl = document.getElementById('hp-'+race);
           if(numEl){
             numEl.className = 'pop-num '+cls;
-            numEl.innerHTML = d.current.toLocaleString()+'<span> / '+d.max.toLocaleString()+'</span>';
+            // 최초 탈락팀(몰래멀티 전)은 마이너스 숫자를 숨기고 0으로만 표시 — '탈락' 그 자체
+          const hideNeg = d.firstElim && !d.revived && d.current <= 0;
+          numEl.innerHTML = (hideNeg ? 0 : d.current).toLocaleString()+'<span> / '+d.max.toLocaleString()+'</span>';
           }
           // 미충전미네랄 반영 (충전 완료 0이면 0으로 표시)
           earnData[race] = d.unspent || 0;
@@ -2493,22 +2522,14 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
   function charge(race){
     const earn = earnData[race];
     if(!earn || earn <= 0){ alert('충전할 미네랄이 없습니다.'); return; }
-    const isDead = teams[race].hp <= 0;
-    if(isDead && race !== firstEliminated){
-      alert('HP 0 이하 팀은 충전할 수 없습니다.\n(패자부활은 최초 탈락팀만 가능)'); return;
-    }
+    if(teams[race].hp <= 0){ alert('탈락한 기지는 충전할 수 없습니다.'); return; }
 
     openPwCapture('🔐 충전 인증', (pw)=>{
       openConfirmModal('⚡ 충전 확인',
         '사용한 미네랄은 회수할 수 없습니다.<br><br>'+
         '<span style="color:var(--yellow);font-size:12px;">'+earn.toLocaleString()+'M</span> 을 기지에 충전하시겠습니까?',
         ()=>{
-          if(isDead){
-            if(reviveChargeUsed[race]){ alert('패자부활 충전은 1회만 가능합니다.'); return; }
-            const ok = confirm('⚠️ 패자부활 충전\n\n'+earn.toLocaleString()+'M 을 기지에 충전합니다.\n\n충전 후에는 다시 충전할 수 없습니다.\n정말 충전하시겠습니까?');
-            if(!ok) return;
-          }
-          _submitCharge(race, pw, isDead ? { revive:'1', bonus:String(reviveBonus[race]) } : {});
+          _submitCharge(race, pw);
         }
       );
     });
@@ -2523,14 +2544,12 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
         const msg = {
           pw:'비밀번호가 올바르지 않습니다.',
           noearn:'충전할 미네랄이 없습니다.',
-          dead:'HP 0 이하 팀은 일반 충전을 할 수 없습니다.',
-          notfirst:'패자부활은 최초 탈락팀만 가능합니다.',
-          revived:'패자부활은 이미 사용했습니다 (1회 한정).'
+          dead:'탈락한 기지는 충전할 수 없습니다.'
         }[r.error] || '충전에 실패했습니다. 잠시 후 다시 시도해주세요.';
         alert(msg);
         return;
       }
-      alert((r.revive ? '🔥 패자부활 발동! +' : '⚡ 충전 완료! +') + r.amount.toLocaleString()+' HP');
+      alert('⚡ 충전 완료! +' + r.amount.toLocaleString()+' HP');
       location.reload();   // HP·잔여 미네랄 서버 기준 갱신
     }catch(e){
       alert('네트워크 오류로 충전을 완료하지 못했습니다.');
@@ -2573,7 +2592,7 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
   const deadClicks = { protoss:0, zerg:0, terran:0 };
   const reviveCharged = { protoss:false, zerg:false, terran:false };
   const reviveChargeUsed = { protoss:false, zerg:false, terran:false }; // 패자부활 충전 1회 제한
-  const reviveBonus = { protoss:0, zerg:0, terran:0 };                  // 1,000클릭당 +1 (서버에 bonus로 전달)
+  const reviveInFlight = { protoss:false, zerg:false, terran:false };
 
   function handleDeadClick(race){
     const popup = document.getElementById('popup-'+race);
@@ -2590,7 +2609,7 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
     const counterEl = document.getElementById('dead-count-'+race);
 
     // 카운터 업데이트
-    if(counterEl && cnt % REVIVE_CLICKS !== 0){
+    if(counterEl && cnt < REVIVE_CLICKS){
       counterEl.textContent = cnt + ' / ' + REVIVE_CLICKS;
       counterEl.style.color = '';
     }
@@ -2601,27 +2620,47 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
     popup.classList.add('click-flash');
     setTimeout(()=>popup.classList.remove('click-flash'), 150);
 
-    // REVIVE_CLICKS 배수 달성마다 +1M 적립
-    if(cnt % REVIVE_CLICKS === 0){
-      earnData[race] = (earnData[race]||0) + 1;
-      reviveBonus[race]++;
-      const earnEl = document.getElementById('earn-'+race);
-      if(earnEl) earnEl.textContent = earnData[race].toLocaleString()+' M';
-
+    // 1,000번 달성 → 몰래멀티 성공
+    if(cnt >= REVIVE_CLICKS){
       if(counterEl){
-        counterEl.textContent = cnt + ' 💎 누적 +' + earnData[race] + 'M';
-        counterEl.style.color = 'rgba(255,215,0,0.9)';
+        counterEl.textContent = '⛏ 몰래멀티 발견!';
+        counterEl.style.color = 'rgba(255,215,0,0.95)';
       }
+      deadClicks[race] = REVIVE_CLICKS;   // 추가 클릭으로 중복 발동 방지
+      if(reviveInFlight[race]) return;
+      reviveInFlight[race] = true;
+      openConfirmModal('🏗 몰래멀티 성공!',
+        '적의 눈을 피해 숨겨둔 멀티가 발견됐습니다.<br><br>'+
+        '<span style="color:var(--yellow);">팀 비밀번호</span>를 입력하면 기지가 <span style="color:var(--green);">HP 1</span>로 부활하고,<br>'+
+        '보유 미네랄로 다시 충전할 수 있습니다.<br><br>'+
+        '<span style="font-size:9px;color:rgba(255,80,80,0.9);">⚠ 부활은 단 1회. 다시 0 이하가 되면 그대로 탈락합니다.</span>',
+        ()=>{
+          openPwCapture('🔐 몰래멀티 — 팀 인증', (pw)=>{ _submitRevive(race, pw); });
+        });
+      // 취소 시 다시 시도 가능
+      setTimeout(()=>{ reviveInFlight[race] = false; }, 400);
+    }
+  }
 
-      // 충전 버튼 활성화 (아직 미사용 시)
-      const chargeBtn = document.getElementById('charge-btn-'+race);
-      if(chargeBtn){
-        chargeBtn.disabled = false;
-        chargeBtn.style.opacity = '1';
-        chargeBtn.style.borderColor = 'rgba(255,215,0,0.6)';
-        chargeBtn.style.color = 'var(--yellow)';
-        chargeBtn.textContent = '⚡ 패자부활 충전 (' + earnData[race] + 'M)';
+  async function _submitRevive(race, pw){
+    try{
+      const q = new URLSearchParams({ action:'revive', race, pw }).toString();
+      const res = await fetch(API_URL + '?' + q, { redirect:'follow' });
+      const r = JSON.parse(await res.text());
+      if(!r.ok){
+        const msg = {
+          pw:'비밀번호가 올바르지 않습니다. 다시 시도해주세요.',
+          notfirst:'몰래멀티는 최초 탈락팀만 가능합니다.',
+          revived:'몰래멀티는 이미 사용했습니다 (1회 한정).',
+          alive:'기지가 아직 살아 있습니다.'
+        }[r.error] || '부활에 실패했습니다. 잠시 후 다시 시도해주세요.';
+        alert(msg);
+        return;
       }
+      alert('🏗 몰래멀티 성공! 기지가 HP 1로 부활했습니다.\n보유 미네랄로 충전해 기지를 다시 세우세요.');
+      location.reload();
+    }catch(e){
+      alert('네트워크 오류로 부활을 완료하지 못했습니다.');
     }
   }
 
