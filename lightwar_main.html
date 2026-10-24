@@ -1822,6 +1822,8 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
       if(data.hp){
         Object.entries(data.hp).forEach(([race, d])=>{
           hpMaxData[race] = d.max;
+          serverFirstElim[race] = !!d.firstElim;
+          reviveChargeUsed[race] = !!d.revived;   // 패자부활 1회 제한 — 서버 기록 기준(새로고침해도 유지)
           teams[race] = { hp: d.current, mineral: teams[race]?.mineral || 0 };
           renderSeg(race, d.current, d.max);
           const pct = d.current / d.max;
@@ -2492,6 +2494,9 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
     const earn = earnData[race];
     if(!earn || earn <= 0){ alert('충전할 미네랄이 없습니다.'); return; }
     const isDead = teams[race].hp <= 0;
+    if(isDead && race !== firstEliminated){
+      alert('HP 0 이하 팀은 충전할 수 없습니다.\n(패자부활은 최초 탈락팀만 가능)'); return;
+    }
 
     openPwCapture('🔐 충전 인증', (pw)=>{
       openConfirmModal('⚡ 충전 확인',
@@ -2502,28 +2507,30 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
             if(reviveChargeUsed[race]){ alert('패자부활 충전은 1회만 가능합니다.'); return; }
             const ok = confirm('⚠️ 패자부활 충전\n\n'+earn.toLocaleString()+'M 을 기지에 충전합니다.\n\n충전 후에는 다시 충전할 수 없습니다.\n정말 충전하시겠습니까?');
             if(!ok) return;
-            reviveChargeUsed[race] = true;
           }
-          _submitCharge(race, pw);
+          _submitCharge(race, pw, isDead ? { revive:'1', bonus:String(reviveBonus[race]) } : {});
         }
       );
     });
   }
 
-  async function _submitCharge(race, pw){
+  async function _submitCharge(race, pw, extra){
     try{
-      const q = new URLSearchParams({ action:'charge', race, pw }).toString();
+      const q = new URLSearchParams(Object.assign({ action:'charge', race, pw }, extra||{})).toString();
       const res = await fetch(API_URL + '?' + q, { redirect:'follow' });
       const r = JSON.parse(await res.text());
       if(!r.ok){
         const msg = {
           pw:'비밀번호가 올바르지 않습니다.',
-          noearn:'충전할 미네랄이 없습니다.'
+          noearn:'충전할 미네랄이 없습니다.',
+          dead:'HP 0 이하 팀은 일반 충전을 할 수 없습니다.',
+          notfirst:'패자부활은 최초 탈락팀만 가능합니다.',
+          revived:'패자부활은 이미 사용했습니다 (1회 한정).'
         }[r.error] || '충전에 실패했습니다. 잠시 후 다시 시도해주세요.';
         alert(msg);
         return;
       }
-      alert('⚡ 충전 완료! +'+r.amount.toLocaleString()+' HP');
+      alert((r.revive ? '🔥 패자부활 발동! +' : '⚡ 충전 완료! +') + r.amount.toLocaleString()+' HP');
       location.reload();   // HP·잔여 미네랄 서버 기준 갱신
     }catch(e){
       alert('네트워크 오류로 충전을 완료하지 못했습니다.');
@@ -2555,35 +2562,18 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
   const hpMaxData = { protoss:0, zerg:0, terran:0 };
   let firstEliminated = null;
 
+  // 서버가 '처음 HP 0 이하가 된 순간'을 고정 기록 → 그 값을 그대로 따름 (충전·핸디캡까지 반영된 실제 HP 기준)
+  const serverFirstElim = { protoss:false, zerg:false, terran:false };
   function computeFirstEliminated(){
     if(REVIVAL_OVERRIDE){ firstEliminated = REVIVAL_OVERRIDE; return; }
-    if(!weeklyData || !hpMaxData.protoss) return;
-    const cum = { protoss:0, zerg:0, terran:0 };
-    const weeks = Object.keys(weeklyData).map(Number).sort((a,b)=>a-b);
-    for(const wk of weeks){
-      const rounds = (weeklyData[wk] && weeklyData[wk].rounds) || [];
-      for(const r of rounds){
-        const pt = r.playingTeams || [];
-        if(pt.length !== 2) continue;
-        const sc = r.score || {};
-        // 각 팀 실점 = 상대 득점
-        cum[pt[0]] += (sc[pt[1]]||0) * 100;
-        cum[pt[1]] += (sc[pt[0]]||0) * 100;
-        for(const race of pt){
-          if(cum[race] >= hpMaxData[race]){
-            firstEliminated = race;
-            return;   // 가장 먼저 0 도달한 팀에서 즉시 종료
-          }
-        }
-      }
-    }
-    firstEliminated = null;   // 아직 탈락 팀 없음
+    firstEliminated = ['protoss','zerg','terran'].find(r=>serverFirstElim[r]) || null;
   }
 
   const REVIVE_CLICKS = 1000; // 패자부활 클릭 수
   const deadClicks = { protoss:0, zerg:0, terran:0 };
   const reviveCharged = { protoss:false, zerg:false, terran:false };
   const reviveChargeUsed = { protoss:false, zerg:false, terran:false }; // 패자부활 충전 1회 제한
+  const reviveBonus = { protoss:0, zerg:0, terran:0 };                  // 1,000클릭당 +1 (서버에 bonus로 전달)
 
   function handleDeadClick(race){
     const popup = document.getElementById('popup-'+race);
@@ -2614,6 +2604,7 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
     // REVIVE_CLICKS 배수 달성마다 +1M 적립
     if(cnt % REVIVE_CLICKS === 0){
       earnData[race] = (earnData[race]||0) + 1;
+      reviveBonus[race]++;
       const earnEl = document.getElementById('earn-'+race);
       if(earnEl) earnEl.textContent = earnData[race].toLocaleString()+' M';
 
