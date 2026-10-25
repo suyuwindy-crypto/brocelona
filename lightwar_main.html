@@ -1580,7 +1580,7 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
   // 데이터 로드 후 탈락 상태 재판정 (최초 탈락팀 확정 뒤 전 팀 오버레이 갱신)
   window.addEventListener('resize', ()=>{ try{ refreshEliminationStates(); }catch(e){} });
   // 우승 타이틀: 마이너스 포함 HP가 가장 높은 팀 (동점이면 모두)
-  const SHOW_WINNER_TITLE = true;
+  const SHOW_WINNER_TITLE = false;   // 시즌 종료 확정 시 true로 바꾸면 HP 최고 팀 위에 '🏆 우승!' 표시
   function renderWinnerTitle(){
     const races = ['protoss','zerg','terran'].filter(r=>hpMaxData[r]);
     if(!races.length) return;
