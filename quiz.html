@@ -192,6 +192,28 @@ html,body{width:100vw;min-height:100vh;background:var(--bg);font-family:'Rajdhan
 .bt-slow-txt{font-size:9px;color:rgba(255,215,0,0.7);letter-spacing:1px;text-align:center;line-height:1.7;}
 .bt-retry{padding:8px 22px;font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;
   letter-spacing:2px;color:#000;background:#ffd700;border:none;cursor:pointer;}
+
+/* ── 룰 숙지 노트 ── */
+.rn-intro{padding:9px 12px 7px;font-size:11px;color:#9fd88a;line-height:1.5;word-break:keep-all;}
+.rn-cat{border-top:1px solid rgba(180,20,20,0.3);}
+.rn-cat summary{list-style:none;display:flex;align-items:center;gap:8px;padding:12px 12px;cursor:pointer;
+  background:rgba(0,10,0,0.55);}
+.rn-cat summary::-webkit-details-marker{display:none;}
+.rn-cat summary::after{content:'▾';margin-left:4px;color:var(--yellow);font-size:13px;transition:transform .2s;}
+.rn-cat:not([open]) summary::after{transform:rotate(-90deg);}
+.rn-ic{font-size:16px;width:20px;text-align:center;}
+.rn-name{flex:1;font-size:15px;font-weight:700;color:var(--green);word-break:keep-all;}
+.rn-hot summary{background:rgba(40,30,0,0.75);}
+.rn-hot .rn-name{color:var(--yellow);text-shadow:0 0 8px var(--yellow-glow);}
+.rn-new{font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:1px;color:#000;background:var(--yellow);padding:2px 6px;}
+.rn-n{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);}
+.rn-list{padding:7px;display:flex;flex-direction:column;gap:6px;}
+.rn-item{padding:10px 12px;background:#eaeee4;border:1px solid #b3c0a6;border-left:3px solid #3a9e1e;}
+.rn-hot .rn-item{border-left-color:#c9a400;}
+.rn-q{font-size:13.5px;font-weight:600;color:#3a4a30;line-height:1.45;word-break:keep-all;}
+.rn-a{font-size:16px;font-weight:700;color:#0f3d05;line-height:1.4;margin-top:4px;word-break:keep-all;}
+.rn-a::before{content:'→ ';color:#3a9e1e;}
+.rn-x{font-size:12.5px;color:#4d5c43;line-height:1.5;margin-top:4px;word-break:keep-all;}
 </style>
 </head>
 <body>
@@ -237,6 +259,134 @@ html,body{width:100vw;min-height:100vh;background:var(--bg);font-family:'Rajdhan
     <div class="ms-box"><div class="ms-num" id="ms-prov">–</div><div class="ms-lbl">오늘 점수</div></div>
   </div>
   <div id="ms-note" style="font-size:9px;color:var(--text-dim);font-family:'Orbitron',sans-serif;letter-spacing:1px;padding:5px 2px 0;line-height:1.5;">오늘 점수는 출석·정답 잠정치 · 속도/팀 보너스는 자정에 확정</div>
+
+  <div class="sec-lbl">⬡ 룰 숙지 노트 <span class="cnt">심판 필독 · 67항목</span></div>
+  <div id="rule-note" class="sc-panel" style="padding:0;">
+    <div class="c-tr"></div><div class="c-bl"></div>
+    <div class="rn-intro">시즌 퀴즈 150문항을 중복 없이 정리했어요 · 중요도 순 · 카테고리를 눌러 펼치기</div>
+    <details class="rn-cat rn-hot" open>
+      <summary><span class="rn-ic">🏆</span><span class="rn-name">그랜드 파이널 특별 규정</span><span class="rn-new">NEW</span><span class="rn-n">5</span></summary>
+      <div class="rn-list">
+        <div class="rn-item"><div class="rn-q">Q. 실점 1점당 기지 HP는?</div><div class="rn-a">-300 HP</div><div class="rn-x">11/7 그랜드 파이널부터 적용. 그 이전 경기는 -100 HP로 계산(이미 반영된 HP는 변동 없음)</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 우승은 어떻게 결정될까?</div><div class="rn-a">한 팀 기지가 HP 0 이하로 탈락하면 상대 팀 우승</div><div class="rn-x">두 팀이 동시에 0 이하 → 마이너스가 더 적은 팀(HP 높은 팀) 우승</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 경기 도중 탈락·우승이 정해질까?</div><div class="rn-a">X — 대시보드 반영 후 확정</div><div class="rn-x">모든 판정은 경기 기록이 대시보드에 입력·표시된 결과 기준. 경기 중에는 결과가 정해지지 않음</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 결승 진출팀 참가 인원은?</div><div class="rn-a">제한 없음</div><div class="rn-x">결승 진출팀 특전 (기존 본리그 최대 8명 출전 제한 해제)</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 5명 미만 충원 시 3실점 페널티, HP로는?</div><div class="rn-a">-900 HP</div><div class="rn-x">3실점 × -300 HP. 인원 관리가 곧 기지 방어</div></div>
+      </div>
+    </details>
+    <details class="rn-cat">
+      <summary><span class="rn-ic">⭐</span><span class="rn-name">득점 계산 · 특수 유닛</span><span class="rn-n">6</span></summary>
+      <div class="rn-list">
+        <div class="rn-item"><div class="rn-q">Q. 배틀크루저·캐리어·울트라리스크(주장, 더블골) 필드골은?</div><div class="rn-a">2점</div><div class="rn-x">PK로 넣으면 1점 (더블골 보너스 미적용)</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 더블골 유닛이 필드골 1 + PK 1을 넣으면?</div><div class="rn-a">3점</div><div class="rn-x">2점 + 1점. 판정 시비 1순위 계산</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 스커지·리버·벌쳐(자폭유닛, 미네랄 1위)가 파울을 당하면?</div><div class="rn-a">PK 선언 가능</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 팀 파울 3개째의 피해자가 자폭유닛이면?</div><div class="rn-a">유닛 PK 1회로 종결</div><div class="rn-x">세컨 PK 중복 적용 없음</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 일꾼의 출석·득점·어시 1회는?</div><div class="rn-a">각 10M 팀 기여</div><div class="rn-x">미네랄이 기지 HP로 전환</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 트레이드 규정은?</div><div class="rn-a">트레이드 유닛 보유 팀 · 발동 팀만 -1,000M · 상대 일꾼만</div><div class="rn-x">상대 동의 불필요, 토요일(경기일) 제외, 팀당 최대 3회, 재트레이드 불가</div></div>
+      </div>
+    </details>
+    <details class="rn-cat">
+      <summary><span class="rn-ic">🧤</span><span class="rn-name">골키퍼 — 보유 시간 · 세이브</span><span class="rn-n">11</span></summary>
+      <div class="rn-list">
+        <div class="rn-item"><div class="rn-q">Q. 자기 진영에서 공을 잡은(손·발 합산) 키퍼의 보유 시간은?</div><div class="rn-a">6초</div><div class="rn-x">FIFA 원문 4초 → 우리 리그 6초. 초과 시 상대 간접 FK</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 6초 위반 간접 FK 위치는?</div><div class="rn-a">에어리어 안 손 위반 → 가장 가까운 에어리어 라인</div><div class="rn-x">에어리어 밖 발 위반 → 그 지점</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 6초 카운트가 멈추는 경우는?</div><div class="rn-a">공이 상대 진영으로 넘어갔을 때만</div><div class="rn-x">상대 진영 보유 무제한. 자기 진영으로 돌아오면 다시 6초</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 키퍼가 패스 후 발로 리턴을 받아 다시 몰면?</div><div class="rn-a">카운트 0초부터 새로 시작</div><div class="rn-x">발 리턴은 허용. 손으로 잡으면 간접 FK</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 백패스를 발로 받은 공도 6초 제한?</div><div class="rn-a">O</div><div class="rn-x">백패스 허용 ≠ 무한 보유</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 세이브한 공을 내려놓고 드리블하면?</div><div class="rn-a">합법 (6초 안)</div><div class="rn-x">드리블 금지 규정 없음</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 상대 코너킥을 공중에서 캐치한 공은?</div><div class="rn-a">인플레이 — 세이브와 동일</div><div class="rn-x">6초 안에 드리블·패스·던지기 가능</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 세이브 후 손으로 하프라인 너머로 던지면?</div><div class="rn-a">정상 플레이</div><div class="rn-x">우리 리그는 허용</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 세이브 후 손으로 던진 공이 그대로 골인되면?</div><div class="rn-a">노골</div><div class="rn-x">손에서 던진 공의 직접 득점 불가. 다른 선수가 한 번 닿거나, 발리킥으로 찼다면 득점</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 키퍼가 에어리어 밖에서 손으로 잡으면?</div><div class="rn-a">직접 FK + 누적 파울</div><div class="rn-x">에어리어 밖에서는 필드 플레이어와 동일</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 키퍼가 상대 진영에서 공격 가담?</div><div class="rn-a">가능</div><div class="rn-x">시간 제한도 없음</div></div>
+      </div>
+    </details>
+    <details class="rn-cat">
+      <summary><span class="rn-ic">🥅</span><span class="rn-name">골 클리어런스 (골라인 아웃)</span><span class="rn-n">8</span></summary>
+      <div class="rn-list">
+        <div class="rn-item"><div class="rn-q">Q. 핵심 구분: 세이브 vs 골 클리어런스</div><div class="rn-a">세이브 = 인플레이 / 클리어런스 = 재개</div><div class="rn-x">세이브: 드리블·발리슛·던지기 가능 · 클리어런스: 손으로만, 재터치 금지</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 골라인 아웃, 마지막 터치가 공격 측이면?</div><div class="rn-a">골 클리어런스 (골킥 없음)</div><div class="rn-x">마지막 터치가 수비 측(키퍼·굴절 포함)이면 코너킥</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 클리어런스 방법은?</div><div class="rn-a">손으로만 — 던지기·굴리기·바운드</div><div class="rn-x">바닥에 놓고 발로 차기 금지</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 클리어런스 제한 시간은?</div><div class="rn-a">6초</div><div class="rn-x">초과 시 가장 가까운 에어리어 라인에서 상대 간접 FK</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 어디서 던질 수 있나?</div><div class="rn-a">페널티 에어리어 안 어디서든</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 언제 인플레이가 될까?</div><div class="rn-a">페널티 에어리어를 벗어나는 순간</div><div class="rn-x">못 벗어나거나, 벗어나기 전 누가 받으면 재시행 (시간은 계속 흐름)</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 던진 공을 상대 터치 전 키퍼가 다시 건드리면?</div><div class="rn-a">상대 간접 FK</div><div class="rn-x">다른 선수를 거쳐 돌아온 공은 정상 → 6초 카운트 시작</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 클리어런스가 그대로 상대 골문에 들어가면?</div><div class="rn-a">노골</div></div>
+      </div>
+    </details>
+    <details class="rn-cat">
+      <summary><span class="rn-ic">🔙</span><span class="rn-name">백패스</span><span class="rn-n">2</span></summary>
+      <div class="rn-list">
+        <div class="rn-item"><div class="rn-q">Q. 우리 리그 백패스 룰 한 줄 요약</div><div class="rn-a">발은 자유, 손으로 잡으면 간접 FK</div><div class="rn-x">FIFA는 발 리턴도 금지 → 우리는 발만 완화</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 우리 편이 일부러 찬 공(킥인 포함)을 키퍼가 손으로 잡으면?</div><div class="rn-a">상대 간접 FK</div><div class="rn-x">급해도 손은 금지 — 발·몸으로 처리</div></div>
+      </div>
+    </details>
+    <details class="rn-cat">
+      <summary><span class="rn-ic">⚠️</span><span class="rn-name">누적 파울 · 세컨 PK</span><span class="rn-n">5</span></summary>
+      <div class="rn-list">
+        <div class="rn-item"><div class="rn-q">Q. 세컨 PK는 팀 파울 몇 개째부터?</div><div class="rn-a">3개째부터 (4·5개째도 계속)</div><div class="rn-x">FIFA는 6개째. 2개부터 경계</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 누적에 포함되는 반칙은?</div><div class="rn-a">직접 FK성 반칙만</div><div class="rn-x">간접성(임피딩 등) 제외. 어드밴티지로 플레이 온해도 포함</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 누적 파울은 언제 리셋?</div><div class="rn-a">라운드 종료 시 0</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 세컨 PK 방식은?</div><div class="rn-a">지정 키커가 슛만 · 수비벽 없음</div><div class="rn-x">살짝 밀어 동료에게 연결 불가</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 3개째 파울이 명백한 득점 기회 저지라면?</div><div class="rn-a">퇴장 + 세컨 PK</div><div class="rn-x">둘 다 적용</div></div>
+      </div>
+    </details>
+    <details class="rn-cat">
+      <summary><span class="rn-ic">🔁</span><span class="rn-name">재개 — 킥인 · 코너킥 · 킥오프 · 프리킥</span><span class="rn-n">8</span></summary>
+      <div class="rn-list">
+        <div class="rn-item"><div class="rn-q">Q. 재개 제한 시간은?</div><div class="rn-a">킥인·코너킥·프리킥 4초</div><div class="rn-x">골키퍼 관련(보유·클리어런스) 6초 · PK는 시간 룰 없음</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 4초를 넘기면?</div><div class="rn-a">상대 공</div><div class="rn-x">킥인 → 상대 킥인, 코너킥 → 상대 골 클리어런스. 공을 받을 수 없는 상황이면 준비된 때부터 셈</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 터치라인 아웃 재개는?</div><div class="rn-a">킥인 (스로인 없음)</div><div class="rn-x">공은 라인 위 또는 라인 밖. 코트 안이면 다시 놓고 재시행 (4초는 계속)</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 재개·프리킥 시 수비 거리는?</div><div class="rn-a">5m</div><div class="rn-x">축구 9.15m와 혼동 주의</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 직접 득점이 되는 재개는?</div><div class="rn-a">코너킥 · 킥오프 · 직접 FK = O</div><div class="rn-x">킥인 · 간접 FK = X (누군가 한 번 닿아야 골)</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 찬 선수가 다른 사람 닿기 전 또 터치하면?</div><div class="rn-a">상대 간접 FK</div><div class="rn-x">킥오프·킥인·코너킥·프리킥 공통 &#x27;2회 연속 터치 금지&#x27;</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 공이 천장(시설물)에 맞으면?</div><div class="rn-a">가장 가까운 터치라인에서 킥인</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 드롭볼은?</div><div class="rn-a">한 팀에게 떨어뜨려 줌</div><div class="rn-x">마지막 터치 팀 (수비 에어리어면 키퍼). 양 팀 경합 X</div></div>
+      </div>
+    </details>
+    <details class="rn-cat">
+      <summary><span class="rn-ic">🦵</span><span class="rn-name">파울 · 위험 플레이 (직접 / 간접)</span><span class="rn-n">5</span></summary>
+      <div class="rn-list">
+        <div class="rn-item"><div class="rn-q">Q. 차기·밀기·잡기 등 접촉 반칙은?</div><div class="rn-a">직접 FK + 누적 파울</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 공 없이 진로만 막음(접촉 없음)은?</div><div class="rn-a">간접 FK</div><div class="rn-x">접촉 있으면 직접 FK</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 발을 얼굴 높이로 들었지만 접촉 없음은?</div><div class="rn-a">간접 FK</div><div class="rn-x">닿았다면 직접 FK 이상</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 공을 닿았어도 파울이 되는 위험 플레이는?</div><div class="rn-a">룰북 명시 5종</div><div class="rn-x">속도 미제어 달려들기 · 사람 먼저 노린 태클 · 팔·상체 과도 압박 · 진행 방향에 몸 넣어 충돌 유도 · 뒤늦은 발 뻗기(공 미접촉)</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 어깨싸움은?</div><div class="rn-a">정당한 어깨 경합은 OK</div><div class="rn-x">팔·팔꿈치 개입하거나 과격하면 파울</div></div>
+      </div>
+    </details>
+    <details class="rn-cat">
+      <summary><span class="rn-ic">🟥</span><span class="rn-name">카드 · 퇴장</span><span class="rn-n">7</span></summary>
+      <div class="rn-list">
+        <div class="rn-item"><div class="rn-q">Q. 2분 퇴장 대상은?</div><div class="rn-a">찬 공이 이마 아래 안면에 직접 적중</div><div class="rn-x">다른 부위 맞고 튄 뒤 맞으면 제외. 교체 투입 불가 → 2분 수적 열세 후 본인 복귀</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 레드카드 퇴장 선수는?</div><div class="rn-a">해당 라운드 퇴장 + 다음 1라운드 출전 정지 후 복귀</div><div class="rn-x">친선 리그 완화 룰</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 명백한 득점 기회를 반칙으로 저지하면?</div><div class="rn-a">퇴장 + 프리킥</div><div class="rn-x">에어리어 안에서 손으로 골 저지 → 퇴장 + PK</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 득점 기회는 아닌 전술적 파울(유니폼 잡기)은?</div><div class="rn-a">경고 + 직접 FK + 누적</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 경고 2장은?</div><div class="rn-a">퇴장</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 판정에 격하게 항의하면?</div><div class="rn-a">경고</div><div class="rn-x">주장만 정중하게 문의 가능. 벤치 선수도 카드 대상</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 상의 탈의 세리머니는?</div><div class="rn-a">경고</div></div>
+      </div>
+    </details>
+    <details class="rn-cat">
+      <summary><span class="rn-ic">✋</span><span class="rn-name">핸드볼</span><span class="rn-n">5</span></summary>
+      <div class="rn-list">
+        <div class="rn-item"><div class="rn-q">Q. 핸드볼 판단 기준은?</div><div class="rn-a">팔 위치가 부자연스러웠나</div><div class="rn-x">팔 벌려 몸을 키웠으면 의도 없어도 반칙. 몸에 붙인 팔 · 넘어지며 짚은 손은 반칙 아님</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 어깨에 맞으면?</div><div class="rn-a">핸드볼 아님</div><div class="rn-x">기준선은 겨드랑이 아래 팔</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 수비수 핸드볼이 에어리어 안이면?</div><div class="rn-a">PK + 누적 파울</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 공격수 손에 맞고 그대로 득점하면?</div><div class="rn-a">노골</div><div class="rn-x">고의 여부 무관</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 키퍼의 자기 에어리어 안 손 사용은?</div><div class="rn-a">핸드볼 아님</div><div class="rn-x">백패스 상황 제외</div></div>
+      </div>
+    </details>
+    <details class="rn-cat">
+      <summary><span class="rn-ic">📋</span><span class="rn-name">경기 운영 · 장비</span><span class="rn-n">5</span></summary>
+      <div class="rn-list">
+        <div class="rn-item"><div class="rn-q">Q. 5명 미만 팀은?</div><div class="rn-a">휴식팀 충원 + 3실점으로 시작</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 심판 운영은?</div><div class="rn-a">팀별 주심 3명(주장 포함) 지정 · 부심 깃발 필수</div><div class="rn-x">주심 판단으로 언제든 경기 중단 가능. 타이머 등 준비는 준비요원</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 교체는?</div><div class="rn-a">무제한 플라잉 교체 (심판 허락 불필요)</div><div class="rn-x">나가는 선수가 완전히 나온 뒤 투입. 키퍼도 가능(유니폼 색 구분)</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 인원이 안 모이면 강제 시작은?</div><div class="rn-a">오전 10시 5분</div></div>
+        <div class="rn-item"><div class="rn-q">Q. 장비 규정은?</div><div class="rn-a">풋살화(TF·AG)만 · 안경은 고글 or 벗기 · 조끼 착용</div><div class="rn-x">스터드 축구화 금지</div></div>
+      </div>
+    </details>
+  </div>
 
   <div class="sec-lbl">⬡ 오늘의 문제 <span class="cnt" id="today-cnt"></span></div>
   <div id="today-wrap" class="sc-panel" style="padding:0;">

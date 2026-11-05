@@ -1022,6 +1022,25 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
     border:1px solid #fff3a0; box-shadow:0 0 12px rgba(255,215,0,0.8); z-index:6; animation:winPulse 1.6s ease-in-out infinite; }
   .win-title.show{ display:block; }
   @keyframes winPulse{0%,100%{box-shadow:0 0 8px rgba(255,215,0,0.6);}50%{box-shadow:0 0 18px rgba(255,215,0,1);}}
+
+/* ── 그랜드 파이널 포스터 팝업 ── */
+#gf-pop{position:fixed;inset:0;z-index:1000000;background:rgba(0,0,0,0.88);display:none;
+  align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  opacity:0;transition:opacity .35s ease;}
+#gf-pop.show{display:flex;}
+#gf-pop.in{opacity:1;}
+.gf-box{position:relative;width:min(100%,460px);max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+  border:1.5px solid rgba(255,215,0,0.75);box-shadow:0 0 24px rgba(57,255,20,0.25),0 0 0 1px rgba(0,0,0,0.6);
+  background:#000;transform:scale(.94);transition:transform .35s ease;}
+#gf-pop.in .gf-box{transform:scale(1);}
+.gf-img{display:block;width:100%;height:auto;max-height:calc(100vh - 92px);object-fit:contain;background:#000;}
+.gf-bar{display:flex;border-top:1px solid rgba(255,215,0,0.45);}
+.gf-bar button{flex:1;padding:13px 6px;background:rgba(0,0,0,0.92);border:none;color:#39ff14;
+  font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.gf-bar button + button{border-left:1px solid rgba(255,215,0,0.35);}
+.gf-bar button.gf-close{color:#ffd700;}
+.gf-x{position:absolute;top:6px;right:6px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,215,0,0.7);
+  background:rgba(0,0,0,0.75);color:#ffd700;font-size:17px;line-height:30px;text-align:center;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -1354,8 +1373,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
           <div class="rule-block">
             <div class="rule-sub">S-5. 기지 HP 시스템</div>
             <div class="rule-text">남은 미네랄 → 팀 기지 HP 전환.</div>
-            <div class="rule-text">실점 <span class="rule-hi">1점 = -100 HP</span>. 매주 경기 후 HP 0 이하 시 <span class="rule-hi">탈락</span>.</div>
+            <div class="rule-text">실점 <span class="rule-hi">1점 = -300 HP</span>. 매주 경기 후 HP 0 이하 시 <span class="rule-hi">탈락</span>.</div>
             <div class="rule-list">
+              <div class="rule-li"><span class="rule-hi">그랜드 파이널(11/7~)</span>부터 실점 1점 = <span class="rule-hi">-300 HP</span> 적용</div>
+              <div class="rule-li">그 이전 경기는 기존대로 1점 = -100 HP로 계산 (이미 반영된 HP는 변동 없음)</div>
               <div class="rule-li">HP 0 이하가 된 팀은 <span class="rule-hi">순서대로 탈락</span>하며, 마이너스 HP도 그대로 기록</div>
               <div class="rule-li">시즌 순위·우승은 <span class="rule-hi">HP가 가장 높은 팀</span> (마이너스 포함, 예: -200 > -900)</div>
             </div>
@@ -1472,6 +1493,7 @@ function bootDone(){
   setTimeout(()=>{
     const l = document.getElementById('boot-loader');
     if(l) l.classList.add('done');
+    setTimeout(function(){ if(typeof showGfPop==='function') showGfPop(); }, 500);
   }, 280);
 }
 function bootFail(){
@@ -2700,6 +2722,34 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
     // 초기 HP 렌더 (DOM 준비 후)
     Object.entries(teams).forEach(([race,d])=>renderSeg(race,d.hp,MAX_HP));
   });
+</script>
+
+<!-- 그랜드 파이널 포스터 팝업 -->
+<div id="gf-pop" onclick="if(event.target===this)closeGfPop(false)">
+  <div class="gf-box">
+    <div class="gf-x" onclick="closeGfPop(false)">✕</div>
+    <img class="gf-img" src="https://suyuwindy-crypto.github.io/brocelona/grandfinal.jpg?v=1" alt="GRAND FINAL — TERRAN vs PROTOSS · NOV 7">
+    <div class="gf-bar">
+      <button onclick="closeGfPop(true)">오늘 하루 보지 않기</button>
+      <button class="gf-close" onclick="closeGfPop(false)">닫기</button>
+    </div>
+  </div>
+</div>
+<script>
+/* 그랜드 파이널 팝업 — GF_POPUP_UNTIL(KST)까지 노출. 기간 연장은 날짜만 바꾸면 됨 */
+var GF_POPUP_UNTIL = '2026-11-07T23:59:59+09:00';
+function gfTodayKey(){ return new Date(Date.now()+9*3600e3).toISOString().slice(0,10); }
+function showGfPop(){
+  if(Date.now() > new Date(GF_POPUP_UNTIL).getTime()) return;
+  try{ if(localStorage.getItem('gf_hide') === gfTodayKey()) return; }catch(e){}
+  var p = document.getElementById('gf-pop'); if(!p || p.classList.contains('show')) return;
+  p.classList.add('show'); requestAnimationFrame(function(){ p.classList.add('in'); });
+}
+function closeGfPop(hideToday){
+  if(hideToday){ try{ localStorage.setItem('gf_hide', gfTodayKey()); }catch(e){} }
+  var p = document.getElementById('gf-pop'); if(!p) return;
+  p.classList.remove('in'); setTimeout(function(){ p.classList.remove('show'); }, 350);
+}
 </script>
 </body>
 </html>
