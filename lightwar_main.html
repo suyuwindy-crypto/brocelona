@@ -1046,7 +1046,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 .rk-wrap{margin:0 0 14px;border:1px solid rgba(255,215,0,0.35);background:linear-gradient(180deg,rgba(30,24,0,0.55),rgba(0,6,0,0.75));position:relative;}
 .rk-wrap::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(57,255,20,0.03) 0 1px,transparent 1px 3px);}
 .rk-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 8px;}
-.rk-title{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:900;letter-spacing:3px;color:var(--yellow);text-shadow:0 0 10px rgba(255,215,0,0.55);}
+.rk-title{font-size:19px;font-weight:900;letter-spacing:1px;color:#ff7a2e;text-shadow:0 0 12px rgba(255,90,20,0.65);transition:color .3s;}
+.rk-title.quiz{color:var(--yellow);text-shadow:0 0 12px rgba(255,215,0,0.6);}
+.rk-sub{font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--text-dim);margin-top:3px;}
+.rk-head{align-items:flex-end;}
 .rk-asof{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);}
 .rk-tabs{display:flex;margin:0 10px 10px;border:1px solid rgba(57,255,20,0.3);}
 .rk-tab{flex:1;padding:9px 4px;text-align:center;font-size:12px;font-weight:700;color:var(--text-dim);background:rgba(0,0,0,0.5);cursor:pointer;letter-spacing:1px;transition:all .2s;}
@@ -1240,10 +1243,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-fam
 
         <!-- 랭킹: 미네랄 / 퀴즈 TOP10 -->
         <div class="rk-wrap" id="rk-wrap">
-          <div class="rk-head"><div class="rk-title">🏆 RANKING TOP 10</div><div class="rk-asof" id="rk-asof"></div></div>
+          <div class="rk-head"><div><div class="rk-title" id="rk-title">⚔️ 전장의 화신</div><div class="rk-sub" id="rk-sub">WAR LEGENDS · 획득 미네랄 TOP 10</div></div><div class="rk-asof" id="rk-asof"></div></div>
           <div class="rk-tabs">
-            <div class="rk-tab on" data-rk="mineral" onclick="setRankTab('mineral')">⛏ 획득 미네랄</div>
-            <div class="rk-tab" data-rk="quiz" onclick="setRankTab('quiz')">❓ 퀴즈 점수</div>
+            <div class="rk-tab on" data-rk="mineral" onclick="setRankTab('mineral')">⚔️ 전장의 화신</div>
+            <div class="rk-tab" data-rk="quiz" onclick="setRankTab('quiz')">📜 지혜의 명예전당</div>
           </div>
           <div id="rk-body"><div class="rk-empty">랭킹 불러오는 중…</div></div>
         </div>
@@ -2831,6 +2834,9 @@ async function loadQuizRank(){
 function setRankTab(t){
   RANK.tab=t;
   document.querySelectorAll('.rk-tab').forEach(function(el){ el.classList.toggle('on', el.dataset.rk===t); });
+  var tt=document.getElementById('rk-title'), sb=document.getElementById('rk-sub');
+  if(tt){ tt.textContent = t==='quiz' ? '📜 지혜의 명예전당' : '⚔️ 전장의 화신'; tt.classList.toggle('quiz', t==='quiz'); }
+  if(sb){ sb.textContent = t==='quiz' ? 'HALL OF HONOR · 퀴즈 점수 TOP 10' : 'WAR LEGENDS · 획득 미네랄 TOP 10'; }
   if(t==='quiz' && RANK.quiz===null) loadQuizRank();
   renderRank();
 }
