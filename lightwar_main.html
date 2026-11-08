@@ -2941,7 +2941,7 @@ function showChampion(r){
   for(var i=0;i<40;i++){ var c=document.createElement('div'); c.className='ch-cf';
     c.style.left=(Math.random()*100)+'%'; c.style.background=cols[i%cols.length];
     c.style.animationDuration=(3+Math.random()*4)+'s'; c.style.animationDelay=(-Math.random()*6)+'s'; p.appendChild(c); }
-  var go=function(){ p.classList.add('show'); requestAnimationFrame(function(){ p.classList.add('in'); }); };
+  var go=function(){ p.classList.add('show'); setTimeout(function(){ p.classList.add('in'); }, 30); };
   var l=document.getElementById('boot-loader');
   if(l && !l.classList.contains('done')){ var iv=setInterval(function(){ if(l.classList.contains('done')){ clearInterval(iv); setTimeout(go,700); } },200); }
   else setTimeout(go,300);
