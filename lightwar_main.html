@@ -1016,8 +1016,8 @@ html,body{width:100vw;height:100vh;height:100dvh;overflow:hidden;background:var(
     font-family:'Orbitron',sans-serif; color:#ff4a4a; border:1px solid rgba(255,74,74,0.6); vertical-align:middle; }
 
   /* ── 우승 타이틀: HP(마이너스 포함) 최고 팀 ── */
-  .win-title{ display:none; position:absolute; left:50%; top:-22px; transform:translateX(-50%);
-    white-space:nowrap; padding:2px 8px; font-family:'Orbitron','Russo One',sans-serif; font-size:10px; font-weight:900;
+  .win-title{ display:none; position:absolute; left:50%; top:-26px; transform:translateX(-50%);
+    white-space:nowrap; padding:3px 10px; font-family:'Orbitron','Russo One',sans-serif; font-size:12px; font-weight:900;
     letter-spacing:2px; color:#000; background:linear-gradient(180deg,#ffe66b,#ffb800);
     border:1px solid #fff3a0; box-shadow:0 0 12px rgba(255,215,0,0.8); z-index:6; animation:winPulse 1.6s ease-in-out infinite; }
   .win-title.show{ display:block; }
@@ -1080,6 +1080,34 @@ html,body{width:100vw;height:100vh;height:100dvh;overflow:hidden;background:var(
 .rk-row .rk-team{position:relative;margin-top:0;}
 .rk-val{position:relative;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;color:#d6ffcc;min-width:58px;text-align:right;}
 .rk-empty{padding:18px;text-align:center;font-size:11px;color:var(--text-dim);letter-spacing:1px;}
+
+/* ── 시즌 챔피언 셀레브레이션 ── */
+#champ-pop{position:fixed;inset:0;z-index:1000001;display:none;align-items:center;justify-content:center;padding:16px;
+  background:radial-gradient(ellipse at 50% 40%,rgba(60,45,0,0.82),rgba(0,0,0,0.94) 70%);opacity:0;transition:opacity .5s ease;overflow:hidden;}
+#champ-pop.show{display:flex;} #champ-pop.in{opacity:1;}
+.ch-rays{position:absolute;left:50%;top:42%;width:240vmax;height:240vmax;transform:translate(-50%,-50%);pointer-events:none;
+  background:repeating-conic-gradient(rgba(255,215,0,0.13) 0 6deg,transparent 6deg 18deg);animation:chSpin 40s linear infinite;}
+@keyframes chSpin{to{transform:translate(-50%,-50%) rotate(360deg);}}
+.ch-box{position:relative;width:min(100%,380px);text-align:center;padding:26px 18px 18px;border:2px solid #ffd700;
+  background:linear-gradient(180deg,rgba(20,16,0,0.92),rgba(0,0,0,0.95));box-shadow:0 0 40px rgba(255,215,0,0.55),inset 0 0 30px rgba(255,215,0,0.12);
+  transform:scale(.8);transition:transform .6s cubic-bezier(.2,1.4,.4,1);}
+#champ-pop.in .ch-box{transform:scale(1);}
+.ch-trophy{font-size:72px;line-height:1;filter:drop-shadow(0 0 18px rgba(255,215,0,0.9));animation:chBob 2.2s ease-in-out infinite;}
+@keyframes chBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.ch-season{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:4px;color:#ffe66b;margin-top:10px;}
+.ch-label{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;letter-spacing:6px;color:#fff;margin-top:6px;}
+.ch-team{font-family:'Orbitron','Russo One',sans-serif;font-size:44px;font-weight:900;letter-spacing:4px;margin:6px 0 2px;line-height:1.1;}
+.ch-team.terran{color:#5ec8e6;text-shadow:0 0 18px rgba(94,200,230,0.9),0 0 40px rgba(94,200,230,0.5);}
+.ch-team.protoss{color:#f2c744;text-shadow:0 0 18px rgba(242,199,68,0.9),0 0 40px rgba(242,199,68,0.5);}
+.ch-team.zerg{color:#e64646;text-shadow:0 0 18px rgba(230,70,70,0.9),0 0 40px rgba(230,70,70,0.5);}
+.ch-ko{font-size:15px;font-weight:700;color:#ffe66b;letter-spacing:2px;}
+.ch-hp{font-family:'Share Tech Mono',monospace;font-size:12px;color:#c9d3b8;margin-top:12px;line-height:1.7;}
+.ch-hp b{color:#39ff14;}
+.ch-bar{display:flex;margin-top:16px;border-top:1px solid rgba(255,215,0,0.4);}
+.ch-bar button{flex:1;padding:12px 6px;background:transparent;border:none;color:#39ff14;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.ch-bar button+button{border-left:1px solid rgba(255,215,0,0.3);color:#ffd700;}
+.ch-cf{position:absolute;top:-12px;width:8px;height:14px;opacity:.9;animation:chFall linear infinite;pointer-events:none;}
+@keyframes chFall{to{transform:translateY(110vh) rotate(720deg);}}
 </style>
 </head>
 <body>
@@ -1651,15 +1679,25 @@ setTimeout(()=>{ if(!BOOT.done) bootFail(); }, 20000);
   // 데이터 로드 후 탈락 상태 재판정 (최초 탈락팀 확정 뒤 전 팀 오버레이 갱신)
   window.addEventListener('resize', ()=>{ try{ refreshEliminationStates(); }catch(e){} });
   // 우승 타이틀: 마이너스 포함 HP가 가장 높은 팀 (동점이면 모두)
-  const SHOW_WINNER_TITLE = false;   // 시즌 종료 확정 시 true로 바꾸면 HP 최고 팀 위에 '🏆 우승!' 표시
-  function renderWinnerTitle(){
+  // 우승 판정: 0 초과 팀이 1팀만 남으면 그 팀 우승 / 전원 0 이하면 HP(마이너스 포함) 최고 팀
+  const SHOW_WINNER_TITLE = true;
+  function getChampion(){
     const races = ['protoss','zerg','terran'].filter(r=>hpMaxData[r]);
-    if(!races.length) return;
+    if(races.length < 3) return null;
+    const alive = races.filter(r=>teams[r].hp > 0);
+    if(alive.length >= 2) return null;            // 아직 2팀 이상 생존 → 진행 중
+    if(alive.length === 1) return alive[0];
     const top = Math.max(...races.map(r=>teams[r].hp));
+    const tops = races.filter(r=>teams[r].hp === top);
+    return tops.length === 1 ? tops[0] : null;
+  }
+  function renderWinnerTitle(){
+    const champ = SHOW_WINNER_TITLE ? getChampion() : null;
     ['protoss','zerg','terran'].forEach(r=>{
       const el = document.getElementById('win-'+r);
-      if(el) el.classList.toggle('show', SHOW_WINNER_TITLE && races.includes(r) && teams[r].hp === top);
+      if(el) el.classList.toggle('show', champ === r);
     });
+    if(champ) showChampion(champ);
   }
   function refreshEliminationStates(){
     computeFirstEliminated();
@@ -2871,6 +2909,47 @@ function renderRank(){
   body.innerHTML=html;
 }
 setTimeout(loadQuizRank, 1500);
+</script>
+
+<!-- 시즌 챔피언 팝업 -->
+<div id="champ-pop" onclick="if(event.target===this)closeChampion(false)">
+  <div class="ch-rays"></div>
+  <div class="ch-box">
+    <div class="ch-trophy">🏆</div>
+    <div class="ch-season">STAR LEAGUE · LIGHTWAR</div>
+    <div class="ch-label">SEASON CHAMPION</div>
+    <div class="ch-team" id="ch-team">—</div>
+    <div class="ch-ko" id="ch-ko"></div>
+    <div class="ch-hp" id="ch-hp"></div>
+    <div class="ch-bar"><button onclick="closeChampion(true)">오늘 하루 보지 않기</button><button onclick="closeChampion(false)">닫기</button></div>
+  </div>
+</div>
+<script>
+var CH_SHOWN=false;
+function chToday(){ return new Date(Date.now()+9*3600e3).toISOString().slice(0,10); }
+function showChampion(r){
+  if(CH_SHOWN) return; CH_SHOWN=true;
+  try{ if(localStorage.getItem('champ_hide')===chToday()) return; }catch(e){}
+  var NM={terran:'TERRAN',protoss:'PROTOSS',zerg:'ZERG'}, KO={terran:'테란 우승!',protoss:'프로토스 우승!',zerg:'저그 우승!'};
+  var t=document.getElementById('ch-team'); t.textContent=NM[r]; t.className='ch-team '+r;
+  document.getElementById('ch-ko').textContent=KO[r];
+  var lines=['terran','protoss','zerg'].filter(function(x){return teams[x]&&hpMaxData[x];})
+    .sort(function(a,b){return teams[b].hp-teams[a].hp;})
+    .map(function(x){ var v=teams[x].hp; return (x===r?'<b>':'')+NM[x]+' HP '+v.toLocaleString()+(x===r?'</b>':''); });
+  document.getElementById('ch-hp').innerHTML=lines.join('<br>');
+  var p=document.getElementById('champ-pop'), cols=['#ffd700','#39ff14','#5ec8e6','#ff6a3d','#ffffff'];
+  for(var i=0;i<40;i++){ var c=document.createElement('div'); c.className='ch-cf';
+    c.style.left=(Math.random()*100)+'%'; c.style.background=cols[i%cols.length];
+    c.style.animationDuration=(3+Math.random()*4)+'s'; c.style.animationDelay=(-Math.random()*6)+'s'; p.appendChild(c); }
+  var go=function(){ p.classList.add('show'); requestAnimationFrame(function(){ p.classList.add('in'); }); };
+  var l=document.getElementById('boot-loader');
+  if(l && !l.classList.contains('done')){ var iv=setInterval(function(){ if(l.classList.contains('done')){ clearInterval(iv); setTimeout(go,700); } },200); }
+  else setTimeout(go,300);
+}
+function closeChampion(hide){
+  if(hide){ try{ localStorage.setItem('champ_hide', chToday()); }catch(e){} }
+  var p=document.getElementById('champ-pop'); p.classList.remove('in'); setTimeout(function(){ p.classList.remove('show'); },500);
+}
 </script>
 </body>
 </html>
