@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PRE-SEASON · 블라인드 드래프트</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090c; --panel:#0e1318; --line:#1f2a33; --text:#e8eef2; --dim:#7d8b96;
+  --neon:#39ff14; --gold:#ffd23f; --A:#ff5a4e; --B:#3fa9ff; --C:#ffc93f;
+  --ax1:#ff6b4a; --ax2:#46d1ff; --ax3:#7dff6b; --ax4:#c78bff;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;}
+body{min-height:100vh;min-height:100dvh;padding-bottom:calc(76px + env(safe-area-inset-bottom));}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at 50% -10%,rgba(57,255,20,0.10),transparent 60%),
+  repeating-linear-gradient(0deg,rgba(255,255,255,0.018) 0 1px,transparent 1px 4px);}
+.wrap{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:18px 16px 24px;}
+.hd{text-align:center;padding:6px 0 16px;}
+.hd .eyebrow{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:4px;color:var(--neon);}
+.hd h1{font-family:'Black Han Sans',sans-serif;font-size:30px;font-weight:400;margin-top:4px;letter-spacing:1px;}
+.hd p{font-size:12px;color:var(--dim);margin-top:4px;}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;background:rgba(7,9,12,0.96);
+  border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.tabs button{flex:1;padding:12px 4px 10px;background:none;border:none;color:var(--dim);font-family:inherit;font-size:13px;font-weight:700;}
+.tabs button .ic{display:block;font-size:20px;margin-bottom:2px;}
+.tabs button.on{color:var(--neon);}
+.view{display:none;} .view.on{display:block;}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;}
+.btn{display:block;width:100%;padding:15px;border:none;border-radius:12px;background:var(--neon);color:#031;font-family:inherit;font-size:16px;font-weight:900;cursor:pointer;}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text);font-weight:700;}
+.btn:disabled{opacity:.35;}
+input[type=text],input[type=password],input[type=tel]{width:100%;padding:14px;border-radius:10px;border:1px solid var(--line);background:#0a0e12;color:var(--text);font-size:16px;font-family:inherit;}
+label.lbl{display:block;font-size:12px;color:var(--dim);margin:0 0 6px;}
+.muted{color:var(--dim);font-size:12px;line-height:1.6;}
+.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:99;background:#111a;border:1px solid var(--neon);color:var(--text);
+  padding:10px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none;backdrop-filter:blur(6px);}
+.toast.on{opacity:1;}
+
+/* ── 검사 ── */
+.intro li{font-size:13px;line-height:1.7;margin-left:18px;color:#cbd5dc;}
+.intro li b{color:var(--gold);}
+.prog{height:4px;background:var(--line);border-radius:4px;overflow:hidden;margin:4px 0 18px;}
+.prog i{display:block;height:100%;background:var(--neon);transition:width .3s;}
+.qnum{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--neon);letter-spacing:2px;}
+.qtext{font-size:19px;font-weight:700;line-height:1.5;margin:8px 0 18px;word-break:keep-all;}
+.opt{display:block;width:100%;text-align:left;padding:16px;margin-bottom:10px;border-radius:12px;border:1px solid var(--line);
+  background:#0a0e12;color:var(--text);font-family:inherit;font-size:15px;line-height:1.5;word-break:keep-all;cursor:pointer;transition:all .15s;}
+.opt:active,.opt.sel{border-color:var(--neon);background:rgba(57,255,20,0.08);}
+.qnav{display:flex;justify-content:space-between;margin-top:6px;}
+.qnav button{background:none;border:none;color:var(--dim);font-size:13px;font-family:inherit;padding:6px 0;}
+.gkrow{display:flex;gap:10px;margin-top:6px;}
+.gkrow button{flex:1;padding:14px;border-radius:12px;border:1px solid var(--line);background:#0a0e12;color:var(--text);font-family:inherit;font-size:15px;font-weight:700;}
+.gkrow button.sel{border-color:var(--gold);color:var(--gold);background:rgba(255,210,63,0.08);}
+
+/* 결과 카드 */
+.rcard{position:relative;border-radius:18px;padding:22px 18px 18px;text-align:center;overflow:hidden;
+  background:linear-gradient(160deg,#122016,#0b0f13 55%);border:1px solid rgba(57,255,20,0.35);box-shadow:0 0 30px rgba(57,255,20,0.12);}
+.rcard .emo{font-size:58px;line-height:1;}
+.rcard .code{font-family:'Orbitron',sans-serif;font-size:30px;font-weight:900;letter-spacing:8px;color:var(--neon);margin-top:10px;text-shadow:0 0 14px rgba(57,255,20,0.5);}
+.rcard .tname{font-family:'Black Han Sans',sans-serif;font-size:28px;margin-top:4px;}
+.rcard .tdesc{font-size:14px;color:#cbd5dc;line-height:1.6;margin-top:8px;word-break:keep-all;}
+.rcard .gk{display:inline-block;margin-top:10px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--gold);color:var(--gold);}
+.axes{margin-top:16px;text-align:left;}
+.ax{display:grid;grid-template-columns:64px 1fr 64px;align-items:center;gap:8px;margin-top:8px;font-size:12px;}
+.ax .l{text-align:right;} .ax .r{text-align:left;}
+.ax .l,.ax .r{color:var(--dim);} .ax .on{color:var(--text);font-weight:700;}
+.ax .bar{height:8px;border-radius:8px;background:#1b252d;position:relative;overflow:hidden;}
+.ax .bar i{position:absolute;top:0;bottom:0;border-radius:8px;}
+
+/* ── 드래프트 ── */
+.turnbar{text-align:center;padding:12px;border-radius:12px;margin-bottom:12px;font-weight:700;font-size:15px;border:1px solid var(--line);background:var(--panel);}
+.turnbar .tn{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--dim);letter-spacing:2px;display:block;margin-bottom:3px;}
+.teams{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.team{border-radius:12px;padding:10px 8px;background:var(--panel);border:1px solid var(--line);min-height:90px;}
+.team.now{box-shadow:0 0 0 2px currentColor,0 0 18px currentColor;}
+.team .tl{font-size:10px;font-family:'Orbitron',sans-serif;letter-spacing:2px;opacity:.85;}
+.team .tc{font-family:'Black Han Sans',sans-serif;font-size:18px;margin:2px 0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.team .mem{font-size:11px;line-height:1.45;padding:3px 0;border-top:1px dashed rgba(255,255,255,0.08);color:var(--text);word-break:keep-all;}
+.team .mem b{font-family:'Orbitron',sans-serif;font-size:10px;}
+.team .sum{font-size:10px;color:var(--dim);margin-top:6px;line-height:1.5;}
+.tA{color:var(--A);} .tB{color:var(--B);} .tC{color:var(--C);}
+.pool{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.pc{position:relative;border-radius:12px;padding:12px 10px 10px;background:var(--panel);border:1px solid var(--line);transition:all .2s;}
+.pc .no{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--dim);letter-spacing:1px;}
+.pc .em{position:absolute;top:8px;right:10px;font-size:24px;}
+.pc .cd{font-family:'Orbitron',sans-serif;font-weight:900;font-size:17px;letter-spacing:3px;color:var(--neon);margin-top:2px;}
+.pc .nm{font-size:13px;font-weight:700;margin-top:1px;word-break:keep-all;}
+.pc .gkb{display:inline-block;font-size:10px;font-weight:700;color:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:0 6px;margin-top:4px;}
+.pc .mini{margin-top:6px;display:grid;gap:3px;}
+.pc .mini div{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--dim);}
+.pc .mini span.b{flex:1;height:4px;background:#1b252d;border-radius:4px;position:relative;overflow:hidden;}
+.pc .mini span.b i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;}
+.pc .real{font-size:12px;font-weight:700;margin-top:6px;color:var(--gold);}
+.pc .pickbtn{margin-top:8px;width:100%;padding:9px;border:none;border-radius:8px;background:var(--neon);color:#031;font-weight:900;font-family:inherit;font-size:13px;}
+.pc.taken{opacity:.42;}
+.pc.taken .tag{position:absolute;inset:auto 8px 8px auto;font-size:11px;font-weight:900;}
+.pc.flash{animation:flash .9s;}
+@keyframes flash{0%{box-shadow:0 0 0 2px var(--neon),0 0 30px var(--neon);}100%{box-shadow:none;}}
+.filter{display:flex;gap:6px;overflow-x:auto;margin:0 0 10px;padding-bottom:2px;}
+.filter button{flex:none;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--dim);font-family:inherit;font-size:12px;font-weight:700;}
+.filter button.on{border-color:var(--neon);color:var(--neon);}
+.capbox{display:flex;gap:8px;align-items:center;margin-bottom:12px;}
+.capbox select{flex:1;padding:12px;border-radius:10px;background:#0a0e12;border:1px solid var(--line);color:var(--text);font-size:15px;font-family:inherit;}
+.capbox input{width:96px;}
+.capbox button{padding:12px 14px;border-radius:10px;border:none;background:var(--gold);color:#221;font-weight:900;font-family:inherit;}
+.capon{font-size:13px;margin-bottom:12px;padding:10px 12px;border-radius:10px;border:1px dashed var(--gold);color:var(--gold);display:flex;justify-content:space-between;align-items:center;}
+.capon button{background:none;border:none;color:var(--dim);font-size:12px;text-decoration:underline;font-family:inherit;}
+.sec{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:3px;color:var(--neon);margin:18px 0 8px;}
+.admin{margin-top:22px;border:1px dashed #4a3b14;border-radius:14px;padding:14px;background:rgba(40,30,0,0.25);}
+.admin h3{font-size:13px;color:var(--gold);margin-bottom:8px;}
+.admin .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.admin .row button{flex:1;min-width:30%;padding:10px 6px;border-radius:9px;border:1px solid var(--line);background:#0a0e12;color:var(--text);font-family:inherit;font-size:12px;font-weight:700;}
+.admin .row button.warn{border-color:#7a2a2a;color:#ff8a80;}
+.admin .chips{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0;}
+.admin .chips span{font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);cursor:pointer;}
+.admin .chips span.sel{border-color:var(--gold);color:var(--gold);}
+.pins{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;text-align:center;}
+.pins div{border:1px solid var(--line);border-radius:9px;padding:8px 4px;font-size:11px;}
+.pins b{display:block;font-family:'Orbitron',sans-serif;font-size:18px;color:var(--gold);margin-top:2px;}
+.empty{text-align:center;padding:30px 10px;color:var(--dim);font-size:13px;line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="wrap">
+  <div class="hd">
+    <div class="eyebrow">BROCELONA · PRE-SEASON</div>
+    <h1>블라인드 드래프트</h1>
+    <p>성향만 보고 뽑는다 · 이름은 드래프트가 끝난 뒤 공개</p>
+  </div>
+
+  <!-- ═══ 성향 검사 ═══ -->
+  <section class="view on" id="v-test">
+    <div id="t-intro" class="card intro">
+      <div style="font-family:'Black Han Sans';font-size:22px;margin-bottom:8px;">⚽ 축구 성향 검사</div>
+      <ul>
+        <li>12문항 · 약 1분</li>
+        <li><b>하고 싶은 플레이</b>가 아니라 <b>평소 경기에서 실제로 자주 하는 선택</b>을 고르세요.</li>
+        <li>정답도, 더 좋은 유형도 없어요. 덤덤하게 고를수록 정확해요.</li>
+        <li>결과는 <b>익명 카드</b>로만 주장에게 보여요.</li>
+      </ul>
+      <div style="margin-top:16px;"><label class="lbl">이름 (드래프트 후 공개용)</label><input type="text" id="t-name" placeholder="실명 입력" maxlength="12"></div>
+      <button class="btn" style="margin-top:14px;" onclick="startTest()">검사 시작</button>
+      <div class="muted" style="margin-top:10px;text-align:center;" id="t-prev"></div>
+    </div>
+    <div id="t-q" class="card" style="display:none;">
+      <div class="qnum" id="q-num"></div>
+      <div class="prog"><i id="q-prog"></i></div>
+      <div class="qtext" id="q-text"></div>
+      <div id="q-opts"></div>
+      <div class="qnav"><button onclick="prevQ()">← 이전</button><span class="muted">평소의 나 기준</span></div>
+    </div>
+    <div id="t-gk" class="card" style="display:none;">
+      <div class="qnum">LAST</div>
+      <div class="qtext">키퍼를 맡아도 괜찮나요?</div>
+      <div class="gkrow"><button onclick="setGK(true,this)">🧤 가능</button><button onclick="setGK(false,this)">🙅 웬만하면 필드</button></div>
+      <button class="btn" style="margin-top:16px;" id="gk-next" disabled onclick="finishTest()">결과 보기</button>
+    </div>
+    <div id="t-res" style="display:none;">
+      <div id="res-card"></div>
+      <div class="muted" id="res-msg" style="text-align:center;margin:12px 0;"></div>
+      <button class="btn ghost" onclick="resetTest()">다시 검사하기</button>
+      <button class="btn" style="margin-top:8px;" onclick="go('draft')">드래프트 보러 가기 →</button>
+    </div>
+  </section>
+
+  <!-- ═══ 드래프트 ═══ -->
+  <section class="view" id="v-draft">
+    <div id="d-body"><div class="empty">불러오는 중…</div></div>
+    <div class="admin" id="admin" style="display:none;"></div>
+  </section>
+</div>
+
+<nav class="tabs">
+  <button class="on" data-v="test" onclick="go('test')"><span class="ic">🧪</span>성향 검사</button>
+  <button data-v="draft" onclick="go('draft')"><span class="ic">🎯</span>드래프트</button>
+</nav>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbzh4fFD9JafD2hX7ffutEumOGMg8jKojxP3wfpXjT3LmR_ctbN8-AuBmBgWVRa77ke-/exec';
+const ls = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
+const ss = { get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }, set(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} }, del(k){ try{ sessionStorage.removeItem(k); }catch(e){} } };
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('on'),2200); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+async function api(params){
+  const q = new URLSearchParams(params).toString();
+  const r = await fetch(API_URL + '?' + q, { redirect:'follow' });
+  return JSON.parse(await r.text());
+}
+
+/* ── 4개 축 ── */
+const AXES = [
+  { k:'AD', a:'A', b:'D', an:'공격', bn:'수비', col:'var(--ax1)' },
+  { k:'SL', a:'S', b:'L', an:'해결', bn:'연결', col:'var(--ax2)' },
+  { k:'EP', a:'E', b:'P', an:'활동량', bn:'위치', col:'var(--ax3)' },
+  { k:'BC', a:'B', b:'C', an:'과감', bn:'침착', col:'var(--ax4)' },
+];
+/* ── 12문항: 실제 경기 상황 · 둘 다 평범한 선택지 · 보기 순서는 매번 섞임 ── */
+const QS = [
+  { ax:'AD', q:'우리 팀이 공을 뺏은 직후, 나는 보통…', a:'앞쪽으로 뛰어나가 공 받을 자리를 찾는다', b:'일단 내 자리 근처에서 상황을 본다' },
+  { ax:'SL', q:'앞에 수비 한 명, 옆에 동료 한 명. 나는 보통…', a:'내가 직접 제치거나 슈팅까지 간다', b:'옆 동료에게 내주고 다시 움직인다' },
+  { ax:'EP', q:'상대가 뒤에서 공을 돌리고 있을 때 나는…', a:'공 가진 사람에게 달려가 압박한다', b:'패스 길목에 서서 기다린다' },
+  { ax:'BC', q:'애매한 거리에서 슈팅 각이 보이면…', a:'일단 때려본다', b:'한 번 더 연결해서 더 좋은 기회를 만든다' },
+  { ax:'AD', q:'경기 끝나고 떠올려 보면, 나는 주로 어디에 있었나?', a:'상대 골문 쪽', b:'우리 골문 쪽' },
+  { ax:'SL', q:'공을 받는 순간 머릿속에 먼저 떠오르는 건…', a:'내가 어떻게 앞으로 나갈지', b:'지금 누가 비어 있는지' },
+  { ax:'EP', q:'한 경기 끝났을 때 내 체력은 보통…', a:'거의 방전', b:'생각보다 여유 있음' },
+  { ax:'BC', q:'우리 진영에서 압박을 받으면 나는 보통…', a:'드리블이나 짧은 패스로 풀어보려 한다', b:'안전하게 멀리 걷어낸다' },
+  { ax:'AD', q:'동점 상황, 마지막 1분. 나는 보통…', a:'한 골 넣으러 올라간다', b:'실점 안 하게 뒤를 지킨다' },
+  { ax:'SL', q:'시즌 기록을 보면 나는 더 많이 쌓인 게…', a:'골·슈팅', b:'어시스트·패스' },
+  { ax:'EP', q:'공이 반대편에 있을 때 나는…', a:'계속 움직이며 공 쪽으로 다가간다', b:'다음 상황을 예상하며 자리를 잡는다' },
+  { ax:'BC', q:'방금 실수로 공을 뺏겼다. 다음 플레이에서 나는…', a:'똑같이 다시 시도해본다', b:'한동안 쉽고 안전하게 간다' },
+];
+/* ── 16유형 ── */
+const TYPES = {
+  ASEB:['🔥','돌격 해결사','많이 뛰고, 기회가 오면 망설임 없이 직접 끝낸다.'],
+  ASEC:['🐺','끈질긴 골잡이','끝까지 쫓아다니다가 확실한 순간에 마무리한다.'],
+  ASPB:['🎯','한방 스나이퍼','자리를 잡고 기다리다 과감한 한 방을 노린다.'],
+  ASPC:['🦊','박스 안의 여우','위치 선정으로 기회를 만들고 침착하게 넣는다.'],
+  ALEB:['⚡','질주하는 크리에이터','쉬지 않고 움직이며 과감한 패스로 찬스를 연다.'],
+  ALEC:['🔗','부지런한 연결고리','많이 뛰며 공격을 끊김 없이 이어준다.'],
+  ALPB:['✨','판타지스타','자리에서 번뜩이는 패스 한 방으로 판을 바꾼다.'],
+  ALPC:['🎼','공격의 지휘자','템포를 읽고 침착하게 공격을 조율한다.'],
+  DSEB:['🐆','사냥꾼','적극적으로 압박해 뺏고, 그대로 직접 치고 나간다.'],
+  DSEC:['🛡️','철벽 추격자','끝까지 따라붙어 안정적으로 끊어낸다.'],
+  DSPB:['🚀','전진 수비수','자리에서 끊고 과감하게 직접 전진한다.'],
+  DSPC:['🧱','최후의 벽','위치를 지키며 1:1을 막아내는 마지막 방어선.'],
+  DLEB:['💪','하드워커 빌드업','많이 뛰며 수비하고, 과감한 전진 패스를 뿌린다.'],
+  DLEC:['🧹','살림꾼','궂은일을 도맡고 공을 안전하게 동료에게 잇는다.'],
+  DLPB:['🏹','후방 플레이메이커','뒤에서 판을 보고 과감한 롱패스로 시작한다.'],
+  DLPC:['🧭','그라운드의 사령관','위치와 안정감으로 팀 전체를 정리한다.'],
+};
+const TEAM_CLS = ['tA','tB','tC'], TEAM_LBL = ['TEAM A','TEAM B','TEAM C'];
+
+/* ═══ 검사 ═══ */
+let qi = 0, answers = [], order = [], gk = null;
+function shuffleOpts(){ order = QS.map(()=>Math.random()<0.5); }
+function initTest(){
+  const n = ls.get('ps_name'); if(n) document.getElementById('t-name').value = n;
+  const last = ls.get('ps_result');
+  if(last){ try{ const r=JSON.parse(last); document.getElementById('t-prev').innerHTML='지난 결과: <b style="color:var(--neon)">'+esc(r.code)+'</b> '+esc(TYPES[r.code][1])+' · <a href="#" onclick="showResult(JSON.parse(ls.get(\'ps_result\')),true);return false;" style="color:var(--dim)">보기</a>'; }catch(e){} }
+}
+function startTest(){
+  const n = document.getElementById('t-name').value.trim();
+  if(!n){ toast('이름을 입력해 주세요'); return; }
+  ls.set('ps_name', n);
+  qi = 0; answers = new Array(QS.length).fill(null); gk = null; shuffleOpts();
+  show('t-q'); renderQ();
+}
+function show(id){ ['t-intro','t-q','t-gk','t-res'].forEach(x=>document.getElementById(x).style.display = x===id?'block':'none'); window.scrollTo(0,0); }
+function renderQ(){
+  const q = QS[qi];
+  document.getElementById('q-num').textContent = 'Q' + String(qi+1).padStart(2,'0') + ' / ' + QS.length;
+  document.getElementById('q-prog').style.width = (qi/QS.length*100) + '%';
+  document.getElementById('q-text').textContent = q.q;
+  const opts = [['a',q.a],['b',q.b]]; if(order[qi]) opts.reverse();
+  document.getElementById('q-opts').innerHTML = opts.map(([k,t])=>
+    `<button class="opt ${answers[qi]===k?'sel':''}" onclick="answer('${k}',this)">${esc(t)}</button>`).join('');
+}
+function answer(k, el){
+  answers[qi] = k; el.classList.add('sel');
+  setTimeout(()=>{ if(qi < QS.length-1){ qi++; renderQ(); } else { show('t-gk'); document.getElementById('q-prog').style.width='100%'; } }, 180);
+}
+function prevQ(){ if(qi>0){ qi--; renderQ(); } else show('t-intro'); }
+function setGK(v, el){ gk = v; document.querySelectorAll('.gkrow button').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('gk-next').disabled=false; }
+function calc(){
+  const sc = {}; let code = '';
+  AXES.forEach(ax=>{
+    const idx = QS.map((q,i)=>q.ax===ax.k?i:-1).filter(i=>i>=0);
+    const nA = idx.filter(i=>answers[i]==='a').length;
+    sc[ax.k] = nA; code += nA >= 2 ? ax.a : ax.b;
+  });
+  return { code, scores:sc };
+}
+async function finishTest(){
+  const r = calc(); r.gk = gk; r.name = ls.get('ps_name');
+  ls.set('ps_result', JSON.stringify(r));
+  showResult(r, false);
+  const msg = document.getElementById('res-msg'); msg.textContent = '서버에 저장 중…';
+  try{
+    const d = await api({ action:'psSubmit', name:r.name, code:r.code, scores:JSON.stringify(r.scores), gk: gk?'1':'0', ans: answers.join('') });
+    if(d.ok) msg.innerHTML = '✅ 저장 완료! 주장에게는 <b>익명 카드</b>로만 보여요.';
+    else if(d.msg==='draft_started') msg.textContent = '⚠️ 이미 드래프트가 시작돼서 이번 드래프트에는 반영되지 않아요.';
+    else msg.textContent = '저장 실패 — 잠시 후 다시 시도해 주세요.';
+  }catch(e){ msg.textContent = '네트워크 오류 — 다시 검사하기로 재시도해 주세요.'; }
+}
+function axisBars(sc, code){
+  return '<div class="axes">' + AXES.map(ax=>{
+    const n = sc[ax.k] ?? 0, pctA = n/3*100, isA = code.includes(ax.a);
+    return `<div class="ax"><span class="l ${isA?'on':''}">${ax.an} ${ax.a}</span>
+      <span class="bar"><i style="left:0;width:${pctA}%;background:${ax.col};opacity:${isA?1:.35}"></i><i style="right:0;width:${100-pctA}%;background:${ax.col};opacity:${isA?.35:1}"></i></span>
+      <span class="r ${!isA?'on':''}">${ax.b} ${ax.bn}</span></div>`;
+  }).join('') + '</div>';
+}
+function showResult(r, fromPrev){
+  const t = TYPES[r.code];
+  document.getElementById('res-card').innerHTML = `<div class="rcard">
+    <div class="emo">${t[0]}</div><div class="code">${r.code}</div><div class="tname">${t[1]}</div>
+    <div class="tdesc">${t[2]}</div>${r.gk?'<div class="gk">🧤 키퍼 가능</div>':''}${axisBars(r.scores, r.code)}</div>`;
+  if(fromPrev) document.getElementById('res-msg').textContent = esc(r.name||'') + ' 님의 지난 결과';
+  show('t-res');
+}
+function resetTest(){ show('t-intro'); }
+
+/* ═══ 드래프트 ═══ */
+const isAdminPage = new URLSearchParams(location.search).has('admin');
+let D = null, poll = null, filt = 'all', lastPicks = -1, adminPw = ss.get('ps_admin') || '';
+let me = (()=>{ try{ return JSON.parse(ss.get('ps_cap')||'null'); }catch(e){ return null; } })();
+async function loadDraft(){
+  try{
+    const p = { action:'psState' }; if(adminPw) p.admin = adminPw;
+    D = await api(p);
+    const ae = document.activeElement;   // 입력 중(PIN·비밀번호)에는 화면을 다시 그리지 않음
+    if(ae && (ae.tagName==='INPUT' || ae.tagName==='SELECT') && ae.closest('#v-draft')) return;
+    renderDraft();
+  }catch(e){ document.getElementById('d-body').innerHTML = '<div class="empty">불러오지 못했어요. 새로고침 해주세요.</div>'; }
+}
+function teamSummary(mem){
+  if(!mem.length) return '';
+  const c = {A:0,D:0,S:0,L:0,E:0,P:0,B:0,C:0}; let g=0;
+  mem.forEach(m=>{ m.code.split('').forEach(ch=>c[ch]++); if(m.gk) g++; });
+  return `공${c.A}·수${c.D} / 해${c.S}·연${c.L}<br>활${c.E}·위${c.P} / 🧤${g}`;
+}
+function miniBars(sc, code){
+  return '<div class="mini">' + AXES.map(ax=>{ const n=sc[ax.k]??0; return `<div>${code.includes(ax.a)?ax.an:ax.bn}<span class="b"><i style="width:${(code.includes(ax.a)?n:3-n)/3*100}%;background:${ax.col}"></i></span></div>`; }).join('') + '</div>';
+}
+function renderDraft(){
+  const el = document.getElementById('d-body');
+  if(isAdminPage) renderAdmin();
+  if(!D || D.status === 'idle'){
+    el.innerHTML = `<div class="card empty">🧪 성향 검사 제출 <b style="color:var(--neon);font-size:22px;">${D?D.count:0}</b>명<br>운영자가 주장 3명을 정하면 드래프트가 시작돼요.</div>`;
+    return;
+  }
+  const done = D.status === 'done';
+  const turn = D.turn;
+  const myTurn = me && !done && me.cap === turn;
+  // 상단 차례 표시
+  let h = `<div class="turnbar"><span class="tn">PICK ${Math.min(D.pickCount+1,D.total)} / ${D.total}</span>` +
+    (done ? '🏁 드래프트 종료!' + (D.revealed?' · 이름 공개됨':' · 이름 공개를 기다리는 중')
+          : `<span class="${TEAM_CLS[turn]}">${esc(D.captains[turn])}</span> 주장 차례` + (myTurn?' — <b style="color:var(--neon)">지금 고르세요!</b>':'')) + '</div>';
+  // 팀
+  h += '<div class="teams">' + D.captains.map((c,i)=>{
+    const mem = D.pool.filter(p=>p.pick===i).sort((a,b)=>a.pickNo-b.pickNo);
+    return `<div class="team ${TEAM_CLS[i]} ${!done&&turn===i?'now':''}"><div class="tl">${TEAM_LBL[i]}</div><div class="tc">${esc(c)}</div>` +
+      mem.map(m=>`<div class="mem"><b>${m.code}</b> ${TYPES[m.code][0]}${m.gk?'🧤':''}${m.name?'<br>'+esc(m.name):' #'+String(m.no).padStart(2,'0')}</div>`).join('') +
+      `<div class="sum">${teamSummary(mem)}</div></div>`;
+  }).join('') + '</div>';
+  // 주장 로그인
+  if(!done){
+    if(me) h += `<div class="capon"><span>🎖 ${esc(D.captains[me.cap])} 주장으로 접속 중</span><button onclick="capLogout()">나가기</button></div>`;
+    else h += `<div class="capbox"><select id="cap-sel">${D.captains.map((c,i)=>`<option value="${i}">${esc(c)} 주장</option>`).join('')}</select>
+      <input type="tel" id="cap-pin" placeholder="PIN" maxlength="4"><button onclick="capLogin()">접속</button></div>`;
+  }
+  // 풀
+  const left = D.pool.filter(p=>p.pick===null).length;
+  h += `<div class="sec">PLAYERS · 남은 ${left}명</div>`;
+  h += '<div class="filter">' + [['all','전체'],['left','남은 선수'],['A','공격형'],['D','수비형'],['gk','🧤 키퍼']].map(([k,t])=>`<button class="${filt===k?'on':''}" onclick="setFilt('${k}')">${t}</button>`).join('') + '</div>';
+  let list = D.pool.slice().sort((a,b)=>a.no-b.no);
+  if(filt==='left') list = list.filter(p=>p.pick===null);
+  if(filt==='A'||filt==='D') list = list.filter(p=>p.code[0]===filt);
+  if(filt==='gk') list = list.filter(p=>p.gk);
+  h += '<div class="pool">' + list.map(p=>{
+    const t = TYPES[p.code], taken = p.pick !== null;
+    return `<div class="pc ${taken?'taken':''}" id="pc-${p.id}"><div class="no">PLAYER #${String(p.no).padStart(2,'0')}</div><div class="em">${t[0]}</div>
+      <div class="cd">${p.code}</div><div class="nm">${t[1]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
+      ${miniBars(p.scores||{}, p.code)}${p.name?`<div class="real">👤 ${esc(p.name)}</div>`:''}
+      ${taken?`<div class="tag ${TEAM_CLS[p.pick]}">${TEAM_LBL[p.pick]}</div>`:(myTurn?`<button class="pickbtn" onclick="pick('${p.id}',${p.no})">이 선수 픽</button>`:'')}</div>`;
+  }).join('') + '</div>';
+  el.innerHTML = h;
+  if(lastPicks >= 0 && D.pickCount > lastPicks){
+    const last = D.pool.filter(p=>p.pickNo===D.pickCount)[0];
+    if(last){ const c=document.getElementById('pc-'+last.id); if(c) c.classList.add('flash'); toast(`${D.captains[last.pick]} 주장 → #${String(last.no).padStart(2,'0')} ${last.code} 픽!`); }
+    if(navigator.vibrate && me && !done && D.turn===me.cap) navigator.vibrate(200);
+  }
+  lastPicks = D.pickCount;
+}
+function setFilt(k){ filt = k; renderDraft(); }
+function capLogin(){
+  const cap = +document.getElementById('cap-sel').value, pin = document.getElementById('cap-pin').value.trim();
+  if(!/^\d{4}$/.test(pin)){ toast('PIN 4자리를 입력해 주세요'); return; }
+  me = { cap, pin }; ss.set('ps_cap', JSON.stringify(me)); renderDraft();
+}
+function capLogout(){ me = null; ss.del('ps_cap'); renderDraft(); }
+let picking = false;
+async function pick(id, no){
+  if(picking) return;
+  if(!confirm(`#${String(no).padStart(2,'0')} 선수를 픽할까요?`)) return;
+  picking = true;
+  try{
+    const d = await api({ action:'psPick', cap:me.cap, pin:me.pin, id });
+    if(!d.ok){ toast({pin:'PIN이 틀렸어요',not_your_turn:'지금은 차례가 아니에요',taken:'이미 뽑힌 선수예요'}[d.msg] || '픽 실패'); if(d.msg==='pin') capLogout(); }
+  }catch(e){ toast('네트워크 오류'); }
+  picking = false; loadDraft();
+}
+
+/* ── 운영자 (?admin) ── */
+let capSel = [];
+function renderAdmin(){
+  const a = document.getElementById('admin'); a.style.display = 'block';
+  if(!adminPw || (D && !D.admin)){
+    a.innerHTML = `<h3>🔐 운영자</h3><div style="display:flex;gap:6px;"><input type="password" id="ad-pw" placeholder="운영자 비밀번호"><button class="btn" style="width:90px;padding:12px;" onclick="adminLogin()">확인</button></div>`;
+    return;
+  }
+  let h = '<h3>🔐 운영자 패널</h3>';
+  if(D.status === 'idle'){
+    h += `<div class="muted">제출자 ${D.count}명 — 임시 주장 3명을 누르세요 (주장은 풀에서 빠져요)</div><div class="chips">` +
+      (D.names||[]).map(n=>{ const nm=n.replace(/ \(.*\)$/,''); return `<span class="${capSel.includes(nm)?'sel':''}" onclick="toggleCap('${esc(nm)}')">${esc(n)}</span>`; }).join('') + '</div>' +
+      `<div class="muted">선택: ${capSel.map(esc).join(', ')||'-'}</div>` +
+      `<div class="row"><button onclick="setupDraft()" ${capSel.length===3?'':'disabled'}>🎯 드래프트 시작</button></div>` +
+      `<div class="row"><button class="warn" onclick="adminOp('wipe','검사 결과까지 전부 삭제할까요?')">검사 결과 전체 삭제</button></div>`;
+  } else {
+    h += '<div class="muted">주장에게 각자 PIN을 알려주세요</div><div class="pins">' + D.captains.map((c,i)=>`<div class="${TEAM_CLS[i]}">${esc(c)}<b>${(D.pins||[])[i]||'----'}</b></div>`).join('') + '</div>' +
+      `<div class="row"><button onclick="adminOp('${D.revealed?'hide':'reveal'}')">${D.revealed?'🙈 이름 다시 숨기기':'👀 이름 공개'}</button><button onclick="adminOp('undo','마지막 픽을 취소할까요?')">↩️ 마지막 픽 취소</button></div>` +
+      `<div class="row"><button class="warn" onclick="adminOp('reset','드래프트를 초기화할까요? (검사 결과는 유지)')">드래프트 초기화</button></div>`;
+  }
+  a.innerHTML = h;
+}
+function adminLogin(){ adminPw = document.getElementById('ad-pw').value.trim(); ss.set('ps_admin', adminPw); loadDraft(); }
+function toggleCap(n){ const i = capSel.indexOf(n); if(i>=0) capSel.splice(i,1); else if(capSel.length<3) capSel.push(n); renderAdmin(); }
+async function setupDraft(){
+  if(!confirm(`주장: ${capSel.join(', ')}\n드래프트를 시작할까요? 시작 후에는 검사 제출이 막혀요.`)) return;
+  const d = await api({ action:'psSetup', admin:adminPw, captains:capSel.join(',') });
+  if(!d.ok){ toast(d.msg==='pw'?'비밀번호 오류':'시작 실패'); return; }
+  capSel = []; toast('드래프트 시작!'); loadDraft();
+}
+async function adminOp(op, ask){
+  if(ask && !confirm(ask)) return;
+  const d = await api({ action:'psAdmin', admin:adminPw, op });
+  toast(d.ok ? '완료' : '실패'); loadDraft();
+}
+
+/* ── 탭 ── */
+function go(v){
+  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on', x.id==='v-'+v));
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
+  window.scrollTo(0,0);
+  clearInterval(poll);
+  if(v==='draft'){ loadDraft(); poll = setInterval(loadDraft, 3000); }
+  try{ history.replaceState(null,'','#'+v); }catch(e){}
+}
+initTest();
+if(location.hash==='#draft' || isAdminPage) go('draft');
+</script>
+</body>
+</html>
