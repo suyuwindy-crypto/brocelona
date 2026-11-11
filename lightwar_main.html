@@ -1108,6 +1108,23 @@ html,body{width:100vw;height:100vh;height:100dvh;overflow:hidden;background:var(
 .ch-bar button+button{border-left:1px solid rgba(255,215,0,0.3);color:#ffd700;}
 .ch-cf{position:absolute;top:-12px;width:8px;height:14px;opacity:.9;animation:chFall linear infinite;pointer-events:none;}
 @keyframes chFall{to{transform:translateY(110vh) rotate(720deg);}}
+
+/* ── EPILOGUE 진입 배너 (블라인드 드래프트) ── */
+.epi{position:relative;display:block;margin:0 0 14px;padding:14px 14px 13px;cursor:pointer;overflow:hidden;
+  border:1px solid rgba(255,215,0,0.55);background:linear-gradient(120deg,rgba(40,30,0,0.75),rgba(0,12,4,0.85) 60%);
+  box-shadow:0 0 18px rgba(255,215,0,0.18),inset 0 0 22px rgba(57,255,20,0.06);text-decoration:none;}
+.epi::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,0.03) 0 1px,transparent 1px 3px);}
+.epi::after{content:'';position:absolute;top:0;bottom:0;width:40%;left:-50%;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,230,120,0.16),transparent);animation:epiSweep 3.8s ease-in-out infinite;}
+@keyframes epiSweep{0%{left:-50%}60%,100%{left:120%}}
+.epi-sig{display:flex;align-items:center;gap:7px;font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;color:#ffd700;}
+.epi-sig i{width:7px;height:7px;border-radius:50%;background:#ff3b30;box-shadow:0 0 8px #ff3b30;animation:epiBlink 1s steps(2) infinite;}
+@keyframes epiBlink{50%{opacity:.15}}
+.epi-t{font-size:16px;font-weight:900;color:#fff;margin-top:8px;line-height:1.4;word-break:keep-all;text-shadow:0 0 10px rgba(255,215,0,0.35);}
+.epi-s{font-size:12px;color:#b9d8ae;margin-top:4px;line-height:1.5;word-break:keep-all;}
+.epi-go{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;border:1px solid #39ff14;
+  font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:#39ff14;background:rgba(57,255,20,0.08);}
+.epi-go b{font-family:inherit;}
 </style>
 </head>
 <body>
@@ -1228,6 +1245,12 @@ html,body{width:100vw;height:100vh;height:100dvh;overflow:hidden;background:var(
     <div class="scroll">
       <div id="tab-overview">
       <div style="position:relative;z-index:1;">
+        <a class="epi" href="preseason.html">
+          <div class="epi-sig"><i></i>INCOMING TRANSMISSION · EPILOGUE</div>
+          <div class="epi-t">전쟁은 끝났다. 종족의 경계도 사라졌다.</div>
+          <div class="epi-s">이름도, 소속도 없이 — 오직 성향만 보고 새 부대를 편성하라.<br>프리시즌 블라인드 드래프트 · 성향 검사 & 3주장 픽</div>
+          <div class="epi-go">🎯 작전 개시 <b>→</b></div>
+        </a>
         <div class="sec-lbl">본리그 미네랄 획득량</div>
         <div class="mineral-row">
           <div class="mc protoss" id="mc-protoss">
@@ -2921,6 +2944,7 @@ setTimeout(loadQuizRank, 1500);
     <div class="ch-team" id="ch-team">—</div>
     <div class="ch-ko" id="ch-ko"></div>
     <div class="ch-hp" id="ch-hp"></div>
+    <a class="epi-go" href="preseason.html" style="margin-top:14px;text-decoration:none;">📜 EPILOGUE — 블라인드 드래프트 <b>→</b></a>
     <div class="ch-bar"><button onclick="closeChampion(true)">오늘 하루 보지 않기</button><button onclick="closeChampion(false)">닫기</button></div>
   </div>
 </div>
