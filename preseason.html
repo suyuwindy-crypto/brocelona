@@ -440,8 +440,8 @@ function renderAdmin(force){
     h += `<div class="muted">① 이번 경기 참가명단 (쉼표 또는 줄바꿈) — 명단에 있는 사람만 검사·드래프트 가능</div>
       <textarea id="ad-roster" placeholder="서범종, 김동우, 이도영 …">${esc((D.roster||[]).join(', '))}</textarea>
       <div class="row"><button onclick="saveRoster()">📋 참가명단 저장 (${(D.roster||[]).length}명)</button></div><div style="height:12px"></div>`;
-    h += `<div class="muted">② 제출자 ${D.count}명 — 임시 주장 3명을 누르세요 (주장은 풀에서 빠져요)</div><div class="chips">` +
-      (D.names||[]).map(n=>{ const nm=n.replace(/ \(.*\)$/,''); return `<span class="${capSel.includes(nm)?'sel':''}" onclick="toggleCap('${esc(nm)}')">${esc(n)}</span>`; }).join('') + '</div>' +
+    h += `<div class="muted">② 임시 주장 3명을 누르세요 — 주장은 검사 안 해도 되고, 선수 풀에서 빠져요 (제출 ${D.count}명)</div><div class="chips">` +
+      capCandidates().map(([nm,label],i)=>`<span class="${capSel.includes(nm)?'sel':''}" onclick="toggleCapIdx(${i})">${capSel.includes(nm)?'🎖 ':''}${esc(label)}</span>`).join('') + '</div>' +
       `<div class="muted">선택: ${capSel.map(esc).join(', ')||'-'}</div>` +
       `<div class="row"><button onclick="setupDraft()" ${capSel.length===3?'':'disabled'}>🎯 드래프트 시작</button></div>` +
       `<div class="row"><button class="warn" onclick="adminOp('wipe','검사 결과까지 전부 삭제할까요?')">검사 결과 전체 삭제</button></div>`;
@@ -458,6 +458,13 @@ async function saveRoster(){
   toast(d.ok ? '참가명단 저장 완료' : '저장 실패'); loadDraft();
 }
 function adminLogin(){ adminPw = document.getElementById('ad-pw').value.trim(); ss.set('ps_admin', adminPw); loadDraft._warned = false; loadDraft(); }
+// 주장 후보: 참가명단 전원(검사 안 했어도 OK) · 명단이 없으면 제출자
+function capCandidates(){
+  const codes = {}; (D.names||[]).forEach(n=>{ const m=n.match(/^(.*) \((\w+)\)$/); if(m) codes[m[1]]=m[2]; });
+  const list = (D.roster && D.roster.length) ? D.roster : Object.keys(codes);
+  return list.map(n=>[n, codes[n] ? `${n} (${codes[n]})` : n]);
+}
+function toggleCapIdx(i){ const c = capCandidates()[i]; if(c) toggleCap(c[0]); }
 function toggleCap(n){ const i = capSel.indexOf(n); if(i>=0) capSel.splice(i,1); else if(capSel.length<3) capSel.push(n); renderAdmin(); }
 async function setupDraft(){
   if(!confirm(`주장: ${capSel.join(', ')}\n드래프트를 시작할까요? 시작 후에는 검사 제출이 막혀요.`)) return;
