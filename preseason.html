@@ -32,6 +32,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .btn{display:block;width:100%;padding:15px;border:none;border-radius:12px;background:var(--neon);color:#031;font-family:inherit;font-size:16px;font-weight:900;cursor:pointer;}
 .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text);font-weight:700;}
 .btn:disabled{opacity:.35;}
+select.sel{width:100%;padding:14px;border-radius:10px;border:1px solid var(--line);background:#0a0e12;color:var(--text);font-size:16px;font-family:inherit;}
+textarea{width:100%;min-height:90px;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0a0e12;color:var(--text);font-size:14px;font-family:inherit;}
 input[type=text],input[type=password],input[type=tel]{width:100%;padding:14px;border-radius:10px;border:1px solid var(--line);background:#0a0e12;color:var(--text);font-size:16px;font-family:inherit;}
 label.lbl{display:block;font-size:12px;color:var(--dim);margin:0 0 6px;}
 .muted{color:var(--dim);font-size:12px;line-height:1.6;}
@@ -142,8 +144,9 @@ label.lbl{display:block;font-size:12px;color:var(--dim);margin:0 0 6px;}
         <li>정답도, 더 좋은 유형도 없어요. 덤덤하게 고를수록 정확해요.</li>
         <li>결과는 <b>익명 카드</b>로만 주장에게 보여요.</li>
       </ul>
-      <div style="margin-top:16px;"><label class="lbl">이름 (드래프트 후 공개용)</label><input type="text" id="t-name" placeholder="실명 입력" maxlength="12"></div>
-      <button class="btn" style="margin-top:14px;" onclick="startTest()">검사 시작</button>
+      <div style="margin-top:16px;"><label class="lbl">이번 경기 참가자 이름</label>
+        <select id="t-name" class="sel"><option value="">불러오는 중…</option></select></div>
+      <button class="btn" style="margin-top:14px;" id="t-start" onclick="startTest()" disabled>검사 시작</button>
       <div class="muted" style="margin-top:10px;text-align:center;" id="t-prev"></div>
     </div>
     <div id="t-q" class="card" style="display:none;">
@@ -237,14 +240,26 @@ const TEAM_CLS = ['tA','tB','tC'], TEAM_LBL = ['TEAM A','TEAM B','TEAM C'];
 /* ═══ 검사 ═══ */
 let qi = 0, answers = [], order = [], gk = null;
 function shuffleOpts(){ order = QS.map(()=>Math.random()<0.5); }
+async function loadRoster(){
+  const sel = document.getElementById('t-name'), btn = document.getElementById('t-start');
+  try{
+    const d = await api({ action:'psState' });
+    if(d.status !== 'idle'){ sel.innerHTML = '<option value="">드래프트 진행 중 — 검사 마감</option>'; btn.disabled = true; return; }
+    const roster = d.roster || [], done = d.submitted || [];
+    if(!roster.length){ sel.innerHTML = '<option value="">참가명단 등록 전이에요</option>'; btn.disabled = true; return; }
+    const saved = ls.get('ps_name');
+    sel.innerHTML = '<option value="">이름을 선택하세요</option>' + roster.map(n=>`<option value="${esc(n)}" ${n===saved?'selected':''}>${esc(n)}${done.includes(n)?'  ✅ 제출함':''}</option>`).join('');
+    btn.disabled = false;
+  }catch(e){ sel.innerHTML = '<option value="">불러오지 못했어요 — 새로고침</option>'; }
+}
 function initTest(){
-  const n = ls.get('ps_name'); if(n) document.getElementById('t-name').value = n;
+  loadRoster();
   const last = ls.get('ps_result');
   if(last){ try{ const r=JSON.parse(last); document.getElementById('t-prev').innerHTML='지난 결과: <b style="color:var(--neon)">'+esc(r.code)+'</b> '+esc(TYPES[r.code][1])+' · <a href="#" onclick="showResult(JSON.parse(ls.get(\'ps_result\')),true);return false;" style="color:var(--dim)">보기</a>'; }catch(e){} }
 }
 function startTest(){
   const n = document.getElementById('t-name').value.trim();
-  if(!n){ toast('이름을 입력해 주세요'); return; }
+  if(!n){ toast('이름을 선택해 주세요'); return; }
   ls.set('ps_name', n);
   qi = 0; answers = new Array(QS.length).fill(null); gk = null; shuffleOpts();
   show('t-q'); renderQ();
@@ -283,6 +298,7 @@ async function finishTest(){
     const d = await api({ action:'psSubmit', name:r.name, code:r.code, scores:JSON.stringify(r.scores), gk: gk?'1':'0', ans: answers.join('') });
     if(d.ok) msg.innerHTML = '✅ 저장 완료! 주장에게는 <b>익명 카드</b>로만 보여요.';
     else if(d.msg==='draft_started') msg.textContent = '⚠️ 이미 드래프트가 시작돼서 이번 드래프트에는 반영되지 않아요.';
+    else if(d.msg==='not_roster') msg.textContent = '⚠️ 이번 경기 참가명단에 없는 이름이라 저장되지 않았어요.';
     else msg.textContent = '저장 실패 — 잠시 후 다시 시도해 주세요.';
   }catch(e){ msg.textContent = '네트워크 오류 — 다시 검사하기로 재시도해 주세요.'; }
 }
@@ -330,7 +346,9 @@ function renderDraft(){
   const el = document.getElementById('d-body');
   if(isAdminPage) renderAdmin();
   if(!D || D.status === 'idle'){
-    el.innerHTML = `<div class="card empty">🧪 성향 검사 제출 <b style="color:var(--neon);font-size:22px;">${D?D.count:0}</b>명<br>운영자가 주장 3명을 정하면 드래프트가 시작돼요.</div>`;
+    const roster = (D&&D.roster)||[], done = (D&&D.submitted)||[];
+    el.innerHTML = `<div class="card empty">🧪 성향 검사 제출 <b style="color:var(--neon);font-size:22px;">${D?D.count:0}</b>${roster.length?' / '+roster.length:''}명<br>운영자가 주장 3명을 정하면 드래프트가 시작돼요.` +
+      (roster.length ? '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px;">' + roster.map(n=>`<span style="font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid ${done.includes(n)?'var(--neon)':'var(--line)'};color:${done.includes(n)?'var(--neon)':'var(--dim)'}">${done.includes(n)?'✅':'⬜'} ${esc(n)}</span>`).join('') + '</div>' : '') + '</div>';
     return;
   }
   const done = D.status === 'done';
@@ -405,7 +423,10 @@ function renderAdmin(){
   }
   let h = '<h3>🔐 운영자 패널</h3>';
   if(D.status === 'idle'){
-    h += `<div class="muted">제출자 ${D.count}명 — 임시 주장 3명을 누르세요 (주장은 풀에서 빠져요)</div><div class="chips">` +
+    h += `<div class="muted">① 이번 경기 참가명단 (쉼표 또는 줄바꿈) — 명단에 있는 사람만 검사·드래프트 가능</div>
+      <textarea id="ad-roster" placeholder="서범종, 김동우, 이도영 …">${esc((D.roster||[]).join(', '))}</textarea>
+      <div class="row"><button onclick="saveRoster()">📋 참가명단 저장 (${(D.roster||[]).length}명)</button></div><div style="height:12px"></div>`;
+    h += `<div class="muted">② 제출자 ${D.count}명 — 임시 주장 3명을 누르세요 (주장은 풀에서 빠져요)</div><div class="chips">` +
       (D.names||[]).map(n=>{ const nm=n.replace(/ \(.*\)$/,''); return `<span class="${capSel.includes(nm)?'sel':''}" onclick="toggleCap('${esc(nm)}')">${esc(n)}</span>`; }).join('') + '</div>' +
       `<div class="muted">선택: ${capSel.map(esc).join(', ')||'-'}</div>` +
       `<div class="row"><button onclick="setupDraft()" ${capSel.length===3?'':'disabled'}>🎯 드래프트 시작</button></div>` +
@@ -416,6 +437,11 @@ function renderAdmin(){
       `<div class="row"><button class="warn" onclick="adminOp('reset','드래프트를 초기화할까요? (검사 결과는 유지)')">드래프트 초기화</button></div>`;
   }
   a.innerHTML = h;
+}
+async function saveRoster(){
+  const names = document.getElementById('ad-roster').value;
+  const d = await api({ action:'psAdmin', admin:adminPw, op:'roster', names });
+  toast(d.ok ? '참가명단 저장 완료' : '저장 실패'); loadDraft();
 }
 function adminLogin(){ adminPw = document.getElementById('ad-pw').value.trim(); ss.set('ps_admin', adminPw); loadDraft(); }
 function toggleCap(n){ const i = capSel.indexOf(n); if(i>=0) capSel.splice(i,1); else if(capSel.length<3) capSel.push(n); renderAdmin(); }
