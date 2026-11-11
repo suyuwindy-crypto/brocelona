@@ -244,6 +244,7 @@ async function loadRoster(){
   const sel = document.getElementById('t-name'), btn = document.getElementById('t-start');
   try{
     const d = await api({ action:'psState' });
+    if(d.error){ sel.innerHTML = '<option value="">서버 업데이트 전이에요 (운영자 확인 필요)</option>'; btn.disabled = true; return; }
     if(d.status !== 'idle'){ sel.innerHTML = '<option value="">드래프트 진행 중 — 검사 마감</option>'; btn.disabled = true; return; }
     const roster = d.roster || [], done = d.submitted || [];
     if(!roster.length){ sel.innerHTML = '<option value="">참가명단 등록 전이에요</option>'; btn.disabled = true; return; }
@@ -321,13 +322,20 @@ function showResult(r, fromPrev){
 function resetTest(){ show('t-intro'); }
 
 /* ═══ 드래프트 ═══ */
-const isAdminPage = new URLSearchParams(location.search).has('admin');
+const isAdminPage = new URLSearchParams(location.search).has('admin') || location.hash==='#admin';
 let D = null, poll = null, filt = 'all', lastPicks = -1, adminPw = ss.get('ps_admin') || '';
 let me = (()=>{ try{ return JSON.parse(ss.get('ps_cap')||'null'); }catch(e){ return null; } })();
 async function loadDraft(){
   try{
     const p = { action:'psState' }; if(adminPw) p.admin = adminPw;
     D = await api(p);
+    if(D && D.error){
+      clearInterval(poll);
+      document.getElementById('d-body').innerHTML = '<div class="card empty">⚠️ 서버에 프리시즌 기능이 아직 없어요.<br><span style="font-size:12px">GAS 에디터에 새 .gs를 붙여넣고 저장 → <b>배포 관리 → 새 버전</b>으로 배포해 주세요.</span></div>';
+      document.getElementById('admin').style.display = 'none';
+      return;
+    }
+    if(adminPw && !D.admin && isAdminPage && !loadDraft._warned){ loadDraft._warned = true; toast('운영자 비밀번호가 틀렸어요'); }
     const ae = document.activeElement;   // 입력 중(PIN·비밀번호)에는 화면을 다시 그리지 않음
     if(ae && (ae.tagName==='INPUT' || ae.tagName==='SELECT') && ae.closest('#v-draft')) return;
     renderDraft();
@@ -443,7 +451,7 @@ async function saveRoster(){
   const d = await api({ action:'psAdmin', admin:adminPw, op:'roster', names });
   toast(d.ok ? '참가명단 저장 완료' : '저장 실패'); loadDraft();
 }
-function adminLogin(){ adminPw = document.getElementById('ad-pw').value.trim(); ss.set('ps_admin', adminPw); loadDraft(); }
+function adminLogin(){ adminPw = document.getElementById('ad-pw').value.trim(); ss.set('ps_admin', adminPw); loadDraft._warned = false; loadDraft(); }
 function toggleCap(n){ const i = capSel.indexOf(n); if(i>=0) capSel.splice(i,1); else if(capSel.length<3) capSel.push(n); renderAdmin(); }
 async function setupDraft(){
   if(!confirm(`주장: ${capSel.join(', ')}\n드래프트를 시작할까요? 시작 후에는 검사 제출이 막혀요.`)) return;
