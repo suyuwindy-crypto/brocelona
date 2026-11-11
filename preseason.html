@@ -166,8 +166,7 @@ label.lbl{display:block;font-size:12px;color:var(--dim);margin:0 0 6px;}
     <div id="t-res" style="display:none;">
       <div id="res-card"></div>
       <div class="muted" id="res-msg" style="text-align:center;margin:12px 0;"></div>
-      <button class="btn ghost" onclick="resetTest()">다시 검사하기</button>
-      <button class="btn" style="margin-top:8px;" onclick="go('draft')">드래프트 보러 가기 →</button>
+      <button class="btn" onclick="go('draft')">드래프트 보러 가기 →</button>
     </div>
   </section>
 
@@ -250,7 +249,10 @@ async function loadRoster(){
     const roster = d.roster || [], done = d.submitted || [];
     if(!roster.length){ sel.innerHTML = '<option value="">참가명단 등록 전이에요</option>'; btn.disabled = true; return; }
     const saved = ls.get('ps_name');
-    sel.innerHTML = '<option value="">이름을 선택하세요</option>' + roster.map(n=>`<option value="${esc(n)}" ${n===saved?'selected':''}>${esc(n)}${done.includes(n)?'  ✅ 제출함':''}</option>`).join('');
+    sel.innerHTML = '<option value="">이름을 선택하세요</option>' + roster.map(n=>done.includes(n)
+      ? `<option value="" disabled>${esc(n)}  ✅ 검사 완료</option>`
+      : `<option value="${esc(n)}" ${n===saved?'selected':''}>${esc(n)}</option>`).join('');
+    if(saved && done.includes(saved)) document.getElementById('t-prev').innerHTML += '<br>✅ 이미 검사를 마쳤어요 (1인 1회)';
     btn.disabled = false;
   }catch(e){ sel.innerHTML = '<option value="">불러오지 못했어요 — 새로고침</option>'; }
 }
@@ -301,6 +303,7 @@ async function finishTest(){
     if(d.ok) msg.innerHTML = '✅ 저장 완료! 주장에게는 <b>익명 카드</b>로만 보여요.';
     else if(d.msg==='draft_started') msg.textContent = '⚠️ 이미 드래프트가 시작돼서 이번 드래프트에는 반영되지 않아요.';
     else if(d.msg==='not_roster') msg.textContent = '⚠️ 이번 경기 참가명단에 없는 이름이라 저장되지 않았어요.';
+    else if(d.msg==='already') msg.textContent = '⚠️ 이미 검사를 마친 이름이에요. 처음 제출한 결과가 그대로 쓰여요. (재검사는 운영자에게)';
     else msg.textContent = '저장 실패 — 잠시 후 다시 시도해 주세요.';
   }catch(e){ msg.textContent = '네트워크 오류 — 다시 검사하기로 재시도해 주세요.'; }
 }
@@ -428,7 +431,7 @@ let adminSig = '';
 function renderAdmin(force){
   const a = document.getElementById('admin'); a.style.display = 'block';
   // 3초 자동 갱신 때 내용이 그대로면 다시 그리지 않음 → 명단 입력·붙여넣기 중 키보드가 닫히지 않음
-  const sig = JSON.stringify([adminPw, D && D.admin, D && D.status, D && D.count, D && D.roster, D && D.names, D && D.revealed, D && D.pins, D && D.pickCount, capSel]);
+  const sig = JSON.stringify([adminPw, D && D.admin, D && D.status, D && D.count, D && D.roster, D && D.names, D && D.submitted, D && D.revealed, D && D.pins, D && D.pickCount, capSel]);
   if(!force && sig === adminSig && a.innerHTML) return;
   adminSig = sig;
   if(!adminPw || (D && !D.admin)){
@@ -444,6 +447,9 @@ function renderAdmin(force){
       capCandidates().map(([nm,label],i)=>`<span class="${capSel.includes(nm)?'sel':''}" onclick="toggleCapIdx(${i})">${capSel.includes(nm)?'🎖 ':''}${esc(label)}</span>`).join('') + '</div>' +
       `<div class="muted">선택: ${capSel.map(esc).join(', ')||'-'}</div>` +
       `<div class="row"><button onclick="setupDraft()" ${capSel.length===3?'':'disabled'}>🎯 드래프트 시작</button></div>` +
+      `<div style="height:12px"></div><div class="muted">재검사 허용 — 선택한 사람의 결과만 삭제</div>` +
+      `<div style="display:flex;gap:6px;margin-top:6px;"><select id="ad-del" class="sel" style="padding:10px;font-size:14px;"><option value="">선택</option>${(D.submitted||[]).map(n=>`<option>${esc(n)}</option>`).join('')}</select>` +
+      `<button class="btn ghost" style="width:90px;padding:10px;font-size:13px;" onclick="delOne()">삭제</button></div>` +
       `<div class="row"><button class="warn" onclick="adminOp('wipe','검사 결과까지 전부 삭제할까요?')">검사 결과 전체 삭제</button></div>`;
   } else {
     h += '<div class="muted">주장에게 각자 PIN을 알려주세요</div><div class="pins">' + D.captains.map((c,i)=>`<div class="${TEAM_CLS[i]}">${esc(c)}<b>${(D.pins||[])[i]||'----'}</b></div>`).join('') + '</div>' +
@@ -451,6 +457,12 @@ function renderAdmin(force){
       `<div class="row"><button class="warn" onclick="adminOp('reset','드래프트를 초기화할까요? (검사 결과는 유지)')">드래프트 초기화</button></div>`;
   }
   a.innerHTML = h;
+}
+async function delOne(){
+  const n = document.getElementById('ad-del').value; if(!n) return;
+  if(!confirm(n+' 님의 검사 결과를 삭제할까요? 다시 검사할 수 있게 돼요.')) return;
+  const d = await api({ action:'psAdmin', admin:adminPw, op:'delone', name:n });
+  toast(d.ok ? '삭제 완료 — 재검사 가능' : '실패'); loadDraft();
 }
 async function saveRoster(){
   const names = document.getElementById('ad-roster').value;
