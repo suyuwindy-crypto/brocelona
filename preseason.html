@@ -338,7 +338,7 @@ async function loadDraft(){
     }
     if(adminPw && !D.admin && isAdminPage && !loadDraft._warned){ loadDraft._warned = true; toast('운영자 비밀번호가 틀렸어요'); }
     const ae = document.activeElement;   // 입력 중(PIN·비밀번호)에는 화면을 다시 그리지 않음
-    if(ae && (ae.tagName==='INPUT' || ae.tagName==='SELECT') && ae.closest('#v-draft')) return;
+    if(ae && /^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName) && ae.closest('#v-draft')) return;
     renderDraft();
   }catch(e){ document.getElementById('d-body').innerHTML = '<div class="empty">불러오지 못했어요. 새로고침 해주세요.</div>'; }
 }
@@ -424,8 +424,13 @@ async function pick(id, no){
 
 /* ── 운영자 (?admin) ── */
 let capSel = [];
-function renderAdmin(){
+let adminSig = '';
+function renderAdmin(force){
   const a = document.getElementById('admin'); a.style.display = 'block';
+  // 3초 자동 갱신 때 내용이 그대로면 다시 그리지 않음 → 명단 입력·붙여넣기 중 키보드가 닫히지 않음
+  const sig = JSON.stringify([adminPw, D && D.admin, D && D.status, D && D.count, D && D.roster, D && D.names, D && D.revealed, D && D.pins, D && D.pickCount, capSel]);
+  if(!force && sig === adminSig && a.innerHTML) return;
+  adminSig = sig;
   if(!adminPw || (D && !D.admin)){
     a.innerHTML = `<h3>🔐 운영자</h3><div style="display:flex;gap:6px;"><input type="password" id="ad-pw" placeholder="운영자 비밀번호"><button class="btn" style="width:90px;padding:12px;" onclick="adminLogin()">확인</button></div>`;
     return;
