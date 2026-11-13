@@ -835,11 +835,14 @@ function go(v){
   document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
   window.scrollTo(0,0);
   clearInterval(poll);
-  if(v==='draft'){ loadDraft(); poll = setInterval(loadDraft, 3000); }
+  if(v==='draft'){ loadDraft(); poll = setInterval(loadDraft, 2000); }
   try{ history.replaceState(null,'','#'+v); }catch(e){}
 }
 initTest();
 if(location.hash==='#draft' || isAdminPage) go('draft');
+else { // 드래프트가 이미 시작됐으면 링크를 연 모든 사람이 바로 드래프트 화면으로
+  api({ action:'psState' }).then(d=>{ if(d && d.status && d.status!=='idle' && !d.error) go('draft'); }).catch(()=>{});
+}
 </script>
 </body>
 </html>
