@@ -146,10 +146,31 @@ label.lbl{display:block;font-size:12px;color:var(--dim);margin:0 0 6px;}
 .pc .mini div{font-size:10px;}
 .pc .mini div em{font-style:normal;font-family:'Orbitron',sans-serif;font-weight:700;width:10px;color:var(--text);}
 .pc .mini div .lb{width:34px;}
+
+/* 카드 상세 시트 */
+.pc{cursor:pointer;}
+.pc .more{font-size:10px;color:var(--dim);margin-top:6px;text-align:right;}
+#sheet{position:fixed;inset:0;z-index:80;display:none;background:rgba(0,0,0,0.7);}
+#sheet.on{display:block;}
+#sheet .sh{position:absolute;left:0;right:0;bottom:0;max-height:86vh;max-height:86dvh;overflow-y:auto;background:#0d1217;border-top:1px solid var(--line);
+  border-radius:18px 18px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom));animation:shUp .25s ease-out;}
+@keyframes shUp{from{transform:translateY(40%);opacity:.4}}
+#sheet .grab{width:40px;height:4px;border-radius:4px;background:#2a3640;margin:0 auto 12px;}
+#sheet .hd2{display:flex;align-items:center;gap:12px;}
+#sheet .hd2 .e{font-size:44px;}
+#sheet .hd2 .c{font-family:'Orbitron',sans-serif;font-weight:900;font-size:22px;letter-spacing:4px;color:var(--neon);}
+#sheet .hd2 .n{font-family:'Black Han Sans',sans-serif;font-size:20px;}
+#sheet .grp{margin-top:14px;}
+#sheet .grp h4{font-size:12px;font-weight:900;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+#sheet .grp h4 i{width:8px;height:8px;border-radius:50%;display:inline-block;}
+#sheet .hb{padding:9px 11px;border-radius:10px;background:#0a0e12;border:1px solid var(--line);margin-bottom:5px;}
+#sheet .hb .q{font-size:11px;color:var(--dim);line-height:1.4;}
+#sheet .hb .a{font-size:14px;font-weight:700;line-height:1.45;margin-top:2px;word-break:keep-all;}
 </style>
 </head>
 <body>
 <div class="toast" id="toast"></div>
+<div id="sheet" onclick="if(event.target===this)closeSheet()"><div class="sh" id="sheet-body"></div></div>
 <div id="yt" onclick="if(event.target===this)this.classList.remove('on')"><div class="box">
   <div style="font-size:46px">🎯</div><div class="big">YOUR TURN</div>
   <div class="sub"><b id="yt-name"></b> 주장, 선수를 고르세요<br><span class="muted" id="yt-no"></span></div>
@@ -426,10 +447,10 @@ function renderDraft(){
   if(filt==='gk') list = list.filter(p=>p.gk);
   h += '<div class="pool">' + list.map(p=>{
     const t = TYPES[p.code], taken = p.pick !== null;
-    return `<div class="pc ${taken?'taken':''}" id="pc-${p.id}"><div class="no">PLAYER #${String(p.no).padStart(2,'0')}</div><div class="em">${t[0]}</div>
+    return `<div class="pc ${taken?'taken':''}" id="pc-${p.id}" onclick="openSheet('${p.id}')"><div class="no">PLAYER #${String(p.no).padStart(2,'0')}</div><div class="em">${t[0]}</div>
       <div class="cd">${p.code}</div><div class="nm">${t[1]}</div><div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
       ${miniBars(p.scores||{}, p.code)}${p.name?`<div class="real">👤 ${esc(p.name)}</div>`:''}
-      ${taken?`<div class="tag ${TEAM_CLS[p.pick]}">${TEAM_LBL[p.pick]}</div>`:(myTurn?`<button class="pickbtn" onclick="pick('${p.id}',${p.no})">이 선수 픽</button>`:'')}</div>`;
+      ${taken?`<div class="tag ${TEAM_CLS[p.pick]}">${TEAM_LBL[p.pick]}</div>`:(myTurn?`<button class="pickbtn" onclick="event.stopPropagation();pick('${p.id}',${p.no})">이 선수 픽</button>`:'')}${p.ans?'<div class="more">평소 습관 12가지 보기 ›</div>':''}</div>`;
   }).join('') + '</div>';
   el.innerHTML = h;
   if(lastPicks >= 0 && D.pickCount > lastPicks){
@@ -439,9 +460,36 @@ function renderDraft(){
   }
   lastPicks = D.pickCount;
   checkYourTurn(myTurn);
+  if(sheetId) openSheet(sheetId, true);
 }
 function setFilt(k){ filt = k; renderDraft(); }
 function snake(n,t){ const o=[]; for(let r=0;o.length<n;r++) for(let i=0;i<t&&o.length<n;i++) o.push(r%2===0?i:t-1-i); return o; }
+
+/* ── 카드 상세: 12문항에서 고른 실제 습관 → 같은 유형끼리도 구별 ── */
+let sheetId = null;
+function openSheet(id, refresh){
+  const p = D && D.pool && D.pool.find(x=>x.id===id); if(!p) return;
+  sheetId = id;
+  const t = TYPES[p.code], taken = p.pick !== null, done = D.status==='done';
+  const myTurn = me && !done && me.cap === D.turn;
+  let h = `<div class="grab"></div><div class="hd2"><div class="e">${t[0]}</div><div><div class="muted">PLAYER #${String(p.no).padStart(2,'0')}${p.gk?' · 🧤 키퍼 가능':''}</div><div class="c">${p.code}</div><div class="n">${t[1]}</div></div></div>
+    <div class="muted" style="margin-top:8px;font-size:13px;color:#cbd5dc">${t[2]}</div>${p.name?`<div class="real" style="margin-top:6px;color:var(--gold);font-weight:700">👤 ${esc(p.name)}</div>`:''}`;
+  if(p.ans && p.ans.length === QS.length){
+    h += '<div class="sec" style="margin-top:16px">평소 이렇게 플레이해요</div>';
+    AXES.forEach(ax=>{
+      const idx = QS.map((q,i)=>q.ax===ax.k?i:-1).filter(i=>i>=0);
+      h += `<div class="grp"><h4><i style="background:${ax.col}"></i>${ax.an} ↔ ${ax.bn}</h4>` +
+        idx.map(i=>`<div class="hb"><div class="q">${esc(QS[i].q)}</div><div class="a">→ ${esc(p.ans[i]==='a'?QS[i].a:QS[i].b)}</div></div>`).join('') + '</div>';
+    });
+  } else h += '<div class="muted" style="margin-top:14px">세부 응답 정보가 없어요.</div>';
+  if(taken) h += `<div class="turnbar" style="position:static;margin:16px 0 0;border-radius:12px"><span class="${TEAM_CLS[p.pick]}">${TEAM_LBL[p.pick]} · ${esc(D.captains[p.pick])} 주장</span>이 픽했어요</div>`;
+  else if(myTurn) h += `<button class="btn" style="margin-top:16px" onclick="closeSheet();pick('${p.id}',${p.no})">🎯 이 선수 픽</button>`;
+  h += '<button class="btn ghost" style="margin-top:8px" onclick="closeSheet()">닫기</button>';
+  const body = document.getElementById('sheet-body'); const st = body.scrollTop;
+  body.innerHTML = h; if(refresh) body.scrollTop = st;
+  document.getElementById('sheet').classList.add('on');
+}
+function closeSheet(){ sheetId = null; document.getElementById('sheet').classList.remove('on'); }
 let ytShown = -1;
 function checkYourTurn(myTurn){
   if(myTurn && ytShown !== D.pickCount){
