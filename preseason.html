@@ -320,6 +320,26 @@ body::before{background:
 .admin .row button,.admin .chips span,.pins div{border-radius:0;}
 .admin .chips span.sel{border-color:var(--neon);color:var(--neon);}
 .pins b{color:var(--neon);}
+
+/* ── 이름 맞추기 ── */
+.gbox{margin:0 0 12px;padding:12px 10px;}
+.gbox .gt{font-family:'Orbitron','Noto Sans KR',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;color:var(--neon);}
+.gbox .gs{font-size:11px;color:var(--dim);margin:3px 0 9px;line-height:1.5;}
+.gchips{display:flex;flex-wrap:wrap;gap:6px;}
+.gchip{padding:7px 11px;font-size:13px;font-weight:700;color:var(--text);background:rgba(0,0,0,0.6);border:1px solid rgba(57,255,20,0.3);
+  touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;}
+.gchip.sel{border-color:var(--neon);color:#061a02;background:var(--neon);}
+.gchip.used{opacity:.25;}
+.gghost{position:fixed;z-index:120;pointer-events:none;padding:7px 11px;font-size:13px;font-weight:900;color:#061a02;background:var(--neon);
+  box-shadow:0 6px 20px rgba(0,0,0,.6);transform:translate(-50%,-120%);}
+.tcard.drop .f.front{border-color:var(--neon);box-shadow:0 0 10px rgba(57,255,20,0.5);}
+.tcard .gl{position:absolute;right:4px;bottom:3px;font-size:10px;font-weight:900;color:#061a02;background:var(--neon);padding:1px 5px;}
+.tcard .back .gr{position:absolute;left:4px;top:2px;font-size:9px;font-weight:900;padding:0 4px;}
+.tcard .back .gr.ok{color:#0a5a00;} .tcard .back .gr.no{color:#b3261e;}
+.gscore{text-align:center;margin:0 0 12px;padding:12px;}
+.gscore b{font-family:'Russo One',sans-serif;font-size:26px;color:var(--neon);}
+.gbtns{display:flex;gap:6px;margin-top:9px;}
+.gbtns button{flex:1;padding:8px;font-size:12px;font-weight:700;background:rgba(0,0,0,0.5);border:1px solid var(--line);color:var(--dim);font-family:inherit;}
 </style>
 </head>
 <body>
@@ -546,6 +566,7 @@ async function loadDraft(){
       return;
     }
     if(adminPw && !D.admin && isAdminPage && !loadDraft._warned){ loadDraft._warned = true; toast('운영자 비밀번호가 틀렸어요'); }
+    if(typeof gDrag!=='undefined' && gDrag) return;   // 이름 끌어다 놓는 중에는 갱신 보류
     const ae = document.activeElement;   // 입력 중(PIN·비밀번호)에는 화면을 다시 그리지 않음
     if(ae && /^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName) && ae.closest('#v-draft')) return;
     renderDraft();
@@ -583,6 +604,8 @@ function renderDraft(){
       (myTurn ? '<div class="me">🎯 내 차례! 아래에서 선수를 고르세요</div>' : '') +
       (nextUp ? `<div class="nx">다음 → ${nextUp}</div>` : '')) + '</div>';
   h += '<button class="livebtn" onclick="openLive()">📺 중계 화면으로 보기</button>';
+  // 이름 맞추기 (드래프트 종료 · 공개 전)
+  h += guessHTML();
   // 팀 (뽑힌 카드가 들어옴)
   h += teamsHTML(done, turn);
   // 주장 로그인
@@ -680,9 +703,9 @@ function teamsHTML(done, turn){
     const mem = D.pool.filter(p=>p.pick===i).sort((a,b)=>a.pickNo-b.pickNo);
     const cards = mem.map((m,k)=>{
       const t = TYPES[m.code], isNew = !seenPicks.has(m.id), flip = showName(m) && (!flipAnim || flipDone.has(m.id));
-      return `<div class="tcard ${flip?'flip':''} ${isNew?'new':''}" data-id="${m.id}" data-k="${m.pickNo}" onclick="openSheet('${m.id}')"><div class="in">
-        <div class="f front"><span class="e">${t[0]}</span><span class="t"><b>${m.code}${m.gk?' 🧤':''}</b><span>#${String(m.no).padStart(2,'0')} ${t[1]}</span></span></div>
-        <div class="f back"><span class="nm2">${esc(m.name||'')}</span><span class="cd2">${m.code} · #${String(m.no).padStart(2,'0')}</span></div></div></div>`;
+      return `<div class="tcard ${flip?'flip':''} ${isNew?'new':''}" data-id="${m.id}" data-k="${m.pickNo}" onclick="cardTap('${m.id}')"><div class="in">
+        <div class="f front"><span class="e">${t[0]}</span><span class="t"><b>${m.code}${m.gk?' 🧤':''}</b><span>#${String(m.no).padStart(2,'0')} ${t[1]}</span></span>${guessOn() && GUESS[m.id] ? `<span class="gl">${esc(GUESS[m.id])}</span>` : ''}</div>
+        <div class="f back"><span class="nm2">${esc(m.name||'')}</span><span class="cd2">${m.code} · #${String(m.no).padStart(2,'0')}</span>${D.revealed && GUESS[m.id] ? `<span class="gr ${GUESS[m.id]===m.name?'ok':'no'}">${GUESS[m.id]===m.name?'✓':'✗ '+esc(GUESS[m.id])}</span>` : ''}</div></div></div>`;
     }).join('');
     const empty = Math.max(0, per - mem.length);
     return `<div class="team ${TEAM_CLS[i]} ${!done&&turn===i?'now':''}"><div class="tl">${TEAM_LBL[i]}</div><div class="tc">${esc(c)}</div>` +
@@ -827,6 +850,64 @@ async function adminOp(op, ask){
 }
 
 
+
+/* ── 🕵️ 이름 맞추기: 결과 공개 전, 이름을 카드로 끌어다 놓아 추측 (내 폰에만 저장) ── */
+let GUESS = (()=>{ try{ return JSON.parse(ls.get('ps_guess')||'{}'); }catch(e){ return {}; } })();
+let gSel = null;
+function guessOn(){ return D && D.status==='done' && !D.revealed && Array.isArray(D.nameList); }
+function saveGuess(){ ls.set('ps_guess', JSON.stringify(GUESS)); }
+function guessHTML(){
+  if(!D || D.status!=='done' || !Array.isArray(D.nameList)) return '';
+  const ids = D.pool.map(p=>p.id);
+  Object.keys(GUESS).forEach(k=>{ if(!ids.includes(k)) delete GUESS[k]; });   // 다른 드래프트의 추측 정리
+  if(D.revealed){
+    const tried = Object.keys(GUESS).length; if(!tried) return '';
+    const hit = D.pool.filter(p=>GUESS[p.id] && GUESS[p.id]===p.name).length;
+    return `<div class="sc gscore"><div class="gt" style="font-size:11px;color:var(--dim);letter-spacing:2px">MY GUESS RESULT</div><b>${hit} / ${D.pool.length}</b><div class="muted">명 맞췄어요 ${hit>=D.pool.length*0.6?'🕵️ 명탐정!':hit>=D.pool.length*0.3?'👀 꽤 하는데요':'🙈 다음엔 더 잘할 수 있어요'}</div></div>`;
+  }
+  const used = new Set(Object.values(GUESS));
+  const n = Object.keys(GUESS).length;
+  return `<div class="sc gbox"><div class="gt">🕵️ 누가 누구일까? · ${n} / ${D.nameList.length}</div>
+    <div class="gs">이름을 <b>끌어서</b> 카드 위에 놓거나, 이름을 누른 뒤 카드를 누르세요. 추측은 내 폰에만 저장돼요.</div>
+    <div class="gchips">${D.nameList.map(nm=>`<span class="gchip ${used.has(nm)?'used':''} ${gSel===nm?'sel':''}" data-n="${esc(nm)}">${esc(nm)}</span>`).join('')}</div>
+    ${n?'<div class="gbtns"><button onclick="clearGuess()">추측 전부 지우기</button></div>':''}</div>`;
+}
+function assignGuess(id, nm){
+  Object.keys(GUESS).forEach(k=>{ if(GUESS[k]===nm) delete GUESS[k]; });  // 한 이름은 한 카드에만
+  GUESS[id] = nm; gSel = null; saveGuess(); renderDraft();
+}
+function clearGuess(){ if(!confirm('추측을 전부 지울까요?')) return; GUESS = {}; gSel = null; saveGuess(); renderDraft(); }
+function cardTap(id){
+  if(guessOn()){
+    if(gSel){ assignGuess(id, gSel); return; }
+    if(GUESS[id]){ delete GUESS[id]; saveGuess(); renderDraft(); toast('추측을 지웠어요'); return; }
+  }
+  openSheet(id);
+}
+// 끌어다 놓기 (손가락·마우스 공통)
+let gDrag = null;
+document.addEventListener('pointerdown', e=>{
+  const c = e.target.closest && e.target.closest('.gchip'); if(!c || !guessOn()) return;
+  gDrag = { nm:c.dataset.n, x:e.clientX, y:e.clientY, moved:false, ghost:null };
+});
+window.addEventListener('pointermove', e=>{
+  if(!gDrag) return;
+  if(!gDrag.moved && Math.hypot(e.clientX-gDrag.x, e.clientY-gDrag.y) < 8) return;
+  e.preventDefault();
+  if(!gDrag.moved){ gDrag.moved = true; const g=document.createElement('div'); g.className='gghost'; g.textContent=gDrag.nm; document.body.appendChild(g); gDrag.ghost=g; }
+  gDrag.ghost.style.left = e.clientX+'px'; gDrag.ghost.style.top = e.clientY+'px';
+  document.querySelectorAll('.tcard.drop').forEach(x=>x.classList.remove('drop'));
+  const t = document.elementFromPoint(e.clientX, e.clientY); const card = t && t.closest('.tcard'); if(card) card.classList.add('drop');
+}, { passive:false });
+window.addEventListener('pointerup', e=>{
+  if(!gDrag) return; const d = gDrag; gDrag = null;
+  document.querySelectorAll('.tcard.drop').forEach(x=>x.classList.remove('drop'));
+  if(d.ghost){ d.ghost.remove();
+    const t = document.elementFromPoint(e.clientX, e.clientY); const card = t && t.closest('.tcard');
+    if(card) assignGuess(card.dataset.id, d.nm);
+  } else { gSel = (gSel===d.nm ? null : d.nm); renderDraft(); }   // 탭 = 선택
+});
+window.addEventListener('pointercancel', ()=>{ if(gDrag && gDrag.ghost) gDrag.ghost.remove(); gDrag = null; });
 /* ── 우상단 자물쇠: 운영자 진입 ── */
 function lockTap(){
   if(!isAdminPage){ location.href = location.pathname + '?admin#draft'; return; }
