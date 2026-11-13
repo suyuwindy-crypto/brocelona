@@ -166,6 +166,10 @@ label.lbl{display:block;font-size:12px;color:var(--dim);margin:0 0 6px;}
 #sheet .hb{padding:9px 11px;border-radius:10px;background:#0a0e12;border:1px solid var(--line);margin-bottom:5px;}
 #sheet .hb .q{font-size:11px;color:var(--dim);line-height:1.4;}
 #sheet .hb .a{font-size:14px;font-weight:700;line-height:1.45;margin-top:2px;word-break:keep-all;}
+
+.pc .diff{margin-top:6px;display:flex;flex-direction:column;gap:3px;}
+.pc .diff span{font-size:10.5px;font-weight:700;color:#ffe08a;background:rgba(255,210,63,0.08);border:1px solid rgba(255,210,63,0.3);border-radius:6px;padding:2px 6px;word-break:keep-all;}
+.pc .dup{display:inline-block;font-size:9px;font-weight:700;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:0 6px;margin-left:4px;vertical-align:middle;}
 </style>
 </head>
 <body>
@@ -446,9 +450,10 @@ function renderDraft(){
   if(filt==='A'||filt==='D') list = list.filter(p=>p.code[0]===filt);
   if(filt==='gk') list = list.filter(p=>p.gk);
   h += '<div class="pool">' + list.map(p=>{
-    const t = TYPES[p.code], taken = p.pick !== null;
+    const t = TYPES[p.code], taken = p.pick !== null; let dt;
     return `<div class="pc ${taken?'taken':''}" id="pc-${p.id}" onclick="openSheet('${p.id}')"><div class="no">PLAYER #${String(p.no).padStart(2,'0')}</div><div class="em">${t[0]}</div>
-      <div class="cd">${p.code}</div><div class="nm">${t[1]}</div><div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
+      <div class="cd">${p.code}${(dt=diffTags(p))?`<span class="dup">같은 유형 ${dt.n}명</span>`:''}</div><div class="nm">${t[1]}</div><div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
+      ${dt?`<div class="diff">${dt.tags.length?dt.tags.map(x=>`<span>✦ ${x.txt}</span>`).join(''):'<span>✦ 같은 유형과 응답이 완전히 같아요</span>'}</div>`:''}
       ${miniBars(p.scores||{}, p.code)}${p.name?`<div class="real">👤 ${esc(p.name)}</div>`:''}
       ${taken?`<div class="tag ${TEAM_CLS[p.pick]}">${TEAM_LBL[p.pick]}</div>`:(myTurn?`<button class="pickbtn" onclick="event.stopPropagation();pick('${p.id}',${p.no})">이 선수 픽</button>`:'')}${p.ans?'<div class="more">평소 습관 12가지 보기 ›</div>':''}</div>`;
   }).join('') + '</div>';
@@ -466,6 +471,26 @@ function setFilt(k){ filt = k; renderDraft(); }
 function snake(n,t){ const o=[]; for(let r=0;o.length<n;r++) for(let i=0;i<t&&o.length<n;i++) o.push(r%2===0?i:t-1-i); return o; }
 
 /* ── 카드 상세: 12문항에서 고른 실제 습관 → 같은 유형끼리도 구별 ── */
+
+/* ── 같은 유형 구별: 문항별 짧은 습관 태그 ── */
+const SHORT = [
+  ['뺏으면 전방 침투','뺏으면 자리 유지'],['1:1이면 직접 돌파','1:1이면 동료에게'],['후방 빌드업에 압박','패스 길목 차단'],['애매해도 슈팅','한 번 더 연결'],
+  ['주로 상대 골문 쪽','주로 우리 골문 쪽'],['받으면 전진부터','받으면 빈 동료부터'],['경기 후 방전','체력 여유'],['압박받아도 풀어감','압박받으면 걷어냄'],
+  ['막판엔 공격 가담','막판엔 뒤를 지킴'],['골·슈팅 기록형','어시스트 기록형'],['공 쪽으로 계속 이동','예측해서 자리 잡기'],['실수해도 재시도','실수 후 안전 모드'],
+];
+// 같은 유형 카드끼리 비교해서, 이 선수만 다르게 고른 습관(소수 응답)을 최대 3개
+function diffTags(p){
+  if(!p.ans || p.ans.length !== 12) return null;
+  const same = D.pool.filter(x=>x.code===p.code && x.ans && x.ans.length===12);
+  if(same.length < 2) return null;
+  const tags = [];
+  for(let i=0;i<12;i++){
+    const mine = p.ans[i], cnt = same.filter(x=>x.ans[i]===mine).length;
+    if(cnt < same.length) tags.push({ i, rare: cnt, txt: SHORT[i][mine==='a'?0:1] });
+  }
+  tags.sort((a,b)=>a.rare-b.rare);
+  return { n: same.length, tags: tags.slice(0,3) };
+}
 let sheetId = null;
 function openSheet(id, refresh){
   const p = D && D.pool && D.pool.find(x=>x.id===id); if(!p) return;
