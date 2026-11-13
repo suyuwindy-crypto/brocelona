@@ -735,10 +735,15 @@ function checkYourTurn(myTurn){
   }
   if(!myTurn) document.getElementById('yt').classList.remove('on');
 }
-function capLogin(){
-  const cap = +document.getElementById('cap-sel').value, pin = document.getElementById('cap-pin').value.trim();
-  if(!/^\d{4}$/.test(pin)){ toast('PIN 4자리를 입력해 주세요'); return; }
-  me = { cap, pin }; ss.set('ps_cap', JSON.stringify(me)); renderDraft();
+async function capLogin(){
+  const cap = +document.getElementById('cap-sel').value, pin = document.getElementById('cap-pin').value.replace(/\D/g,'');
+  if(!/^\d{4}$/.test(pin)){ toast('PIN 4자리 숫자를 입력해 주세요'); return; }
+  // 접속할 때 PIN 미리 확인 (내 차례일 때 서버가 검증 — 존재하지 않는 카드로 조회만)
+  try{
+    const d = await api({ action:'psPick', cap, pin, id:'__check__' });
+    if(d.msg === 'pin'){ toast(`${D.captains[cap]} 주장 PIN이 아니에요. 이름 선택과 숫자를 확인해 주세요`); return; }
+  }catch(e){}
+  me = { cap, pin }; ss.set('ps_cap', JSON.stringify(me)); toast(`${D.captains[cap]} 주장으로 접속했어요`); renderDraft();
 }
 function capLogout(){ me = null; ss.del('ps_cap'); renderDraft(); }
 let picking = false;
@@ -748,7 +753,7 @@ async function pick(id, no){
   picking = true;
   try{
     const d = await api({ action:'psPick', cap:me.cap, pin:me.pin, id });
-    if(!d.ok){ toast({pin:'PIN이 틀렸어요',not_your_turn:'지금은 차례가 아니에요',taken:'이미 뽑힌 선수예요'}[d.msg] || '픽 실패'); if(d.msg==='pin') capLogout(); }
+    if(!d.ok){ toast({pin:'PIN이 틀렸어요 — 다시 접속해 주세요',not_your_turn:'지금은 차례가 아니에요',taken:'이미 뽑힌 선수예요'}[d.msg] || '픽 실패'); if(d.msg==='pin') capLogout(); }
   }catch(e){ toast('네트워크 오류'); }
   picking = false; loadDraft();
 }
