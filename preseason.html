@@ -170,10 +170,36 @@ label.lbl{display:block;font-size:12px;color:var(--dim);margin:0 0 6px;}
 .pc .diff{margin-top:6px;display:flex;flex-direction:column;gap:3px;}
 .pc .diff span{font-size:10.5px;font-weight:700;color:#ffe08a;background:rgba(255,210,63,0.08);border:1px solid rgba(255,210,63,0.3);border-radius:6px;padding:2px 6px;word-break:keep-all;}
 .pc .dup{display:inline-block;font-size:9px;font-weight:700;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:0 6px;margin-left:4px;vertical-align:middle;}
+
+/* ── 📺 중계 화면 ── */
+.livebtn{display:block;width:100%;margin:0 0 12px;padding:11px;border-radius:12px;border:1px solid #2b5a1e;background:rgba(57,255,20,0.06);color:var(--neon);font-family:inherit;font-weight:900;font-size:14px;}
+#live{position:fixed;inset:0;z-index:70;display:none;overflow-y:auto;background:radial-gradient(ellipse at 50% 0%,#14240f,#05070a 65%);padding:14px 14px calc(20px + env(safe-area-inset-bottom));}
+#live.on{display:block;}
+#live .lx{position:absolute;top:10px;right:12px;background:none;border:1px solid var(--line);color:var(--dim);border-radius:999px;padding:6px 12px;font-family:inherit;font-size:12px;}
+#live .lt{text-align:center;padding-top:6px;}
+#live .lt .k{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:4px;color:var(--dim);}
+#live .lt .w{font-family:'Black Han Sans',sans-serif;font-size:clamp(34px,9vw,64px);line-height:1.15;}
+#live .lt .nx{font-size:13px;color:var(--dim);margin-top:4px;}
+#live .last{margin:14px auto 0;max-width:640px;text-align:center;padding:14px;border-radius:16px;border:1px solid;background:rgba(0,0,0,0.45);animation:lastIn .6s cubic-bezier(.2,1.4,.4,1);}
+@keyframes lastIn{from{transform:scale(.85);opacity:0}}
+#live .last .lk{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;opacity:.8;}
+#live .last .lc{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(26px,7vw,44px);letter-spacing:6px;color:var(--neon);text-shadow:0 0 16px rgba(57,255,20,.5);}
+#live .last .ln{font-family:'Black Han Sans',sans-serif;font-size:clamp(20px,5vw,30px);}
+#live .last .ld{font-size:13px;color:#cbd5dc;margin-top:4px;}
+#live .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px auto 0;max-width:900px;}
+#live .col{border-radius:14px;padding:10px 8px;background:rgba(14,19,24,0.9);border:1px solid var(--line);}
+#live .col.now{box-shadow:0 0 0 2px currentColor,0 0 22px currentColor;}
+#live .col .ch{font-family:'Black Han Sans',sans-serif;font-size:clamp(16px,4.5vw,24px);text-align:center;}
+#live .col .cl{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:2px;text-align:center;opacity:.8;}
+#live .col .m{display:flex;align-items:center;gap:6px;padding:6px 4px;border-top:1px dashed rgba(255,255,255,0.08);font-size:12px;color:var(--text);}
+#live .col .m .e{font-size:18px;} #live .col .m b{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--neon);}
+#live .col .sm{font-size:10px;color:var(--dim);margin-top:6px;text-align:center;line-height:1.5;}
+#live .rem{text-align:center;margin-top:14px;font-size:12px;color:var(--dim);}
 </style>
 </head>
 <body>
 <div class="toast" id="toast"></div>
+<div id="live"><button class="lx" onclick="closeLive()">✕ 닫기</button><div id="live-body"></div></div>
 <div id="sheet" onclick="if(event.target===this)closeSheet()"><div class="sh" id="sheet-body"></div></div>
 <div id="yt" onclick="if(event.target===this)this.classList.remove('on')"><div class="box">
   <div style="font-size:46px">🎯</div><div class="big">YOUR TURN</div>
@@ -428,11 +454,12 @@ function renderDraft(){
     : `<span class="tn">NOW PICKING · ${D.pickCount+1} / ${D.total}</span><div class="who ${TEAM_CLS[turn]}">${esc(D.captains[turn])} <small>주장 차례</small></div>` +
       (myTurn ? '<div class="me">🎯 내 차례! 아래에서 선수를 고르세요</div>' : '') +
       (nextUp ? `<div class="nx">다음 → ${nextUp}</div>` : '')) + '</div>';
+  h += '<button class="livebtn" onclick="openLive()">📺 중계 화면으로 보기</button>';
   // 팀
   h += '<div class="teams">' + D.captains.map((c,i)=>{
     const mem = D.pool.filter(p=>p.pick===i).sort((a,b)=>a.pickNo-b.pickNo);
     return `<div class="team ${TEAM_CLS[i]} ${!done&&turn===i?'now':''}"><div class="tl">${TEAM_LBL[i]}</div><div class="tc">${esc(c)}</div>` +
-      mem.map(m=>`<div class="mem"><b>${m.code}</b> ${TYPES[m.code][0]}${m.gk?'🧤':''}${m.name?'<br>'+esc(m.name):' #'+String(m.no).padStart(2,'0')}</div>`).join('') +
+      mem.map(m=>`<div class="mem"><b>${m.code}</b> ${TYPES[m.code][0]}${m.gk?'🧤':''}${showName(m)?'<br>'+esc(m.name):' #'+String(m.no).padStart(2,'0')}</div>`).join('') +
       `<div class="sum">${teamSummary(mem)}</div></div>`;
   }).join('') + '</div>';
   // 주장 로그인
@@ -454,7 +481,7 @@ function renderDraft(){
     return `<div class="pc ${taken?'taken':''}" id="pc-${p.id}" onclick="openSheet('${p.id}')"><div class="no">PLAYER #${String(p.no).padStart(2,'0')}</div><div class="em">${t[0]}</div>
       <div class="cd">${p.code}${(dt=diffTags(p))?`<span class="dup">같은 유형 ${dt.n}명</span>`:''}</div><div class="nm">${t[1]}</div><div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
       ${dt?`<div class="diff">${dt.tags.length?dt.tags.map(x=>`<span>✦ ${x.txt}</span>`).join(''):'<span>✦ 같은 유형과 응답이 완전히 같아요</span>'}</div>`:''}
-      ${miniBars(p.scores||{}, p.code)}${p.name?`<div class="real">👤 ${esc(p.name)}</div>`:''}
+      ${miniBars(p.scores||{}, p.code)}${showName(p)?`<div class="real">👤 ${esc(p.name)}</div>`:''}
       ${taken?`<div class="tag ${TEAM_CLS[p.pick]}">${TEAM_LBL[p.pick]}</div>`:(myTurn?`<button class="pickbtn" onclick="event.stopPropagation();pick('${p.id}',${p.no})">이 선수 픽</button>`:'')}${p.ans?'<div class="more">평소 습관 12가지 보기 ›</div>':''}</div>`;
   }).join('') + '</div>';
   el.innerHTML = h;
@@ -466,6 +493,7 @@ function renderDraft(){
   lastPicks = D.pickCount;
   checkYourTurn(myTurn);
   if(sheetId) openSheet(sheetId, true);
+  renderLive();
 }
 function setFilt(k){ filt = k; renderDraft(); }
 function snake(n,t){ const o=[]; for(let r=0;o.length<n;r++) for(let i=0;i<t&&o.length<n;i++) o.push(r%2===0?i:t-1-i); return o; }
@@ -491,6 +519,36 @@ function diffTags(p){
   tags.sort((a,b)=>a.rare-b.rare);
   return { n: same.length, tags: tags.slice(0,3) };
 }
+
+/* ── 이름 노출 규칙 · 중계 화면 ── */
+let adminPeek = false;
+function showName(p){ return !!p.name && (D.revealed || (isAdminPage && adminPeek)); }
+let liveOn = false;
+function openLive(){ liveOn = true; document.getElementById('live').classList.add('on'); renderLive(); }
+function closeLive(){ liveOn = false; document.getElementById('live').classList.remove('on'); }
+function renderLive(){
+  if(!liveOn || !D || !D.pool) return;
+  const done = D.status==='done', turn = D.turn, order = snake(D.total,3);
+  let h = '<div class="lt">' + (done
+    ? '<div class="k">DRAFT COMPLETE</div><div class="w">🏁 드래프트 종료</div>'
+    : `<div class="k">NOW PICKING · ${D.pickCount+1} / ${D.total}</div><div class="w ${TEAM_CLS[turn]}">${esc(D.captains[turn])} 주장</div>` +
+      `<div class="nx">다음 → ${order.slice(D.pickCount+1, D.pickCount+5).map(i=>`<b class="${TEAM_CLS[i]}">${esc(D.captains[i])}</b>`).join(' → ') || '-'}</div>`) + '</div>';
+  const last = D.pool.find(p=>p.pickNo===D.pickCount);
+  if(last){ const t=TYPES[last.code];
+    h += `<div class="last ${TEAM_CLS[last.pick]}" style="border-color:currentColor"><div class="lk">LAST PICK · ${esc(D.captains[last.pick])} 주장</div>
+      <div style="font-size:40px;line-height:1.1;margin-top:4px">${t[0]}</div><div class="lc">${last.code}</div><div class="ln" style="color:var(--text)">#${String(last.no).padStart(2,'0')} ${t[1]}</div>
+      <div class="ld">${t[2]}</div>${showName(last)?`<div class="ld" style="color:var(--gold);font-weight:700">👤 ${esc(last.name)}</div>`:''}</div>`;
+  }
+  h += '<div class="cols">' + D.captains.map((c,i)=>{
+    const mem = D.pool.filter(p=>p.pick===i).sort((a,b)=>a.pickNo-b.pickNo);
+    return `<div class="col ${TEAM_CLS[i]} ${!done&&turn===i?'now':''}"><div class="cl">${TEAM_LBL[i]}</div><div class="ch">${esc(c)}</div>` +
+      mem.map(m=>`<div class="m"><span class="e">${TYPES[m.code][0]}</span><span><b>${m.code}</b>${m.gk?' 🧤':''}<br>${showName(m)?esc(m.name):'#'+String(m.no).padStart(2,'0')}</span></div>`).join('') +
+      `<div class="sm">${teamSummary(mem)}</div></div>`;
+  }).join('') + '</div>';
+  const left = D.pool.filter(p=>p.pick===null);
+  h += `<div class="rem">남은 선수 ${left.length}명` + (left.length ? ' · ' + left.map(p=>TYPES[p.code][0]).join(' ') : '') + '</div>';
+  document.getElementById('live-body').innerHTML = h;
+}
 let sheetId = null;
 function openSheet(id, refresh){
   const p = D && D.pool && D.pool.find(x=>x.id===id); if(!p) return;
@@ -498,7 +556,7 @@ function openSheet(id, refresh){
   const t = TYPES[p.code], taken = p.pick !== null, done = D.status==='done';
   const myTurn = me && !done && me.cap === D.turn;
   let h = `<div class="grab"></div><div class="hd2"><div class="e">${t[0]}</div><div><div class="muted">PLAYER #${String(p.no).padStart(2,'0')}${p.gk?' · 🧤 키퍼 가능':''}</div><div class="c">${p.code}</div><div class="n">${t[1]}</div></div></div>
-    <div class="muted" style="margin-top:8px;font-size:13px;color:#cbd5dc">${t[2]}</div>${p.name?`<div class="real" style="margin-top:6px;color:var(--gold);font-weight:700">👤 ${esc(p.name)}</div>`:''}`;
+    <div class="muted" style="margin-top:8px;font-size:13px;color:#cbd5dc">${t[2]}</div>${showName(p)?`<div class="real" style="margin-top:6px;color:var(--gold);font-weight:700">👤 ${esc(p.name)}</div>`:''}`;
   if(p.ans && p.ans.length === QS.length){
     h += '<div class="sec" style="margin-top:16px">평소 이렇게 플레이해요</div>';
     AXES.forEach(ax=>{
@@ -550,7 +608,7 @@ let adminSig = '';
 function renderAdmin(force){
   const a = document.getElementById('admin'); a.style.display = 'block';
   // 3초 자동 갱신 때 내용이 그대로면 다시 그리지 않음 → 명단 입력·붙여넣기 중 키보드가 닫히지 않음
-  const sig = JSON.stringify([adminPw, D && D.admin, D && D.status, D && D.count, D && D.roster, D && D.names, D && D.submitted, D && D.revealed, D && D.pins, D && D.pickCount, capSel]);
+  const sig = JSON.stringify([adminPw, D && D.admin, D && D.status, D && D.count, D && D.roster, D && D.names, D && D.submitted, D && D.revealed, D && D.pins, D && D.pickCount, capSel, adminPeek]);
   if(!force && sig === adminSig && a.innerHTML) return;
   adminSig = sig;
   if(!adminPw || (D && !D.admin)){
@@ -572,6 +630,8 @@ function renderAdmin(force){
       `<div class="row"><button class="warn" onclick="adminOp('wipe','검사 결과까지 전부 삭제할까요?')">검사 결과 전체 삭제</button></div>`;
   } else {
     h += '<div class="muted">주장에게 각자 PIN을 알려주세요</div><div class="pins">' + D.captains.map((c,i)=>`<div class="${TEAM_CLS[i]}">${esc(c)}<b>${(D.pins||[])[i]||'----'}</b></div>`).join('') + '</div>' +
+      `<div class="row"><button onclick="adminPeek=!adminPeek;renderAdmin(true);renderDraft()">${adminPeek?'🙈 내 화면 이름 숨기기':'🔍 내 화면에서만 이름 보기'}</button></div>` +
+      `<div class="muted" style="margin-top:4px">화면 공유로 중계할 땐 숨김 상태로 두세요</div>` +
       `<div class="row"><button onclick="adminOp('${D.revealed?'hide':'reveal'}')">${D.revealed?'🙈 이름 다시 숨기기':'👀 이름 공개'}</button><button onclick="adminOp('undo','마지막 픽을 취소할까요?')">↩️ 마지막 픽 취소</button></div>` +
       `<div class="row"><button class="warn" onclick="adminOp('reset','드래프트를 초기화할까요? (검사 결과는 유지)')">드래프트 초기화</button></div>`;
   }
