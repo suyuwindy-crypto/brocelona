@@ -340,10 +340,24 @@ body::before{background:
 .gscore b{font-family:'Russo One',sans-serif;font-size:26px;color:var(--neon);}
 .gbtns{display:flex;gap:6px;margin-top:9px;}
 .gbtns button{flex:1;padding:8px;font-size:12px;font-weight:700;background:rgba(0,0,0,0.5);border:1px solid var(--line);color:var(--dim);font-family:inherit;}
+
+.gshare-hint{margin-top:10px;font-size:13px;font-weight:700;color:var(--text);}
+#gpop{position:fixed;inset:0;z-index:95;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.86);padding:20px;}
+#gpop.on{display:flex;}
+#gpop .box{width:min(100%,360px);text-align:center;padding:24px 18px 18px;background:var(--panel);border:1.5px solid var(--neon);box-shadow:0 0 40px rgba(57,255,20,0.3);animation:ytIn .4s cubic-bezier(.2,1.4,.4,1);}
+#gpop .k{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:3px;color:var(--dim);}
+#gpop .sc2{font-family:'Russo One',sans-serif;font-size:54px;color:var(--neon);text-shadow:0 0 18px rgba(57,255,20,0.5);line-height:1.1;margin:6px 0 2px;}
+#gpop .gd{font-size:16px;font-weight:900;}
+#gpop .cap{margin:14px 0 14px;padding:10px;border:1px dashed var(--neon);font-size:14px;font-weight:700;line-height:1.5;}
 </style>
 </head>
 <body>
 <div class="toast" id="toast"></div>
+<div id="gpop" onclick="if(event.target===this)this.classList.remove('on')"><div class="box">
+  <div class="k">🕵️ 이름 맞추기 결과</div><div class="sc2" id="gp-score"></div><div class="gd" id="gp-grade"></div>
+  <div class="cap">📸 지금 이 화면을 캡처하거나<br>아래 버튼으로 <b>단톡방에 공유</b>해 주세요!</div>
+  <button class="btn" onclick="shareScore()">💬 카톡방에 점수 공유하기</button>
+  <button class="btn ghost" style="margin-top:8px" onclick="document.getElementById('gpop').classList.remove('on')">카드 결과 보기</button></div></div>
 <div id="live"><button class="lx" onclick="closeLive()">✕ 닫기</button><div id="live-body"></div></div>
 <div id="sheet" onclick="if(event.target===this)closeSheet()"><div class="sh" id="sheet-body"></div></div>
 <div id="yt" onclick="if(event.target===this)this.classList.remove('on')"><div class="box">
@@ -633,7 +647,9 @@ function renderDraft(){
   const revealNow = wasRevealed === false && D.revealed;
   el.innerHTML = h;
   D.pool.filter(p=>p.pick!==null).forEach(p=>seenPicks.add(p.id));
-  if(revealNow) flipSequence();
+  if(revealNow){ flipSequence();
+    if(Object.keys(GUESS).length) setTimeout(showScorePop, D.pool.length*450 + 1300);   // 다 뒤집힌 뒤 점수 발표 팝업
+  }
   wasRevealed = !!D.revealed;
   if(lastPicks >= 0 && D.pickCount > lastPicks){
     const last = D.pool.filter(p=>p.pickNo===D.pickCount)[0];
@@ -863,7 +879,9 @@ function guessHTML(){
   if(D.revealed){
     const tried = Object.keys(GUESS).length; if(!tried) return '';
     const hit = D.pool.filter(p=>GUESS[p.id] && GUESS[p.id]===p.name).length;
-    return `<div class="sc gscore"><div class="gt" style="font-size:11px;color:var(--dim);letter-spacing:2px">MY GUESS RESULT</div><b>${hit} / ${D.pool.length}</b><div class="muted">명 맞췄어요 ${hit>=D.pool.length*0.6?'🕵️ 명탐정!':hit>=D.pool.length*0.3?'👀 꽤 하는데요':'🙈 다음엔 더 잘할 수 있어요'}</div></div>`;
+    return `<div class="sc gscore"><div class="gt" style="font-size:11px;color:var(--dim);letter-spacing:2px">MY GUESS RESULT</div><b>${hit} / ${D.pool.length}</b><div class="muted">명 맞췄어요 ${gradeOf(hit)}</div>
+      <div class="gshare-hint">📸 내 점수를 단톡방에 자랑해 주세요!</div>
+      <button class="btn" style="margin-top:8px" onclick="shareScore()">💬 카톡방에 점수 공유하기</button></div>`;
   }
   const used = new Set(Object.values(GUESS));
   const n = Object.keys(GUESS).length;
@@ -908,6 +926,62 @@ window.addEventListener('pointerup', e=>{
   } else { gSel = (gSel===d.nm ? null : d.nm); renderDraft(); }   // 탭 = 선택
 });
 window.addEventListener('pointercancel', ()=>{ if(gDrag && gDrag.ghost) gDrag.ghost.remove(); gDrag = null; });
+
+/* ── 점수 발표 · 카톡 공유 (점수 카드 이미지 생성 → 공유 시트에서 카카오톡 선택) ── */
+function gradeOf(hit){ const n = D.pool.length; return hit>=n*0.6?'🕵️ 명탐정!':hit>=n*0.3?'👀 꽤 하는데요':'🙈 다음엔 더 잘할 수 있어요'; }
+function myHits(){ return D.pool.filter(p=>GUESS[p.id] && GUESS[p.id]===p.name).length; }
+function showScorePop(){
+  if(!D || !D.revealed) return;
+  document.getElementById('gp-score').textContent = myHits() + ' / ' + D.pool.length;
+  document.getElementById('gp-grade').textContent = gradeOf(myHits());
+  document.getElementById('gpop').classList.add('on');
+  if(navigator.vibrate) navigator.vibrate([120,80,120]);
+}
+function scoreCanvas(){
+  const per = Math.max(...[0,1,2].map(i=>D.pool.filter(p=>p.pick===i).length));
+  const W=1080, H=Math.max(1080, 600+130+per*92+90), c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+  const G='#39ff14', F='"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif';
+  x.fillStyle='#030308'; x.fillRect(0,0,W,H);
+  x.strokeStyle='rgba(180,20,20,0.6)'; x.lineWidth=4; x.strokeRect(40,40,W-80,H-80);
+  x.strokeStyle='rgba(255,215,0,0.8)'; x.lineWidth=4;
+  [[40,40,1,1],[W-40,H-40,-1,-1]].forEach(([a,b,sx,sy])=>{ x.beginPath(); x.moveTo(a,b+44*sy); x.lineTo(a,b); x.lineTo(a+44*sx,b); x.stroke(); });
+  x.textAlign='center';
+  x.fillStyle='#ffd700'; x.font='700 40px '+F; x.fillText('BLIND DRAFT · 누가 누구일까?', W/2, 150);
+  x.fillStyle='#5f8a55'; x.font='500 28px '+F; x.fillText('STAR LEAGUE · EPILOGUE', W/2, 200);
+  const hit = myHits(), n = D.pool.length;
+  x.fillStyle=G; x.shadowColor='rgba(57,255,20,0.6)'; x.shadowBlur=30; x.font='900 200px '+F; x.fillText(hit+' / '+n, W/2, 430); x.shadowBlur=0;
+  x.fillStyle='#dff5d8'; x.font='900 52px '+F; x.fillText('명 맞췄어요  '+gradeOf(hit), W/2, 520);
+  // 팀별 결과
+  const cols=[0,1,2], cw=(W-160)/3, top=600, TC=['#4a90e2','#e0b43a','#e5534b'];
+  cols.forEach(i=>{
+    const cx = 80 + cw*i + cw/2, mem = D.pool.filter(p=>p.pick===i).sort((a,b)=>a.pickNo-b.pickNo);
+    x.fillStyle=TC[i]; x.fillRect(80+cw*i+10, top, cw-20, 6);
+    x.font='900 38px '+F; x.fillText(D.captains[i], cx, top+60);
+    mem.forEach((m,k)=>{
+      const y = top + 130 + k*92, g = GUESS[m.id], ok = g && g===m.name;
+      x.fillStyle = ok ? 'rgba(57,255,20,0.12)' : 'rgba(255,255,255,0.04)'; x.fillRect(80+cw*i+14, y-52, cw-28, 78);
+      x.fillStyle = '#dff5d8'; x.font='700 34px '+F; x.fillText(m.name, cx-20, y);
+      x.fillStyle = ok ? G : (g ? '#e5534b' : '#5f8a55'); x.font='900 34px '+F; x.fillText(ok?'✓':(g?'✗':'·'), cx+cw/2-52, y);
+    });
+  });
+  x.fillStyle='#5f8a55'; x.font='500 26px '+F; x.fillText('suyuwindy-crypto.github.io/brocelona/preseason.html', W/2, H-80);
+  return c;
+}
+async function shareScore(){
+  try{
+    const blob = await new Promise(r=>scoreCanvas().toBlob(r,'image/png'));
+    const file = new File([blob], 'blind_draft_score.png', { type:'image/png' });
+    const text = `🕵️ 블라인드 드래프트 이름 맞추기 ${myHits()} / ${D.pool.length} ${gradeOf(myHits())}`;
+    if(navigator.canShare && navigator.canShare({ files:[file] })){
+      await navigator.share({ files:[file], text });          // 공유 시트에서 카카오톡 선택
+      return;
+    }
+    // 공유 기능이 없는 브라우저: 이미지 저장 + 문구 복사
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'blind_draft_score.png'; a.click();
+    try{ await navigator.clipboard.writeText(text); }catch(e){}
+    toast('점수 이미지를 저장했어요 — 카톡방에 올려주세요');
+  }catch(e){ if(e && e.name !== 'AbortError') toast('공유가 안 되면 화면을 캡처해서 올려주세요'); }
+}
 /* ── 우상단 자물쇠: 운영자 진입 ── */
 function lockTap(){
   if(!isAdminPage){ location.href = location.pathname + '?admin#draft'; return; }
