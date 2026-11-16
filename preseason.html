@@ -580,7 +580,7 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 <div class="wrap">
   <div class="sbar sc">
     <div class="sb-l"><a class="sb-back" href="lightwar_main.html">◀</a><span class="sb-dot"></span>
-      <div><div class="sb-title">PRE-SEASON</div><div class="sb-sub">STAR LEAGUE · EPILOGUE</div></div></div>
+      <div><div class="sb-title">PRE-SEASON</div><div class="sb-sub">BROCELONA · NEW SEASON</div></div></div>
     <button class="sb-lock" id="lock" onclick="lockTap()" aria-label="운영자">🔒</button>
   </div>
   <div class="hd">
@@ -642,7 +642,7 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 </nav>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbzh4fFD9JafD2hX7ffutEumOGMg8jKojxP3wfpXjT3LmR_ctbN8-AuBmBgWVRa77ke-/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyvq0WwN5MKYi4QIfHkkukMl_ZoVHbTsAcQUsdqlo87W9KHm-2swngVnTTcRl9m0kkv/exec';
 const ls = { get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
 const ss = { get(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }, set(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} }, del(k){ try{ sessionStorage.removeItem(k); }catch(e){} } };
 function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('on'),2200); }
@@ -1166,7 +1166,7 @@ function scoreCanvas(){
   [[40,40,1,1],[W-40,H-40,-1,-1]].forEach(([a,b,sx,sy])=>{ x.beginPath(); x.moveTo(a,b+44*sy); x.lineTo(a,b); x.lineTo(a+44*sx,b); x.stroke(); });
   x.textAlign='center';
   x.fillStyle='#0b1f4b'; x.font='700 40px '+F; x.fillText('BLIND DRAFT · 누가 누구일까?', W/2, 150);
-  x.fillStyle='#667085'; x.font='500 28px '+F; x.fillText('STAR LEAGUE · EPILOGUE', W/2, 200);
+  x.fillStyle='#667085'; x.font='500 28px '+F; x.fillText('BROCELONA · NEW SEASON', W/2, 200);
   const hit = myHits(), n = D.pool.length;
   x.fillStyle=G; x.shadowBlur=0; x.font='900 200px '+F; x.fillText(hit+' / '+n, W/2, 430); x.shadowBlur=0;
   x.fillStyle='#101828'; x.font='900 52px '+F; x.fillText('명 맞췄어요  '+gradeOf(hit), W/2, 520);
