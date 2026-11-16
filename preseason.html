@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="theme-color" content="#0b1f4b">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>PRE-SEASON · 브로셀로나</title>
+<title>26/27 오지리그 · 브로셀로나</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Barlow+Condensed:ital,wght@0,600;0,700;1,600;1,700;1,800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -562,6 +562,15 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 .ttab td.tn.tA{color:var(--A);} .ttab td.tn.tB{color:var(--B);} .ttab td.tn.tC{color:var(--C);}
 .admin .row button[onclick^="recSaveRound"],.admin .row button[onclick^="recSaveTeams"],.admin .row button[onclick^="setupDraft"],.admin .row button[onclick^="saveRoster"]{background:linear-gradient(180deg,#00b85c,#009648);border:none;color:#fff;}
 .admin .row button:disabled{background:#e4e7ec;color:#98a2b3;}
+.sb-title{font-family:'Barlow Condensed','Noto Sans KR',sans-serif;font-weight:900;}
+.rcard .code{font-size:36px;letter-spacing:3px;}
+.rcard .star{margin:14px auto 2px;padding:12px;border-radius:12px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;max-width:300px;}
+.rcard .star span{display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);}
+.rcard .star b{display:block;font-size:24px;font-weight:900;font-style:italic;margin-top:2px;}
+.pc .cd{font-size:20px;letter-spacing:1.5px;}
+.pc .st2,#sheet .st2{font-size:12.5px;font-weight:900;color:#067a3f;margin-top:3px;}
+.tcard .f .t b{font-size:12px;letter-spacing:0.5px;}
+.ax{grid-template-columns:70px 1fr 70px;}
 </style>
 </head>
 <body>
@@ -580,7 +589,7 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 <div class="wrap">
   <div class="sbar sc">
     <div class="sb-l"><a class="sb-back" href="lightwar_main.html">◀</a><span class="sb-dot"></span>
-      <div><div class="sb-title">PRE-SEASON</div><div class="sb-sub">BROCELONA · NEW SEASON</div></div></div>
+      <div><div class="sb-title">26/27 오지리그</div><div class="sb-sub">BROCELONA · PRE-SEASON</div></div></div>
     <button class="sb-lock" id="lock" onclick="lockTap()" aria-label="운영자">🔒</button>
   </div>
   <div class="hd">
@@ -591,9 +600,10 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
   <!-- ═══ 성향 검사 ═══ -->
   <section class="view on" id="v-test">
     <div id="t-intro" class="card intro">
-      <div style="font-family:'Noto Sans KR';font-size:22px;margin-bottom:8px;">⚽ 축구 성향 검사</div>
+      <div style="font-family:'Noto Sans KR';font-size:22px;margin-bottom:8px;">⚽ 풋살 성향 검사</div>
       <ul>
-        <li>12문항 · 약 1분</li>
+        <li>18문항 · 약 1분 30초 · <b>64가지 유형</b></li>
+        <li>결과와 플레이 스타일이 닮은 <b>레전드 선수</b>도 알려줘요.</li>
         <li><b>하고 싶은 플레이</b>가 아니라 <b>평소 경기에서 실제로 자주 하는 선택</b>을 고르세요.</li>
         <li>정답도, 더 좋은 유형도 없어요. 덤덤하게 고를수록 정확해요.</li>
         <li>결과는 <b>익명 카드</b>로만 주장에게 보여요.</li>
@@ -659,24 +669,32 @@ const AXES = [
   { k:'SL', a:'S', b:'L', an:'해결', bn:'연결', col:'var(--ax2)' },
   { k:'EP', a:'E', b:'P', an:'활동량', bn:'위치', col:'var(--ax3)' },
   { k:'BC', a:'B', b:'C', an:'과감', bn:'침착', col:'var(--ax4)' },
+  { k:'TM', a:'T', b:'M', an:'기술', bn:'피지컬', col:'var(--ax1)' },
+  { k:'VQ', a:'V', b:'Q', an:'지휘', bn:'묵묵', col:'var(--ax2)' },
 ];
-/* ── 12문항: 실제 경기 상황 · 둘 다 평범한 선택지 · 보기 순서는 매번 섞임 ── */
+/* ── 18문항(축마다 3개): 풋살 실전 상황 · 둘 다 평범한 선택지 · 보기 순서는 매번 섞임 ── */
 const QS = [
-  { ax:'AD', q:'우리 팀이 공을 뺏은 직후, 나는 보통…', a:'앞쪽으로 뛰어나가 공 받을 자리를 찾는다', b:'일단 내 자리 근처에서 상황을 본다' },
-  { ax:'SL', q:'앞에 수비 한 명, 옆에 동료 한 명. 나는 보통…', a:'내가 직접 제치거나 슈팅까지 간다', b:'옆 동료에게 내주고 다시 움직인다' },
+  { ax:'AD', q:'우리 골레이로(키퍼)가 공을 잡았다. 나는 보통…', a:'상대 진영 쪽으로 올라가 받을 준비를 한다', b:'뒤쪽 가까이 내려가 받아준다' },
+  { ax:'SL', q:'골문 앞 2:1 상황, 공은 내 발에 있다. 나는 보통…', a:'내가 직접 슈팅한다', b:'옆 동료에게 밀어준다' },
   { ax:'EP', q:'상대가 뒤에서 공을 돌리고 있을 때 나는…', a:'공 가진 사람에게 달려가 압박한다', b:'패스 길목에 서서 기다린다' },
-  { ax:'BC', q:'애매한 거리에서 슈팅 각이 보이면…', a:'일단 때려본다', b:'한 번 더 연결해서 더 좋은 기회를 만든다' },
-  { ax:'AD', q:'경기 끝나고 떠올려 보면, 나는 주로 어디에 있었나?', a:'상대 골문 쪽', b:'우리 골문 쪽' },
-  { ax:'SL', q:'공을 받는 순간 머릿속에 먼저 떠오르는 건…', a:'내가 어떻게 앞으로 나갈지', b:'지금 누가 비어 있는지' },
-  { ax:'EP', q:'한 경기 끝났을 때 내 체력은 보통…', a:'거의 방전', b:'생각보다 여유 있음' },
-  { ax:'BC', q:'우리 진영에서 압박을 받으면 나는 보통…', a:'드리블이나 짧은 패스로 풀어보려 한다', b:'안전하게 멀리 걷어낸다' },
+  { ax:'BC', q:'애매한 거리에서 슈팅 각이 살짝 보이면…', a:'일단 때려본다', b:'한 번 더 연결해서 더 좋은 기회를 만든다' },
+  { ax:'TM', q:'수비가 등 뒤에 바짝 붙었을 때 나는…', a:'발바닥·페인트로 돌아서 벗겨낸다', b:'등지고 몸으로 버티며 공을 지킨다' },
+  { ax:'VQ', q:'경기 중 나는…', a:'계속 말한다 ("왼쪽!", "맨 붙어!")', b:'말보다 플레이로 한다 (거의 조용한 편)' },
+  { ax:'AD', q:'경기 끝나고 떠올려 보면, 나는 주로 어디에 있었나?', a:'상대 골문 앞', b:'우리 골문 앞' },
+  { ax:'SL', q:'공을 받는 순간 머릿속에 먼저 떠오르는 건…', a:'내가 어떻게 뚫을지', b:'지금 누가 비어 있는지' },
+  { ax:'EP', q:'패스를 주고 난 직후 나는 보통…', a:'바로 빈 공간으로 뛰어 들어간다', b:'그 자리에서 다음 상황을 본다' },
+  { ax:'BC', q:'우리 골문 앞에서 압박을 받으면 나는 보통…', a:'드리블이나 짧은 패스로 풀어보려 한다', b:'안전하게 멀리 걷어낸다' },
+  { ax:'TM', q:'1:1 수비를 할 때 나는 주로…', a:'발을 뻗어 공을 건드려 뺏는다', b:'몸을 붙여 밀어내며 막는다' },
+  { ax:'VQ', q:'동료가 수비 위치를 놓쳤을 때 나는…', a:'바로 불러서 알려준다', b:'말없이 내가 움직여서 메운다' },
   { ax:'AD', q:'동점 상황, 마지막 1분. 나는 보통…', a:'한 골 넣으러 올라간다', b:'실점 안 하게 뒤를 지킨다' },
-  { ax:'SL', q:'시즌 기록을 보면 나는 더 많이 쌓인 게…', a:'골·슈팅', b:'어시스트·패스' },
-  { ax:'EP', q:'공이 반대편에 있을 때 나는…', a:'계속 움직이며 공 쪽으로 다가간다', b:'다음 상황을 예상하며 자리를 잡는다' },
+  { ax:'SL', q:'상대 진영 깊은 곳에서 킥인을 내가 찬다면…', a:'골문 쪽으로 강하게 때려 넣는다', b:'가까운 동료에게 짧게 준다' },
+  { ax:'EP', q:'한 경기 끝났을 때 내 체력은 보통…', a:'거의 방전', b:'생각보다 여유 있음' },
   { ax:'BC', q:'방금 실수로 공을 뺏겼다. 다음 플레이에서 나는…', a:'똑같이 다시 시도해본다', b:'한동안 쉽고 안전하게 간다' },
+  { ax:'TM', q:'내 득점은 주로 어떤 골인가?', a:'수비를 제치거나 구석을 노린 골', b:'몸싸움을 이기고 밀어 넣거나 강하게 때린 골' },
+  { ax:'VQ', q:'실점 직후 나는 보통…', a:'"괜찮아, 다시 하자" 하고 분위기를 올린다', b:'조용히 내 자리로 돌아가 집중한다' },
 ];
-/* ── 16유형 ── */
-const TYPES = {
+/* ── 64유형 = 기본 16유형(공수·해결·활동·판단) × 무기(기술 T / 피지컬 M) × 역할(지휘 V / 묵묵 Q) ── */
+const BASE = {
   ASEB:['🔥','돌격 해결사','많이 뛰고, 기회가 오면 망설임 없이 직접 끝낸다.'],
   ASEC:['🐺','끈질긴 골잡이','끝까지 쫓아다니다가 확실한 순간에 마무리한다.'],
   ASPB:['🎯','한방 스나이퍼','자리를 잡고 기다리다 과감한 한 방을 노린다.'],
@@ -691,9 +709,42 @@ const TYPES = {
   DSPC:['🧱','최후의 벽','위치를 지키며 1:1을 막아내는 마지막 방어선.'],
   DLEB:['💪','하드워커 빌드업','많이 뛰며 수비하고, 과감한 전진 패스를 뿌린다.'],
   DLEC:['🧹','살림꾼','궂은일을 도맡고 공을 안전하게 동료에게 잇는다.'],
-  DLPB:['🏹','후방 플레이메이커','뒤에서 판을 보고 과감한 롱패스로 시작한다.'],
+  DLPB:['🏹','후방 플레이메이커','뒤에서 판을 보고 과감한 패스로 공격을 시작한다.'],
   DLPC:['🧭','그라운드의 사령관','위치와 안정감으로 팀 전체를 정리한다.'],
 };
+const MOD = {
+  TV:['기술로 이끄는','발기술이 좋고, 말로 팀을 움직인다.'],
+  TQ:['조용한 테크니션','발기술이 좋고, 말없이 플레이로 보여준다.'],
+  MV:['투지의 리더','몸싸움에 강하고, 목소리로 팀을 끌어올린다.'],
+  MQ:['묵묵한 파워','몸싸움에 강하고, 묵묵히 제 몫을 해낸다.'],
+};
+// 플레이 스타일이 닮은 선수 (TV, TQ, MV, MQ 순) — 재미로 보는 매칭
+const STAR = {
+  ASEB:['마라도나','손흥민','호날두','홀란'],
+  ASEC:['펠레','앙리','에투','차범근'],
+  ASPB:['팔카오 (풋살 황제)','호나우두 (R9)','즐라탄','바티스투타'],
+  ASPC:['호마리우','메시','시어러','레반도프스키'],
+  ALEB:['더 브라위너','히카르지뉴 (풋살)','제라드','야야 투레'],
+  ALEC:['크루이프','이니에스타','램파드','박지성'],
+  ALPB:['토티','호나우지뉴','칸토나','히바우두'],
+  ALPC:['플라티니','지단','소크라테스','리켈메'],
+  DSEB:['다비즈','호베르투 카를로스','가투소','에시앙'],
+  DSEC:['필립 람','이영표','푸욜','캉테'],
+  DSPB:['라모스','알라바','루시우','김민재'],
+  DSPC:['바레시','네스타','칸나바로','판 다이크'],
+  DLEB:['다니 알베스','마르셀루','로이 킨','레이카르트'],
+  DLEC:['모드리치','마켈렐레','슈바인슈타이거','지우베르투 실바'],
+  DLPB:['베켄바워','스콜스','마테우스','보누치'],
+  DLPC:['사비','피를로','말디니','홍명보'],
+};
+// TYPES[code] → [아이콘, 유형 이름, 설명, 닮은 선수]  (예전 4글자 코드도 그대로 표시됨)
+function typeOf(code){
+  code = String(code||''); const b = BASE[code.slice(0,4)] || ['❔','알 수 없음',''];
+  const mk = code.slice(4,6), m = MOD[mk];
+  if(!m) return [b[0], b[1], b[2], ''];
+  return [b[0], m[0]+' '+b[1], b[2]+' '+m[1], (STAR[code.slice(0,4)]||[])[['TV','TQ','MV','MQ'].indexOf(mk)] || ''];
+}
+const TYPES = new Proxy({}, { get:(_, code)=>typeOf(code) });
 const TEAM_CLS = ['tA','tB','tC'], TEAM_LBL = ['TEAM BLUE','TEAM YELLOW','TEAM RED'];
 
 /* ═══ 검사 ═══ */
@@ -778,7 +829,7 @@ function showResult(r, fromPrev){
   const t = TYPES[r.code];
   document.getElementById('res-card').innerHTML = `<div class="rcard">
     <div class="emo">${t[0]}</div><div class="code">${r.code}</div><div class="tname">${t[1]}</div>
-    <div class="tdesc">${t[2]}</div>${r.gk?'<div class="gk">🧤 키퍼 가능</div>':''}${axisBars(r.scores, r.code)}</div>`;
+    <div class="tdesc">${t[2]}</div>${t[3]?`<div class="star"><span>플레이 스타일이 닮은 선수</span><b>${esc(t[3])}</b></div>`:''}${r.gk?'<div class="gk">🧤 키퍼 가능</div>':''}${axisBars(r.scores, r.code)}</div>`;
   if(fromPrev) document.getElementById('res-msg').textContent = esc(r.name||'') + ' 님의 지난 결과';
   show('t-res');
 }
@@ -807,7 +858,7 @@ async function loadDraft(){
 }
 function teamSummary(mem){
   if(!mem.length) return '';
-  const c = {A:0,D:0,S:0,L:0,E:0,P:0,B:0,C:0}; let g=0;
+  const c = {A:0,D:0,S:0,L:0,E:0,P:0,B:0,C:0,T:0,M:0,V:0,Q:0}; let g=0;
   mem.forEach(m=>{ m.code.split('').forEach(ch=>c[ch]++); if(m.gk) g++; });
   return `공${c.A}·수${c.D} / 해${c.S}·연${c.L}<br>활${c.E}·위${c.P} / 🧤${g}`;
 }
@@ -858,10 +909,10 @@ function renderDraft(){
   h += '<div class="pool">' + list.map(p=>{
     const t = TYPES[p.code], taken = p.pick !== null; let dt;
     return `<div class="pc ${taken?'taken':''}" id="pc-${p.id}" onclick="openSheet('${p.id}')"><div class="no">PLAYER #${String(p.no).padStart(2,'0')}</div><div class="em">${t[0]}</div>
-      <div class="cd">${p.code}${(dt=diffTags(p))?`<span class="dup">같은 유형 ${dt.n}명</span>`:''}</div><div class="nm">${t[1]}</div><div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
+      <div class="cd">${p.code}${(dt=diffTags(p))?`<span class="dup">같은 유형 ${dt.n}명</span>`:''}</div><div class="nm">${t[1]}</div>${t[3]?`<div class="st2">⚽ ${esc(t[3])} 스타일</div>`:''}<div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
       ${dt?`<div class="diff">${dt.tags.length?dt.tags.map(x=>`<span>✦ ${x.txt}</span>`).join(''):'<span>✦ 같은 유형과 응답이 완전히 같아요</span>'}</div>`:''}
       ${miniBars(p.scores||{}, p.code)}${showName(p)?`<div class="real">👤 ${esc(p.name)}</div>`:''}
-      ${taken?`<div class="tag ${TEAM_CLS[p.pick]}">${TEAM_LBL[p.pick]}</div>`:(myTurn?`<button class="pickbtn" onclick="event.stopPropagation();pick('${p.id}',${p.no})">이 선수 픽</button>`:'')}${p.ans?'<div class="more">평소 습관 12가지 보기 ›</div>':''}</div>`;
+      ${taken?`<div class="tag ${TEAM_CLS[p.pick]}">${TEAM_LBL[p.pick]}</div>`:(myTurn?`<button class="pickbtn" onclick="event.stopPropagation();pick('${p.id}',${p.no})">이 선수 픽</button>`:'')}${p.ans?'<div class="more">평소 습관 18가지 보기 ›</div>':''}</div>`;
   }).join('') + '</div>';
   const revealNow = wasRevealed === false && D.revealed;
   el.innerHTML = h;
@@ -887,17 +938,20 @@ function snake(n,t){ const o=[]; for(let r=0;o.length<n;r++) for(let i=0;i<t&&o.
 
 /* ── 같은 유형 구별: 문항별 짧은 습관 태그 ── */
 const SHORT = [
-  ['뺏으면 전방 침투','뺏으면 자리 유지'],['1:1이면 직접 돌파','1:1이면 동료에게'],['후방 빌드업에 압박','패스 길목 차단'],['애매해도 슈팅','한 번 더 연결'],
-  ['주로 상대 골문 쪽','주로 우리 골문 쪽'],['받으면 전진부터','받으면 빈 동료부터'],['경기 후 방전','체력 여유'],['압박받아도 풀어감','압박받으면 걷어냄'],
-  ['막판엔 공격 가담','막판엔 뒤를 지킴'],['골·슈팅 기록형','어시스트 기록형'],['공 쪽으로 계속 이동','예측해서 자리 잡기'],['실수해도 재시도','실수 후 안전 모드'],
+  ['키퍼 공엔 전방으로','키퍼 공엔 내려와 받기'],['2:1이면 직접 슈팅','2:1이면 동료에게'],['후방 빌드업에 압박','패스 길목 차단'],['애매해도 슈팅','한 번 더 연결'],
+  ['붙으면 발기술로 탈출','붙으면 등지고 버티기'],['경기 내내 콜 플레이','말보다 플레이'],
+  ['주로 상대 골문 앞','주로 우리 골문 앞'],['받으면 돌파부터','받으면 빈 동료부터'],['주고 바로 침투','주고 자리 유지'],['압박받아도 풀어감','압박받으면 걷어냄'],
+  ['발 뻗어 뺏는 수비','몸 붙여 막는 수비'],['동료 위치 바로 콜','말없이 내가 메움'],
+  ['막판엔 공격 가담','막판엔 뒤를 지킴'],['킥인은 골문으로 강하게','킥인은 짧게 연결'],['경기 후 방전','체력 여유'],['실수해도 재시도','실수 후 안전 모드'],
+  ['제치고 구석 노린 골','몸싸움 이긴 파워 골'],['실점 후 분위기 메이커','실점 후 조용히 집중'],
 ];
 // 같은 유형 카드끼리 비교해서, 이 선수만 다르게 고른 습관(소수 응답)을 최대 3개
 function diffTags(p){
-  if(!p.ans || p.ans.length !== 12) return null;
-  const same = D.pool.filter(x=>x.code===p.code && x.ans && x.ans.length===12);
+  if(!p.ans || p.ans.length !== QS.length) return null;
+  const same = D.pool.filter(x=>x.code===p.code && x.ans && x.ans.length===QS.length);
   if(same.length < 2) return null;
   const tags = [];
-  for(let i=0;i<12;i++){
+  for(let i=0;i<QS.length;i++){
     const mine = p.ans[i], cnt = same.filter(x=>x.ans[i]===mine).length;
     if(cnt < same.length) tags.push({ i, rare: cnt, txt: SHORT[i][mine==='a'?0:1] });
   }
@@ -922,7 +976,7 @@ function renderLive(){
   if(last){ const t=TYPES[last.code];
     h += `<div class="last ${TEAM_CLS[last.pick]}" style="border-color:currentColor"><div class="lk">LAST PICK · ${esc(D.captains[last.pick])} 주장</div>
       <div style="font-size:40px;line-height:1.1;margin-top:4px">${t[0]}</div><div class="lc">${last.code}</div><div class="ln" style="color:var(--text)">#${String(last.no).padStart(2,'0')} ${t[1]}</div>
-      <div class="ld">${t[2]}</div>${showName(last)?`<div class="ld" style="color:var(--gold);font-weight:700">👤 ${esc(last.name)}</div>`:''}</div>`;
+      ${t[3]?`<div class="ld" style="font-weight:900;color:var(--navy)">⚽ ${esc(t[3])} 스타일</div>`:''}<div class="ld">${t[2]}</div>${showName(last)?`<div class="ld" style="color:var(--gold);font-weight:700">👤 ${esc(last.name)}</div>`:''}</div>`;
   }
   h += teamsHTML(done, turn);
   const left = D.pool.filter(p=>p.pick===null);
@@ -939,7 +993,7 @@ function teamsHTML(done, turn){
     const cards = mem.map((m,k)=>{
       const t = TYPES[m.code], isNew = !seenPicks.has(m.id), flip = showName(m) && (!flipAnim || flipDone.has(m.id));
       return `<div class="tcard ${flip?'flip':''} ${isNew?'new':''}" data-id="${m.id}" data-k="${m.pickNo}" onclick="cardTap('${m.id}')"><div class="in">
-        <div class="f front"><span class="e">${t[0]}</span><span class="t"><b>${m.code}${m.gk?' 🧤':''}</b><span>#${String(m.no).padStart(2,'0')} ${t[1]}</span></span>${guessOn() && GUESS[m.id] ? `<span class="gl">${esc(GUESS[m.id])}</span>` : ''}</div>
+        <div class="f front"><span class="e">${t[0]}</span><span class="t"><b>${m.code}${m.gk?' 🧤':''}</b><span>#${String(m.no).padStart(2,'0')} ${esc(t[3] ? t[3].replace(/ \(.*\)$/,'')+'형' : t[1])}</span></span>${guessOn() && GUESS[m.id] ? `<span class="gl">${esc(GUESS[m.id])}</span>` : ''}</div>
         <div class="f back"><span class="nm2">${esc(m.name||'')}</span><span class="cd2">${m.code} · #${String(m.no).padStart(2,'0')}</span>${D.revealed && GUESS[m.id] ? `<span class="gr ${GUESS[m.id]===m.name?'ok':'no'}">${GUESS[m.id]===m.name?'✓':'✗ '+esc(GUESS[m.id])}</span>` : ''}</div></div></div>`;
     }).join('');
     const empty = Math.max(0, per - mem.length);
@@ -965,7 +1019,7 @@ function openSheet(id, refresh){
   const t = TYPES[p.code], taken = p.pick !== null, done = D.status==='done';
   const myTurn = me && !done && me.cap === D.turn;
   let h = `<div class="grab"></div><div class="hd2"><div class="e">${t[0]}</div><div><div class="muted">PLAYER #${String(p.no).padStart(2,'0')}${p.gk?' · 🧤 키퍼 가능':''}</div><div class="c">${p.code}</div><div class="n">${t[1]}</div></div></div>
-    <div class="muted" style="margin-top:8px;font-size:13px;color:#475467">${t[2]}</div>${showName(p)?`<div class="real" style="margin-top:6px;color:var(--gold);font-weight:700">👤 ${esc(p.name)}</div>`:''}`;
+    ${t[3]?`<div class="st2" style="margin-top:8px;font-size:14px">⚽ ${esc(t[3])} 스타일</div>`:''}<div class="muted" style="margin-top:6px;font-size:13px;color:#475467">${t[2]}</div>${showName(p)?`<div class="real" style="margin-top:6px;color:var(--gold);font-weight:700">👤 ${esc(p.name)}</div>`:''}`;
   if(p.ans && p.ans.length === QS.length){
     h += '<div class="sec" style="margin-top:16px">평소 이렇게 플레이해요</div>';
     AXES.forEach(ax=>{
@@ -1166,7 +1220,7 @@ function scoreCanvas(){
   [[40,40,1,1],[W-40,H-40,-1,-1]].forEach(([a,b,sx,sy])=>{ x.beginPath(); x.moveTo(a,b+44*sy); x.lineTo(a,b); x.lineTo(a+44*sx,b); x.stroke(); });
   x.textAlign='center';
   x.fillStyle='#0b1f4b'; x.font='700 40px '+F; x.fillText('BLIND DRAFT · 누가 누구일까?', W/2, 150);
-  x.fillStyle='#667085'; x.font='500 28px '+F; x.fillText('BROCELONA · NEW SEASON', W/2, 200);
+  x.fillStyle='#667085'; x.font='500 28px '+F; x.fillText('26/27 오지리그 · PRE-SEASON', W/2, 200);
   const hit = myHits(), n = D.pool.length;
   x.fillStyle=G; x.shadowBlur=0; x.font='900 200px '+F; x.fillText(hit+' / '+n, W/2, 430); x.shadowBlur=0;
   x.fillStyle='#101828'; x.font='900 52px '+F; x.fillText('명 맞췄어요  '+gradeOf(hit), W/2, 520);
@@ -1251,11 +1305,11 @@ function renderBoard(){
   el.innerHTML = h + ruleHTML();
 }
 function ruleHTML(){
-  return `<details class="sc rule"><summary>📜 프리시즌 규정 (가안)</summary><ul style="margin-top:8px">
+  return `<details class="sc rule"><summary>📜 26/27 오지리그 프리시즌 규정 (가안)</summary><ul style="margin-top:8px">
     <li>매 경기일 블라인드 드래프트로 3팀을 새로 편성해요.</li>
     <li>하루 9라운드 · 라운드마다 승 3점 / 무 1점 / 패 0점.</li>
     <li>내 팀이 얻은 라운드 승점이 <b>내 개인 승점</b>으로 쌓여요. 결석한 날은 0점.</li>
-    <li>정규리그(오르앤지드 리그) 팀이 정해지면 <b>팀원 개인 승점 평균 = 팀 출발 승점</b>.</li>
+    <li>26/27 오지리그(정규리그) 팀이 정해지면 <b>팀원 개인 승점 평균 = 팀 출발 승점</b>.</li>
     <li>개인 승점 상위 3명이 정규리그 주장 후보.</li>
     <li>정규리그: 연속 3주 결석 시 휴면 · 게스트는 3회 참석 시 입단 자격.</li></ul></details>`;
 }
