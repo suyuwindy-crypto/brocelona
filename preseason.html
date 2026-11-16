@@ -578,6 +578,25 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 .pc .cd{font-size:26px;letter-spacing:3px;}
 .pc .w4s{font-size:10.5px;font-weight:700;color:#667085;margin-top:1px;}
 .tcard .f .t b{font-size:14px;letter-spacing:1px;}
+
+/* 4줄 성향 막대 + 닮은 선수 카드 */
+.ax4{margin-top:16px;text-align:left;display:grid;gap:10px;}
+.r4 .rt{font-size:12px;font-weight:800;color:var(--navy);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+.r4 .rt b{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-size:12px;color:#fff;background:var(--navy);width:17px;height:17px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;}
+.seg{display:grid;gap:5px;} .seg.n2{grid-template-columns:1fr 1fr;} .seg.n4{grid-template-columns:repeat(4,1fr);}
+.sg{border:1px solid var(--line);border-radius:9px;padding:6px 4px 5px;text-align:center;background:#f8fafc;color:#98a2b3;min-width:0;}
+.sg em{display:block;font-style:italic;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;line-height:1;}
+.sg span{display:block;font-size:10.5px;font-weight:700;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sg i{display:block;height:4px;border-radius:4px;background:#e4e7ec;margin-top:5px;overflow:hidden;} .sg i u{display:block;height:100%;background:#c3cad6;border-radius:4px;}
+.sg.on{background:#fff;border-color:var(--navy);color:var(--navy);box-shadow:0 2px 8px rgba(11,31,75,.12);} .sg.on i u{background:var(--neon);}
+.rcard .star,.star.sm{display:flex;align-items:center;gap:12px;text-align:left;}
+.star .ava{position:relative;flex:none;width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.5);overflow:visible;}
+.star .ava svg{width:100%;height:100%;border-radius:50%;fill:rgba(255,255,255,.75);display:block;}
+.star .ava i{position:absolute;right:-6px;bottom:-4px;font-style:normal;font-size:20px;line-height:1;}
+.star.sm{margin-top:10px;padding:10px 12px;border-radius:12px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;}
+.star.sm span{display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,.7);} .star.sm b{display:block;font-size:19px;font-weight:900;font-style:italic;}
+.star.sm .ava{width:42px;height:42px;} .star.sm .ava i{font-size:16px;}
+.pc .mini div .lb{width:46px;}
 </style>
 </head>
 <body>
@@ -726,6 +745,11 @@ const MOD = {
   MQ:['묵묵한 파워','몸싸움에 강하고, 묵묵히 제 몫을 해낸다.'],
 };
 // 플레이 스타일이 닮은 선수 (TV, TQ, MV, MQ 순) — 재미로 보는 매칭
+const FLAG = (()=>{ const g = { '🇦🇷':'마라도나,바티스투타,메시,리켈메', '🇰🇷':'손흥민,차범근,박지성,이영표,김민재,홍명보', '🇵🇹':'호날두,히카르지뉴 (풋살)', '🇳🇴':'홀란',
+  '🇧🇷':'펠레,팔카오 (풋살 황제),호나우두 (R9),호마리우,호나우지뉴,히바우두,소크라테스,호베르투 카를로스,루시우,카푸,마르셀루,지우베르투 실바', '🇫🇷':'앙리,칸토나,플라티니,지단,캉테,마켈렐레',
+  '🇨🇲':'에투', '🇸🇪':'즐라탄', '🏴󠁧󠁢󠁥󠁮󠁧󠁿':'시어러,제라드,램파드,스콜스', '🇵🇱':'레반도프스키', '🇧🇪':'더 브라위너', '🇨🇮':'야야 투레', '🇳🇱':'크루이프,다비즈,판 다이크,레이카르트',
+  '🇪🇸':'이니에스타,푸욜,라모스,사비', '🇮🇹':'토티,가투소,바레시,네스타,칸나바로,보누치,피를로,말디니', '🇬🇭':'에시앙', '🇩🇪':'필립 람,슈바인슈타이거,베켄바워,마테우스', '🇦🇹':'알라바', '🇮🇪':'로이 킨', '🇭🇷':'모드리치' };
+  const m = {}; for(const f in g) g[f].split(',').forEach(n=>m[n]=f); return m; })();
 const STAR = {
   ASEB:['마라도나','손흥민','호날두','홀란'],
   ASEC:['펠레','앙리','에투','차범근'],
@@ -739,7 +763,7 @@ const STAR = {
   DSEC:['필립 람','이영표','푸욜','캉테'],
   DSPB:['라모스','알라바','루시우','김민재'],
   DSPC:['바레시','네스타','칸나바로','판 다이크'],
-  DLEB:['다니 알베스','마르셀루','로이 킨','레이카르트'],
+  DLEB:['카푸','마르셀루','로이 킨','레이카르트'],
   DLEC:['모드리치','마켈렐레','슈바인슈타이거','지우베르투 실바'],
   DLPB:['베켄바워','스콜스','마테우스','보누치'],
   DLPC:['사비','피를로','말디니','홍명보'],
@@ -837,19 +861,31 @@ async function finishTest(){
     else msg.textContent = '저장 실패 — 잠시 후 다시 시도해 주세요.';
   }catch(e){ msg.textContent = '네트워크 오류 — 다시 검사하기로 재시도해 주세요.'; }
 }
+/* 4글자 = 막대 4줄. ①④는 두 축의 조합(4지선다), ②③은 단일 축(2지선다) */
+const ROWS4 = [
+  { t:'역할',   opts:[['F','피니셔','AD',1,'SL',1],['M','메이커','AD',1,'SL',0],['H','헌터','AD',0,'SL',1],['A','앵커','AD',0,'SL',0]] },
+  { t:'움직임', opts:[['E','엔진','EP',1],['P','포지션','EP',0]] },
+  { t:'판단',   opts:[['B','과감','BC',1],['C','침착','BC',0]] },
+  { t:'무기',   opts:[['G','제너럴','TM',1,'VQ',1],['T','테크니션','TM',1,'VQ',0],['W','워리어','TM',0,'VQ',1],['I','아이언','TM',0,'VQ',0]] },
+];
+function rows4(sc, code){
+  const f = (k,first)=>{ const n = sc[k] ?? 1.5; return (first ? n : 3-n)/3; };
+  return ROWS4.map((row,i)=>({ t:row.t, opts:row.opts.map(o=>({ l:o[0], w:o[1], on:o[0]===code[i], v:f(o[2],o[3]) * (o[4] ? f(o[4],o[5]) : 1) })) }));
+}
 function axisBars(sc, code){
-  return '<div class="axes">' + AXES.map(ax=>{
-    const n = sc[ax.k] ?? 0, pctA = n/3*100, isA = raw6(code).includes(ax.a);
-    return `<div class="ax"><span class="l ${isA?'on':''}">${ax.an} ${ax.a}</span>
-      <span class="bar"><i style="left:0;width:${pctA}%;background:${ax.col};opacity:${isA?1:.35}"></i><i style="right:0;width:${100-pctA}%;background:${ax.col};opacity:${isA?.35:1}"></i></span>
-      <span class="r ${!isA?'on':''}">${ax.b} ${ax.bn}</span></div>`;
-  }).join('') + '</div>';
+  code = to4(raw6(code));
+  return '<div class="ax4">' + rows4(sc, code).map((r,i)=>`<div class="r4"><div class="rt"><b>${i+1}</b>${r.t}</div><div class="seg n${r.opts.length}">` +
+    r.opts.map(o=>`<div class="sg ${o.on?'on':''}"><em>${o.l}</em><span>${o.w}</span><i><u style="width:${Math.round(o.v*100)}%"></u></i></div>`).join('') + '</div></div>').join('') + '</div>';
+}
+function starHTML(name, small){
+  const fl = FLAG[name] || '⚽';
+  return `<div class="star ${small?'sm':''}"><div class="ava"><svg viewBox="0 0 40 40"><circle cx="20" cy="14" r="7.5"/><path d="M5 40c0-9.5 6.7-15 15-15s15 5.5 15 15z"/></svg><i>${fl}</i></div><div><span>플레이 스타일이 닮은 선수</span><b>${esc(name)}</b></div></div>`;
 }
 function showResult(r, fromPrev){
   const t = TYPES[r.code];
   document.getElementById('res-card').innerHTML = `<div class="rcard">
     <div class="emo">${t[0]}</div><div class="code">${r.code}</div><div class="w4">${words4(r.code).map((w,i)=>`<span><b>${r.code[i]}</b>${w}</span>`).join('')}</div><div class="tname">${t[1]}</div>
-    <div class="tdesc">${t[2]}</div>${t[3]?`<div class="star"><span>플레이 스타일이 닮은 선수</span><b>${esc(t[3])}</b></div>`:''}${r.gk?'<div class="gk">🧤 키퍼 가능</div>':''}${axisBars(r.scores, r.code)}</div>`;
+    <div class="tdesc">${t[2]}</div>${t[3]?starHTML(t[3]):''}${r.gk?'<div class="gk">🧤 키퍼 가능</div>':''}${axisBars(r.scores, r.code)}</div>`;
   if(fromPrev) document.getElementById('res-msg').textContent = esc(r.name||'') + ' 님의 지난 결과';
   show('t-res');
 }
@@ -883,9 +919,9 @@ function teamSummary(mem){
   return `공${c.A}·수${c.D} / 해${c.S}·연${c.L}<br>활${c.E}·위${c.P} / 🧤${g}`;
 }
 function miniBars(sc, code){
-  // 축마다 우세한 쪽: 글자 + 뜻 + 강도(3문항 중 몇 개)
-  return '<div class="mini">' + AXES.map(ax=>{ const n=sc[ax.k]??0, isA=raw6(code).includes(ax.a), v=isA?n:3-n;
-    return `<div><em>${isA?ax.a:ax.b}</em><span class="lb">${isA?ax.an:ax.bn}</span><span class="b"><i style="width:${v/3*100}%;background:${ax.col}"></i></span></div>`; }).join('') + '</div>';
+  code = to4(raw6(code));
+  return '<div class="mini">' + rows4(sc, code).map(r=>{ const o = r.opts.find(x=>x.on) || r.opts[0];
+    return `<div><em>${o.l}</em><span class="lb">${o.w}</span><span class="b"><i style="width:${Math.round(o.v*100)}%;background:var(--navy)"></i></span></div>`; }).join('') + '</div>';
 }
 function renderDraft(){
   const el = document.getElementById('d-body');
@@ -929,7 +965,7 @@ function renderDraft(){
   h += '<div class="pool">' + list.map(p=>{
     const t = TYPES[p.code], taken = p.pick !== null; let dt;
     return `<div class="pc ${taken?'taken':''}" id="pc-${p.id}" onclick="openSheet('${p.id}')"><div class="no">PLAYER #${String(p.no).padStart(2,'0')}</div><div class="em">${t[0]}</div>
-      <div class="cd">${p.code}${(dt=diffTags(p))?`<span class="dup">같은 유형 ${dt.n}명</span>`:''}</div><div class="w4s">${words4(p.code).join(' · ')}</div><div class="nm">${t[1]}</div>${t[3]?`<div class="st2">⚽ ${esc(t[3])} 스타일</div>`:''}<div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
+      <div class="cd">${p.code}${(dt=diffTags(p))?`<span class="dup">같은 유형 ${dt.n}명</span>`:''}</div><div class="w4s">${words4(p.code).join(' · ')}</div><div class="nm">${t[1]}</div>${t[3]?`<div class="st2">${FLAG[t[3]]||'⚽'} ${esc(t[3])} 스타일</div>`:''}<div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
       ${dt?`<div class="diff">${dt.tags.length?dt.tags.map(x=>`<span>✦ ${x.txt}</span>`).join(''):'<span>✦ 같은 유형과 응답이 완전히 같아요</span>'}</div>`:''}
       ${miniBars(p.scores||{}, p.code)}${showName(p)?`<div class="real">👤 ${esc(p.name)}</div>`:''}
       ${taken?`<div class="tag ${TEAM_CLS[p.pick]}">${TEAM_LBL[p.pick]}</div>`:(myTurn?`<button class="pickbtn" onclick="event.stopPropagation();pick('${p.id}',${p.no})">이 선수 픽</button>`:'')}${p.ans?'<div class="more">평소 습관 18가지 보기 ›</div>':''}</div>`;
@@ -1039,7 +1075,7 @@ function openSheet(id, refresh){
   const t = TYPES[p.code], taken = p.pick !== null, done = D.status==='done';
   const myTurn = me && !done && me.cap === D.turn;
   let h = `<div class="grab"></div><div class="hd2"><div class="e">${t[0]}</div><div><div class="muted">PLAYER #${String(p.no).padStart(2,'0')}${p.gk?' · 🧤 키퍼 가능':''}</div><div class="c">${p.code}</div><div class="n">${t[1]}</div></div></div><div class="w4" style="justify-content:flex-start;margin-top:8px">${words4(p.code).map((w,i)=>`<span><b>${p.code[i]}</b>${w}</span>`).join('')}</div>
-    ${t[3]?`<div class="st2" style="margin-top:8px;font-size:14px">⚽ ${esc(t[3])} 스타일</div>`:''}<div class="muted" style="margin-top:6px;font-size:13px;color:#475467">${t[2]}</div>${showName(p)?`<div class="real" style="margin-top:6px;color:var(--gold);font-weight:700">👤 ${esc(p.name)}</div>`:''}`;
+    ${t[3]?starHTML(t[3],1):''}<div class="muted" style="margin-top:6px;font-size:13px;color:#475467">${t[2]}</div>${showName(p)?`<div class="real" style="margin-top:6px;color:var(--gold);font-weight:700">👤 ${esc(p.name)}</div>`:''}`;
   if(p.ans && p.ans.length === QS.length){
     h += '<div class="sec" style="margin-top:16px">평소 이렇게 플레이해요</div>';
     AXES.forEach(ax=>{
