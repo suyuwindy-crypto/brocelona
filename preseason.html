@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>EPILOGUE · 블라인드 드래프트</title>
+<title>PRE-SEASON · 브로셀로나</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&family=Orbitron:wght@500;700;900&family=Russo+One&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -349,6 +349,69 @@ body::before{background:
 #gpop .sc2{font-family:'Russo One',sans-serif;font-size:54px;color:var(--neon);text-shadow:0 0 18px rgba(57,255,20,0.5);line-height:1.1;margin:6px 0 2px;}
 #gpop .gd{font-size:16px;font-weight:900;}
 #gpop .cap{margin:14px 0 14px;padding:10px;border:1px dashed var(--neon);font-size:14px;font-weight:700;line-height:1.5;}
+
+/* ════ 📊 프리시즌 대시보드 ════ */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;}
+.kpi{padding:10px 6px;text-align:center;}
+.kpi b{display:block;font-family:'Russo One',sans-serif;font-size:22px;color:var(--neon);line-height:1.1;}
+.kpi span{font-size:10px;color:var(--dim);letter-spacing:1px;}
+.rank{width:100%;border-collapse:collapse;font-size:13px;}
+.rank th{font-family:'Orbitron','Noto Sans KR',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;color:var(--dim);padding:6px 4px;text-align:center;border-bottom:1px solid var(--line);}
+.rank td{padding:9px 4px;text-align:center;border-bottom:1px solid rgba(57,255,20,0.08);color:var(--text);font-family:'Share Tech Mono','Noto Sans KR',monospace;}
+.rank td.nm{text-align:left;font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:14px;white-space:nowrap;}
+.rank td.pt{font-family:'Russo One',sans-serif;font-size:17px;color:var(--neon);}
+.rank td.no{color:var(--dim);width:30px;}
+.rank tr.top td.no{color:var(--gold);font-weight:900;}
+.rank tr.top td.nm{color:var(--gold);}
+.rank .up{font-size:10px;color:var(--neon);margin-left:4px;font-family:'Share Tech Mono',monospace;}
+.rank .cap{font-size:9px;color:var(--gold);border:1px solid rgba(255,215,0,0.5);padding:0 4px;margin-left:5px;vertical-align:middle;}
+.bnote{font-size:11px;color:var(--dim);line-height:1.6;margin-top:8px;}
+.dchips{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;}
+.dchips button{flex:none;padding:7px 12px;border:1px solid var(--line);background:rgba(0,0,0,0.5);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:12px;}
+.dchips button.on{border-color:var(--neon);color:var(--neon);}
+.ttab{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:10px;}
+.ttab th{font-size:9px;color:var(--dim);font-family:'Orbitron',sans-serif;letter-spacing:1px;padding:5px 3px;border-bottom:1px solid var(--line);}
+.ttab td{padding:8px 3px;text-align:center;font-family:'Share Tech Mono',monospace;color:var(--text);border-bottom:1px solid rgba(57,255,20,0.08);}
+.ttab td.tn{text-align:left;font-family:'Noto Sans KR';font-weight:900;border-left:3px solid currentColor;padding-left:8px;}
+.ttab td.pt{font-family:'Russo One',sans-serif;font-size:16px;color:var(--neon);}
+.squads{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;}
+.squad{padding:8px 6px;border-top:3px solid currentColor;background:rgba(0,0,0,0.45);border-left:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);}
+.squad .sh{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:2px;}
+.squad .sm{font-size:12px;color:var(--text);line-height:1.7;margin-top:3px;word-break:keep-all;}
+.squad .sm b{font-weight:900;}
+.rd{display:grid;grid-template-columns:34px 1fr auto 1fr;align-items:center;gap:6px;padding:9px 8px;border-bottom:1px solid rgba(57,255,20,0.08);}
+.rd .rn{font-family:'Orbitron',sans-serif;font-size:10px;color:var(--dim);}
+.rd .ta{text-align:right;font-weight:900;font-size:14px;} .rd .tb2{text-align:left;font-weight:900;font-size:14px;}
+.rd .sc3{font-family:'Russo One',sans-serif;font-size:18px;color:var(--text);min-width:52px;text-align:center;}
+.rd .gl2{grid-column:2 / 5;font-size:11px;color:var(--dim);line-height:1.5;}
+.rd .lose{opacity:.45;}
+.mini2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mini2 .box{padding:10px;}
+.mini2 h5{font-family:'Orbitron','Noto Sans KR',sans-serif;font-size:10px;letter-spacing:1px;color:var(--dim);margin-bottom:6px;}
+.mini2 .li{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:var(--text);}
+.mini2 .li b{font-family:'Share Tech Mono',monospace;color:var(--neon);}
+details.rule{margin-top:14px;padding:10px 12px;}
+details.rule summary{font-size:13px;font-weight:700;color:var(--neon);cursor:pointer;}
+details.rule li{font-size:12.5px;line-height:1.7;margin-left:16px;color:var(--text);}
+/* 기록 입력 */
+.rec h4{font-size:12px;color:var(--text);margin:14px 0 6px;}
+.rec input[type=date],.rec input[type=number],.rec select{padding:10px;background:rgba(0,0,0,0.55);border:1px solid var(--line);color:var(--text);font-size:15px;font-family:inherit;border-radius:0;}
+.rec .trow{display:grid;grid-template-columns:52px 1fr;gap:6px;align-items:center;margin-bottom:5px;font-size:12px;font-weight:900;}
+.rec .trow input{width:100%;padding:9px;font-size:13px;}
+.rec .pick2{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;}
+.rec .scoreline{text-align:center;font-family:'Russo One',sans-serif;font-size:30px;margin:10px 0 6px;color:var(--text);}
+.rec .cols2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.rec .cols2 .hd3{font-size:11px;font-weight:900;margin-bottom:5px;border-bottom:2px solid currentColor;padding-bottom:3px;}
+.rec .nb{display:flex;flex-wrap:wrap;gap:5px;}
+.rec .nb button{padding:9px 9px;font-size:13px;font-weight:700;background:rgba(0,0,0,0.6);border:1px solid rgba(57,255,20,0.3);color:var(--text);font-family:inherit;}
+.rec .nb button.og{border-style:dashed;color:var(--dim);font-size:11px;}
+.rec .nb button.sel{background:var(--neon);color:#061a02;}
+.rec .ask{margin:8px 0;padding:8px;border:1px dashed var(--neon);font-size:12px;}
+.rec .glist{margin-top:8px;}
+.rec .glist div{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(57,255,20,0.08);}
+.rec .glist button{background:none;border:none;color:#ff8a80;font-size:12px;font-family:inherit;}
+.rec .saved div{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:6px 0;border-bottom:1px solid rgba(57,255,20,0.08);}
+.rec .saved button{background:none;border:1px solid var(--line);color:var(--dim);font-size:11px;padding:3px 7px;margin-left:4px;font-family:inherit;}
 </style>
 </head>
 <body>
@@ -367,12 +430,12 @@ body::before{background:
 <div class="wrap">
   <div class="sbar sc">
     <div class="sb-l"><a class="sb-back" href="lightwar_main.html">◀</a><span class="sb-dot"></span>
-      <div><div class="sb-title">BLIND DRAFT</div><div class="sb-sub">STAR LEAGUE · EPILOGUE</div></div></div>
+      <div><div class="sb-title">PRE-SEASON</div><div class="sb-sub">STAR LEAGUE · EPILOGUE</div></div></div>
     <button class="sb-lock" id="lock" onclick="lockTap()" aria-label="운영자">🔒</button>
   </div>
   <div class="hd">
-    <h1>블라인드 드래프트</h1>
-    <p>종족의 경계는 사라졌다 · 성향만 보고 새 부대를 편성한다<br>이름은 운영자가 결과 확인을 누르면 공개</p>
+    <h1>프리시즌</h1>
+    <p>매 경기 블라인드 드래프트로 새 팀 편성<br>개인 승점은 <b style="color:var(--neon)">정규리그 출발 승점</b>으로 이어진다</p>
   </div>
 
   <!-- ═══ 성향 검사 ═══ -->
@@ -411,6 +474,11 @@ body::before{background:
   </section>
 
   <!-- ═══ 드래프트 ═══ -->
+  <section class="view" id="v-board">
+    <div id="b-body"><div class="empty">불러오는 중…</div></div>
+    <div class="admin" id="b-admin" style="display:none;"></div>
+  </section>
+
   <section class="view" id="v-draft">
     <div id="d-body"><div class="empty">불러오는 중…</div></div>
     <div class="admin" id="admin" style="display:none;"></div>
@@ -418,6 +486,7 @@ body::before{background:
 </div>
 
 <nav class="tabs">
+  <button data-v="board" onclick="go('board')"><span class="ic">📊</span>대시보드</button>
   <button class="on" data-v="test" onclick="go('test')"><span class="ic">🧪</span>성향 검사</button>
   <button data-v="draft" onclick="go('draft')"><span class="ic">🎯</span>드래프트</button>
 </nav>
@@ -982,11 +1051,160 @@ async function shareScore(){
     toast('점수 이미지를 저장했어요 — 카톡방에 올려주세요');
   }catch(e){ if(e && e.name !== 'AbortError') toast('공유가 안 되면 화면을 캡처해서 올려주세요'); }
 }
+
+/* ════════ 📊 프리시즌 대시보드 ════════ */
+const TK = ['blue','yellow','red'], TKO = { blue:'블루', yellow:'옐로', red:'레드' }, TCL = { blue:'tA', yellow:'tB', red:'tC' };
+let B = null, bDate = null;
+async function loadBoard(){
+  try{
+    const p = { action:'pbBoard' }; if(adminPw) p.admin = adminPw;
+    B = await api(p);
+    if(B.error){ document.getElementById('b-body').innerHTML = '<div class="card empty">⚠️ 서버에 대시보드 기능이 아직 없어요.<br><span style="font-size:12px">새 .gs를 붙여넣고 <b>새 버전으로 배포</b>해 주세요.</span></div>'; return; }
+    if(!bDate || !B.days.some(d=>d.date===bDate)) bDate = B.days.length ? B.days[B.days.length-1].date : null;
+    renderBoard();
+    if(isAdminPage) renderRec();
+  }catch(e){ document.getElementById('b-body').innerHTML = '<div class="empty">불러오지 못했어요. 새로고침 해주세요.</div>'; }
+}
+function mmdd(d){ const p = d.split('-'); return (+p[1])+'/'+(+p[2]); }
+function renderBoard(){
+  const el = document.getElementById('b-body');
+  if(!B.days.length){ el.innerHTML = '<div class="card empty">📊 아직 프리시즌 경기 기록이 없어요.<br>첫 경기 기록이 입력되면 개인 승점 순위가 여기에 떠요.</div>' + ruleHTML(); return; }
+  const last = B.days[B.days.length-1], rounds = B.days.reduce((n,d)=>n+d.rounds.length,0);
+  let h = `<div class="kpis"><div class="sc kpi"><b>${B.days.length}</b><span>경기일</span></div><div class="sc kpi"><b>${rounds}</b><span>라운드</span></div><div class="sc kpi"><b>${B.players.length}</b><span>참가 선수</span></div></div>`;
+  // 개인 승점 순위 (동점 = 같은 순위)
+  h += '<div class="sec">개인 승점 순위 · 정규리그로 이어짐</div><div class="sc" style="padding:6px 8px 10px"><table class="rank"><tr><th>#</th><th style="text-align:left">선수</th><th>승점</th><th>승</th><th>무</th><th>패</th><th>골</th><th>도움</th><th>출석</th></tr>';
+  let rank = 0, prev = null;
+  B.players.forEach((p,i)=>{
+    if(p.pts !== prev){ rank = i+1; prev = p.pts; }
+    const up = last.gained && last.gained[p.name];
+    h += `<tr class="${rank<=3&&p.pts>0?'top':''}"><td class="no">${rank}</td><td class="nm">${esc(p.name)}${rank<=3&&p.pts>0?'<span class="cap">주장권</span>':''}${up?`<span class="up">+${up}</span>`:''}</td><td class="pt">${p.pts}</td><td>${p.w}</td><td>${p.d}</td><td>${p.l}</td><td>${p.g}</td><td>${p.a}</td><td>${p.days}</td></tr>`;
+  });
+  h += `</table><div class="bnote">· 내 팀이 라운드에서 이기면 +${B.rule.win}, 비기면 +${B.rule.draw} · 초록 숫자는 최근 경기(${mmdd(last.date)})에서 얻은 승점<br>· 상위 3명은 정규리그 주장 후보 · 팀원 승점 평균이 팀 출발 승점이 돼요</div></div>`;
+  // 골·도움
+  const tg = B.players.filter(p=>p.g>0).sort((a,b)=>b.g-a.g).slice(0,5), ta = B.players.filter(p=>p.a>0).sort((a,b)=>b.a-a.a).slice(0,5);
+  if(tg.length || ta.length) h += '<div class="sec">골 · 도움 TOP 5</div><div class="mini2"><div class="sc box"><h5>⚽ 골</h5>' + (tg.map(p=>`<div class="li"><span>${esc(p.name)}</span><b>${p.g}</b></div>`).join('')||'<div class="muted">-</div>') +
+    '</div><div class="sc box"><h5>🅰️ 도움</h5>' + (ta.map(p=>`<div class="li"><span>${esc(p.name)}</span><b>${p.a}</b></div>`).join('')||'<div class="muted">-</div>') + '</div></div>';
+  // 경기일별
+  h += '<div class="sec">경기 기록</div><div class="dchips">' + B.days.slice().reverse().map(d=>`<button class="${d.date===bDate?'on':''}" onclick="bDate='${d.date}';renderBoard()">${mmdd(d.date)}</button>`).join('') + '</div>';
+  const D0 = B.days.find(d=>d.date===bDate);
+  if(D0){
+    h += '<div class="sc" style="padding:8px">';
+    if(D0.rounds.length) h += '<table class="ttab"><tr><th style="text-align:left">팀</th><th>경기</th><th>승</th><th>무</th><th>패</th><th>득실</th><th>승점</th></tr>' +
+      D0.table.map(t=>`<tr><td class="tn ${TCL[t.team]}">${TKO[t.team]}</td><td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gf-t.ga>0?'+':''}${t.gf-t.ga}</td><td class="pt">${t.pts}</td></tr>`).join('') + '</table>';
+    h += '<div class="squads">' + TK.map(k=>`<div class="squad ${TCL[k]}"><div class="sh">TEAM ${k.toUpperCase()}</div><div class="sm">${D0.teams[k].map(m=>m.role==='주장'?`<b>${esc(m.name)}(C)</b>`:esc(m.name)).join(' · ')||'-'}</div></div>`).join('') + '</div>';
+    h += D0.rounds.map(R=>{
+      const gl = R.goals.map(g=>`<span class="${TCL[g.team]}">●</span> ${esc(g.scorer||'?')}${g.assist?` <span style="opacity:.7">(${esc(g.assist)})</span>`:''}`).join(' &nbsp;');
+      return `<div class="rd"><span class="rn">R${R.r}</span><span class="ta ${TCL[R.a]} ${R.sa<R.sb?'lose':''}">${TKO[R.a]}</span><span class="sc3">${R.sa} : ${R.sb}</span><span class="tb2 ${TCL[R.b]} ${R.sb<R.sa?'lose':''}">${TKO[R.b]}</span>${gl?`<span class="gl2">${gl}</span>`:''}</div>`;
+    }).join('') || '<div class="muted" style="padding:10px;text-align:center">라운드 기록이 아직 없어요</div>';
+    h += '</div>';
+  }
+  el.innerHTML = h + ruleHTML();
+}
+function ruleHTML(){
+  return `<details class="sc rule"><summary>📜 프리시즌 규정 (가안)</summary><ul style="margin-top:8px">
+    <li>매 경기일 블라인드 드래프트로 3팀을 새로 편성해요.</li>
+    <li>하루 9라운드 · 라운드마다 승 3점 / 무 1점 / 패 0점.</li>
+    <li>내 팀이 얻은 라운드 승점이 <b>내 개인 승점</b>으로 쌓여요. 결석한 날은 0점.</li>
+    <li>정규리그(오르앤지드 리그) 팀이 정해지면 <b>팀원 개인 승점 평균 = 팀 출발 승점</b>.</li>
+    <li>개인 승점 상위 3명이 정규리그 주장 후보.</li>
+    <li>정규리그: 연속 3주 결석 시 휴면 · 게스트는 3회 참석 시 입단 자격.</li></ul></details>`;
+}
+
+/* ── 운영자: 기록 입력 (탭해서 입력 → 시트 자동 기록) ── */
+let REC = { date:null, teams:null, round:1, a:'blue', b:'yellow', goals:[], pend:null, dirtyTeams:false };
+function recInit(){
+  if(!REC.date){ // 기본 날짜: 오늘이 토요일이면 오늘, 아니면 지난 토요일
+    const t = new Date(B.today+'T00:00:00Z'); const back = (t.getUTCDay()+1)%7; t.setUTCDate(t.getUTCDate()-back);
+    REC.date = t.toISOString().slice(0,10);
+  }
+  recLoadDay();
+}
+function recLoadDay(){
+  const D0 = B.days.find(d=>d.date===REC.date);
+  REC.teams = { blue:[], yellow:[], red:[] }; REC.dirtyTeams = false;
+  if(D0) TK.forEach(k=>REC.teams[k] = D0.teams[k].map(m=>m.name));
+  REC.round = D0 && D0.rounds.length ? Math.max(...D0.rounds.map(r=>r.r))+1 : 1;
+  REC.goals = []; REC.pend = null;
+}
+function renderRec(){
+  const a = document.getElementById('b-admin'); a.style.display = 'block'; syncLock2();
+  if(!adminPw || !B.admin){
+    a.innerHTML = `<h3>🔐 운영자</h3><div style="display:flex;gap:6px;"><input type="password" id="bd-pw" placeholder="운영자 비밀번호"><button class="btn" style="width:90px;padding:12px;" onclick="adminPw=document.getElementById('bd-pw').value.trim();ss.set('ps_admin',adminPw);loadBoard()">확인</button></div>`;
+    return;
+  }
+  if(!REC.teams) recInit();
+  const D0 = B.days.find(d=>d.date===REC.date), hasTeams = TK.every(k=>REC.teams[k].length);
+  let h = `<div class="rec"><h3>📝 경기 기록 입력</h3>
+    <h4>① 경기 날짜</h4><input type="date" id="rc-date" value="${REC.date}" onchange="REC.date=this.value;recLoadDay();renderRec()">
+    <h4>② 팀 편성 (첫 번째 이름이 주장 · 쉼표로 구분 · 실제로 뛴 사람만)</h4>` +
+    TK.map(k=>`<div class="trow"><span class="${TCL[k]}">${TKO[k]}</span><input type="text" id="rc-t-${k}" value="${esc(REC.teams[k].join(', '))}" oninput="REC.dirtyTeams=true" placeholder="주장, 선수, 선수…"></div>`).join('') +
+    `<div class="row">${B.draft?'<button onclick="recFromDraft()">🎯 드래프트 결과 불러오기</button>':''}<button onclick="recSaveTeams()">💾 팀 편성 저장</button></div>`;
+  if(hasTeams && !REC.dirtyTeams){
+    const sa = REC.goals.filter(g=>g.team===REC.a).length, sb = REC.goals.filter(g=>g.team===REC.b).length;
+    const opt = (v)=>TK.map(k=>`<option value="${k}" ${k===v?'selected':''}>${TKO[k]}</option>`).join('');
+    h += `<h4>③ 라운드 입력</h4><div class="pick2"><select onchange="REC.a=this.value;REC.goals=[];REC.pend=null;renderRec()">${opt(REC.a)}</select>
+      <span style="display:flex;align-items:center;gap:4px;font-size:12px">R <input type="number" min="1" max="30" value="${REC.round}" style="width:58px" onchange="REC.round=+this.value||1"></span>
+      <select onchange="REC.b=this.value;REC.goals=[];REC.pend=null;renderRec()">${opt(REC.b)}</select></div>`;
+    if(REC.a === REC.b) h += '<div class="muted" style="margin-top:8px">서로 다른 두 팀을 골라 주세요.</div>';
+    else {
+      h += `<div class="scoreline"><span class="${TCL[REC.a]}">${sa}</span> : <span class="${TCL[REC.b]}">${sb}</span></div>`;
+      if(REC.pend){
+        const mates = REC.teams[REC.pend.team].filter(n=>n!==REC.pend.scorer);
+        h += `<div class="ask"><b>${esc(REC.pend.scorer)}</b> 골! 도움은?<div class="nb" style="margin-top:6px">${mates.map((n,i)=>`<button onclick="recAssist(${i})">${esc(n)}</button>`).join('')}<button class="og" onclick="recAssist(-1)">도움 없음</button></div></div>`;
+      } else {
+        h += '<div class="muted" style="margin-bottom:6px">골 넣은 선수 이름을 누르세요 (골마다 한 번씩)</div><div class="cols2">' + [REC.a,REC.b].map(k=>
+          `<div><div class="hd3 ${TCL[k]}">${TKO[k]} 득점</div><div class="nb">${REC.teams[k].map((n,i)=>`<button onclick="recGoal('${k}',${i})">${esc(n)}</button>`).join('')}<button class="og" onclick="recGoal('${k}',-1)">상대 자책골</button></div></div>`).join('') + '</div>';
+      }
+      if(REC.goals.length) h += '<div class="glist">' + REC.goals.map((g,i)=>`<div><span><span class="${TCL[g.team]}">●</span> ${esc(g.scorer)}${g.assist?` (${esc(g.assist)})`:''}</span><button onclick="REC.goals.splice(${i},1);renderRec()">삭제</button></div>`).join('') + '</div>';
+      h += `<div class="row"><button onclick="recSaveRound()" ${REC.pend?'disabled':''}>💾 R${REC.round} 저장 (${sa} : ${sb})</button></div>`;
+    }
+    if(D0 && D0.rounds.length) h += '<h4>저장된 라운드</h4><div class="saved">' + D0.rounds.map(R=>
+      `<div><span>R${R.r} <span class="${TCL[R.a]}">${TKO[R.a]}</span> ${R.sa} : ${R.sb} <span class="${TCL[R.b]}">${TKO[R.b]}</span></span><span><button onclick="recEdit(${R.r})">수정</button><button onclick="recDel(${R.r})">삭제</button></span></div>`).join('') + '</div>';
+  } else h += `<div class="muted" style="margin-top:10px">${REC.dirtyTeams?'팀 편성을 저장하면 라운드 입력이 열려요.':'세 팀 편성을 먼저 저장해 주세요.'}</div>`;
+  a.innerHTML = h + '</div>';
+}
+function syncLock2(){ const l=document.getElementById('lock'); if(!l) return; const ok = isAdminPage && B && B.admin; l.textContent = ok ? '🔓' : '🔒'; l.classList.toggle('on', !!ok); }
+function recFromDraft(){ TK.forEach((k,i)=>{ REC.teams[k] = (B.draft[i]||[]).slice(); }); REC.dirtyTeams = true; renderRec(); REC.dirtyTeams = true; toast('드래프트 결과를 불러왔어요 — 확인 후 저장'); }
+async function recSaveTeams(){
+  const teams = {}; TK.forEach(k=>teams[k] = document.getElementById('rc-t-'+k).value.split(/[,\n]/).map(x=>x.trim()).filter(Boolean));
+  const all = [].concat(...TK.map(k=>teams[k])); const dup = all.find((n,i)=>all.indexOf(n)!==i);
+  if(dup){ toast(dup+' 이름이 두 번 들어갔어요'); return; }
+  const d = await api({ action:'pbTeams', admin:adminPw, date:REC.date, teams:JSON.stringify(teams) });
+  if(!d.ok){ toast('저장 실패'); return; }
+  toast(`팀 편성 저장 (${d.count}명)`); await loadBoard(); recLoadDay(); renderRec();
+}
+function recGoal(k, i){
+  if(i < 0){ REC.goals.push({ team:k, scorer:'자책골', assist:'' }); renderRec(); return; }
+  REC.pend = { team:k, scorer:REC.teams[k][i] }; renderRec();
+}
+function recAssist(i){
+  const mates = REC.teams[REC.pend.team].filter(n=>n!==REC.pend.scorer);
+  REC.goals.push({ team:REC.pend.team, scorer:REC.pend.scorer, assist: i<0 ? '' : mates[i] }); REC.pend = null; renderRec();
+}
+async function recSaveRound(){
+  const sa = REC.goals.filter(g=>g.team===REC.a).length, sb = REC.goals.filter(g=>g.team===REC.b).length;
+  const D0 = B.days.find(d=>d.date===REC.date);
+  if(D0 && D0.rounds.some(r=>r.r===REC.round) && !confirm(`R${REC.round} 기록이 이미 있어요. 덮어쓸까요?`)) return;
+  const d = await api({ action:'pbRound', admin:adminPw, date:REC.date, round:REC.round, a:REC.a, b:REC.b, sa, sb, goals:JSON.stringify(REC.goals) });
+  if(!d.ok){ toast('저장 실패'); return; }
+  toast(`R${REC.round} 저장 완료`); bDate = REC.date; await loadBoard(); recLoadDay(); renderRec();
+}
+function recEdit(r){
+  const R = B.days.find(d=>d.date===REC.date).rounds.find(x=>x.r===r);
+  REC.round = r; REC.a = R.a; REC.b = R.b; REC.goals = R.goals.map(g=>({ team:g.team, scorer:g.scorer, assist:g.assist })); REC.pend = null; renderRec();
+  document.getElementById('b-admin').scrollIntoView({ behavior:'smooth' });
+}
+async function recDel(r){
+  if(!confirm(`R${r} 기록을 삭제할까요?`)) return;
+  const d = await api({ action:'pbRound', admin:adminPw, date:REC.date, round:r, op:'del' });
+  toast(d.ok ? '삭제 완료' : '실패'); await loadBoard(); recLoadDay(); renderRec();
+}
 /* ── 우상단 자물쇠: 운영자 진입 ── */
 function lockTap(){
-  if(!isAdminPage){ location.href = location.pathname + '?admin#draft'; return; }
-  go('draft');
-  setTimeout(()=>{ const a=document.getElementById('admin'); if(a){ a.scrollIntoView({behavior:'smooth'}); const i=document.getElementById('ad-pw'); if(i) i.focus(); } }, 400);
+  const cur = (document.querySelector('.view.on')||{}).id === 'v-board' ? 'board' : 'draft';
+  if(!isAdminPage){ location.href = location.pathname + '?admin#' + cur; return; }
+  go(cur);
+  setTimeout(()=>{ const a=document.getElementById(cur==='board'?'b-admin':'admin'); if(a){ a.scrollIntoView({behavior:'smooth'}); const i=a.querySelector('input[type=password]'); if(i) i.focus(); } }, 400);
 }
 function syncLock(){ const l=document.getElementById('lock'); if(!l) return; const ok = isAdminPage && D && D.admin; l.textContent = ok ? '🔓' : '🔒'; l.classList.toggle('on', !!ok); }
 /* ── 탭 ── */
@@ -996,12 +1214,17 @@ function go(v){
   window.scrollTo(0,0);
   clearInterval(poll);
   if(v==='draft'){ loadDraft(); poll = setInterval(loadDraft, 2000); }
+  if(v==='board'){ loadBoard(); }
   try{ history.replaceState(null,'','#'+v); }catch(e){}
 }
 initTest();
-if(location.hash==='#draft' || isAdminPage) go('draft');
-else { // 드래프트가 이미 시작됐으면 링크를 연 모든 사람이 바로 드래프트 화면으로
-  api({ action:'psState' }).then(d=>{ if(d && d.status && d.status!=='idle' && !d.error) go('draft'); }).catch(()=>{});
+// 첫 화면: 주소의 #탭 → 드래프트 진행·공개 대기 중이면 드래프트 → 그 외엔 대시보드
+const h0 = location.hash.replace('#','');
+if(['board','draft','test'].includes(h0)) go(h0);
+else if(isAdminPage) go('draft');
+else {
+  go('board');
+  api({ action:'psState' }).then(d=>{ if(d && !d.error && (d.status==='drafting' || (d.status==='done' && !d.revealed))) go('draft'); }).catch(()=>{});
 }
 </script>
 </body>
