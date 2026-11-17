@@ -162,9 +162,11 @@ function psAdmin_(e){
 /* ═══════════════ 프리시즌 대시보드: 개인 승점 (→ 정규리그 출발 승점으로 이어짐) ═══════════════
  * 스타리그 기록지와 같은 모양의 시트 2개 (없으면 자동 생성 · 시트에 직접 써도 되고, 페이지에서 입력해도 같은 칸에 기록됨)
  *  프리시즌_출석     [날짜, 블루, 옐로, 레드]          ← 팀 칸에 그날 뛴 사람 이름을 띄어쓰기로 나열 (첫 번째 = 주장)
- *  프리시즌_경기결과 [날짜, 라운드, 블루, 옐로, 레드]  ← 팀 칸에 득점자(도움) 을 띄어쓰기로 나열
- *      예) 이호진(김동우) 이호진 권호연   → 3골 (첫 골은 김동우 도움)
- *      무득점 = 0 · 쉬는 팀 = 빈칸(또는 '대기') · 자책골 = 득점한 팀 칸에 '자책골' · @2 = 이 팀이 2실점 안고 시작
+ *  프리시즌_경기결과 [날짜, 라운드, 쉬는팀, 블루, 옐로, 레드]  ← 종이 기록지와 같은 모양
+ *      쉬는팀 칸에 블루/옐로/레드 중 하나 → 나머지 두 팀이 경기 (득점 없는 팀 칸은 비워도 0골)
+ *      팀 칸에는 득점자(도움) 을 띄어쓰기로 나열   예) 이호진(김동우) 이호진 권호연 → 3골 (첫 골은 김동우 도움)
+ *      자책골 = 득점한 팀 칸에 '자책골'(또는 OG) · @2 = 이 팀이 2실점 안고 시작
+ *      (쉬는팀 칸을 비우면 스타리그 방식: 빈칸인 팀이 쉬는 팀, 무득점은 0)
  *      이름에는 띄어쓰기를 넣지 않음 (폴 허 → 폴허)
  * 개인 승점: 그 라운드에 내 팀이 이기면 +3 · 비기면 +1 · 지면 0 (쉬는 라운드는 0)
  */
@@ -191,8 +193,12 @@ function pbSheet_(name, header, widths){
 function pbSheets_(){
   var S = {
     att:  pbSheet_(PB_ATT,  ['날짜','블루','옐로','레드'], [100,280,280,280]),
-    game: pbSheet_(PB_GAME, ['날짜','라운드','블루','옐로','레드'], [100,60,260,260,260])
+    game: pbSheet_(PB_GAME, ['날짜','라운드','쉬는팀','블루','옐로','레드'], [100,60,70,260,260,260])
   };
+  // 예전 5칸 형식(쉬는팀 칸 없음)이면 칸을 끼워 넣음
+  if(String(S.game.getRange(1,3).getValue()).trim() !== '쉬는팀'){
+    S.game.insertColumnAfter(2); S.game.getRange(1,3).setValue('쉬는팀').setBackground('#0b1f4b'); S.game.setColumnWidth(3,70);
+  }
   pbMigrate_(S);
   return S;
 }
@@ -258,7 +264,8 @@ function pbMigrate_(S){
       var d = stDateStr_(r[0]), rn = parseInt(r[1],10), a = pbKey_(r[2]), b = pbKey_(r[3]);
       if(!d || !rn || !a || !b || haveR[d+'|'+rn]) return;
       var sc = {}; sc[a] = parseInt(r[4],10)||0; sc[b] = parseInt(r[5],10)||0;
-      S.game.appendRow([d, rn].concat(PB_KEYS.map(function(k){
+      var rest0 = PB_KEYS.filter(function(k){ return k !== a && k !== b; })[0];
+      S.game.appendRow([d, rn, PB_KO[rest0]].concat(PB_KEYS.map(function(k){
         if(k !== a && k !== b) return '';
         var g = (gl[d+'|'+rn+'|'+k] || []).slice();
         while(g.length < sc[k]) g.push({ scorer:'자책골', assist:'' });   // 득점자 없이 점수만 있던 골
@@ -286,10 +293,10 @@ function pbCompute_(){
   });
   pbRows_(S.game).forEach(function(r){
     var d = stDateStr_(r[0]), rn = parseInt(r[1],10); if(!d || !rn) return;
-    var playing = [], parsed = {};
+    var playing = [], parsed = {}, rest = pbKey_(r[2]);
     PB_KEYS.forEach(function(k, ci){
-      var raw = r[ci+2], cell = String(raw === undefined || raw === null ? '' : raw).trim();
-      if(cell === '' || cell === '대기') return;
+      var raw = r[ci+3], cell = String(raw === undefined || raw === null ? '' : raw).trim();
+      if(rest ? k === rest : (cell === '' || cell === '대기')) return;
       playing.push(k); parsed[k] = pbParse_(cell);
     });
     if(playing.length !== 2) return;                    // 한 라운드는 두 팀 경기 (나머지 한 팀은 빈칸)
@@ -384,9 +391,10 @@ function pbRound_(e){
       for(var i=0;i<(parseInt(p.sa,10)||0);i++) by[a].push({ scorer:'자책골' });
       for(var j=0;j<(parseInt(p.sb,10)||0);j++) by[b].push({ scorer:'자책골' });
     }
-    S.game.appendRow([date, rn].concat(PB_KEYS.map(function(k){ return by[k] ? pbCell_(by[k]) : ''; })));
+    var restK = PB_KEYS.filter(function(k){ return !by[k]; })[0];
+    S.game.appendRow([date, rn, PB_KO[restK]].concat(PB_KEYS.map(function(k){ return by[k] ? pbCell_(by[k]) : ''; })));
     // 날짜·라운드 순으로 정렬 (기록지처럼 위에서 아래로 읽히게)
-    if(S.game.getLastRow() > 2) S.game.getRange(2,1,S.game.getLastRow()-1,5).sort([{column:1,ascending:true},{column:2,ascending:true}]);
+    if(S.game.getLastRow() > 2) S.game.getRange(2,1,S.game.getLastRow()-1,6).sort([{column:1,ascending:true},{column:2,ascending:true}]);
     return psOut_({ok:true, sa:by[a].length, sb:by[b].length});
   } finally { lock.releaseLock(); }
 }
