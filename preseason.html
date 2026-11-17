@@ -600,6 +600,8 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 
 .rank td.val{white-space:nowrap;font-size:15px;}
 .rank .up.dn{color:#e0392f;}
+.rank .cap.mvp{background:var(--neon);color:#fff;}
+.rank th{white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -1336,15 +1338,15 @@ function renderBoard(){
   let h = `<div class="kpis"><div class="sc kpi"><b>${B.days.length}</b><span>경기일</span></div><div class="sc kpi"><b>${rounds}</b><span>라운드</span></div><div class="sc kpi"><b>${B.players.length}</b><span>참가 선수</span></div></div>`;
   // 몸값 순위 (동점 = 같은 순위)
   const V = B.rule.val || {};
-  h += '<div class="sec">몸값 순위 · 정규리그로 이어짐</div><div class="sc" style="padding:6px 8px 10px"><table class="rank"><tr><th>#</th><th style="text-align:left">선수</th><th>몸값</th><th>승점</th><th>골</th><th>도움</th><th>출석</th></tr>';
+  h += '<div class="sec">몸값 순위 · 정규리그로 이어짐</div><div class="sc" style="padding:6px 8px 10px"><table class="rank"><tr><th>#</th><th style="text-align:left">선수</th><th>몸값(BP)</th><th>골</th><th>도움</th><th>클린</th><th>출석</th></tr>';
   let rank = 0, prev = null;
   B.players.forEach((p,i)=>{
     const v = p.val||0;
     if(v !== prev){ rank = i+1; prev = v; }
     const dv = p.dv||0;
-    h += `<tr class="${rank<=3&&v>0?'top':''}"><td class="no">${rank}</td><td class="nm">${esc(p.name)}${rank<=3&&v>0?'<span class="cap">주장권</span>':''}${dv>0?`<span class="up">▲${dv}</span>`:dv<0?`<span class="up dn">▼${-dv}</span>`:''}</td><td class="pt val">${won(v)}</td><td>${p.pts}</td><td>${p.g}</td><td>${p.a}</td><td>${p.days}</td></tr>`;
+    h += `<tr class="${rank<=3&&v>0?'top':''}"><td class="no">${rank}</td><td class="nm">${esc(p.name)}${rank<=3&&v>0?'<span class="cap">주장권</span>':''}${(last.mvp||[]).includes(p.name)?'<span class="cap mvp">MVP</span>':''}${dv>0?`<span class="up">▲${dv}</span>`:dv<0?`<span class="up dn">▼${-dv}</span>`:''}</td><td class="pt val">${won(v)}</td><td>${p.g}</td><td>${p.a}</td><td>${p.cs||0}</td><td>${p.days}</td></tr>`;
   });
-  h += `</table><div class="bnote">· 모두 0원에서 시작 · ▲▼는 최근 경기(${mmdd(last.date)})의 몸값 변동(억)<br>· 출석 +${V.att}억 · 라운드 승 +${V.win}억 / 무 +${V.draw}억 · 골 +${V.goal}억 · 도움 +${V.assist}억 · 결석 −${V.absent}억<br>· 몸값 상위 3명은 정규리그 주장 후보</div></div>`;
+  h += `</table><div class="bnote">· 모두 0 BP에서 시작 · ▲▼는 최근 경기(${mmdd(last.date)})의 몸값 변동(만 BP) · 클린 = 무실점 라운드 수<br>· 출석 +${V.att}만 · 라운드 승 +${V.win}만 / 무 +${V.draw}만 · 골 +${V.goal}만 · 도움 +${V.assist}만<br>· <b>무실점 라운드 +${V.clean}만</b> (팀원 전원 · 골과 같은 값) · 그날 가장 많이 번 <b>MVP +${V.mvp}만</b> · 결석 −${V.absent}만<br>· 몸값 상위 3명은 정규리그 주장 후보</div></div>`;
   // 골·도움
   const tg = B.players.filter(p=>p.g>0).sort((a,b)=>b.g-a.g).slice(0,5), ta = B.players.filter(p=>p.a>0).sort((a,b)=>b.a-a.a).slice(0,5);
   if(tg.length || ta.length) h += '<div class="sec">골 · 도움 TOP 5</div><div class="mini2"><div class="sc box"><h5>⚽ 골</h5>' + (tg.map(p=>`<div class="li"><span>${esc(p.name)}</span><b>${p.g}</b></div>`).join('')||'<div class="muted">-</div>') +
@@ -1365,13 +1367,15 @@ function renderBoard(){
   }
   el.innerHTML = h + ruleHTML();
 }
-function won(v){ return v ? Number(v).toLocaleString('ko-KR') + '억' : '0원'; }
+function won(v){ v = Number(v)||0; if(!v) return '0'; const e = Math.floor(v/10000), m = v%10000; return (e ? e + '억' + (m ? ' ' : '') : '') + (m ? m.toLocaleString('ko-KR') + '만' : ''); }   // 단위: 만 BP
 function ruleHTML(){
   return `<details class="sc rule"><summary>📜 26/27 오지리그 프리시즌 규정 (가안)</summary><ul style="margin-top:8px">
     <li>매 경기일 블라인드 드래프트로 3팀을 새로 편성해요.</li>
     <li>하루 9라운드 · 라운드마다 승 3점 / 무 1점 / 패 0점.</li>
-    <li>모든 선수는 <b>몸값 0원</b>에서 시작해요. 출석·팀 승리·골·도움으로 오르고, 결석하면 내려가요(0원 아래로는 안 내려감).</li>
-    <li>출석 +10억 · 라운드 승 +3억 / 무 +1억 · 골 +2억 · 도움 +1억 · 결석 −5억.</li>
+    <li>모든 선수는 <b>몸값 0 BP</b>에서 시작해요. 출석·팀 승리·골·도움·무실점으로 오르고, 결석하면 내려가요(0 아래로는 안 내려감).</li>
+    <li>출석 +100만 · 라운드 승 +60만 / 무 +20만 · 골 +60만 · 도움 +30만 · 결석 −50만.</li>
+    <li><b>무실점 라운드 +60만</b>: 한 골도 안 먹은 라운드는 팀원 전원이 골 1개와 같은 값을 받아요. 수비도 득점만큼 인정!</li>
+    <li><b>오늘의 MVP +200만</b>: 그날 몸값을 가장 많이 번 선수에게 추가 지급(동률이면 모두).</li>
     <li><b>몸값 상위 3명</b>이 정규리그 주장 후보 · 정규리그 팀 구성은 몸값을 기준으로 해요.</li>
     <li>정규리그: 연속 3주 결석 시 휴면 · 게스트는 3회 참석 시 입단 자격.</li></ul></details>`;
 }
