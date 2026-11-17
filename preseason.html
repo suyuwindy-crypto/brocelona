@@ -597,6 +597,9 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 .star.sm span{display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,.7);} .star.sm b{display:block;font-size:19px;font-weight:900;font-style:italic;}
 .star.sm .ava{width:42px;height:42px;} .star.sm .ava i{font-size:16px;}
 .pc .mini div .lb{width:46px;}
+
+.rank td.val{white-space:nowrap;font-size:15px;}
+.rank .up.dn{color:#e0392f;}
 </style>
 </head>
 <body>
@@ -620,7 +623,7 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
   </div>
   <div class="hd">
     <h1>프리시즌</h1>
-    <p>매 경기 블라인드 드래프트로 새 팀 편성<br>개인 승점은 <b style="color:var(--neon)">정규리그 출발 승점</b>으로 이어진다</p>
+    <p>매 경기 블라인드 드래프트로 새 팀 편성<br>출석·승리·골로 쌓는 <b style="color:var(--neon)">몸값</b>이 정규리그로 이어져요</p>
   </div>
 
   <!-- ═══ 성향 검사 ═══ -->
@@ -1328,18 +1331,20 @@ async function loadBoard(){
 function mmdd(d){ const p = d.split('-'); return (+p[1])+'/'+(+p[2]); }
 function renderBoard(){
   const el = document.getElementById('b-body');
-  if(!B.days.length){ el.innerHTML = '<div class="card empty">📊 아직 프리시즌 경기 기록이 없어요.<br>첫 경기 기록이 입력되면 개인 승점 순위가 여기에 떠요.</div>' + ruleHTML(); return; }
+  if(!B.days.length){ el.innerHTML = '<div class="card empty">📊 아직 프리시즌 경기 기록이 없어요.<br>첫 경기 기록이 입력되면 몸값 순위가 여기에 떠요.</div>' + ruleHTML(); return; }
   const last = B.days[B.days.length-1], rounds = B.days.reduce((n,d)=>n+d.rounds.length,0);
   let h = `<div class="kpis"><div class="sc kpi"><b>${B.days.length}</b><span>경기일</span></div><div class="sc kpi"><b>${rounds}</b><span>라운드</span></div><div class="sc kpi"><b>${B.players.length}</b><span>참가 선수</span></div></div>`;
-  // 개인 승점 순위 (동점 = 같은 순위)
-  h += '<div class="sec">개인 승점 순위 · 정규리그로 이어짐</div><div class="sc" style="padding:6px 8px 10px"><table class="rank"><tr><th>#</th><th style="text-align:left">선수</th><th>승점</th><th>승</th><th>무</th><th>패</th><th>골</th><th>도움</th><th>출석</th></tr>';
+  // 몸값 순위 (동점 = 같은 순위)
+  const V = B.rule.val || {};
+  h += '<div class="sec">몸값 순위 · 정규리그로 이어짐</div><div class="sc" style="padding:6px 8px 10px"><table class="rank"><tr><th>#</th><th style="text-align:left">선수</th><th>몸값</th><th>승점</th><th>골</th><th>도움</th><th>출석</th></tr>';
   let rank = 0, prev = null;
   B.players.forEach((p,i)=>{
-    if(p.pts !== prev){ rank = i+1; prev = p.pts; }
-    const up = last.gained && last.gained[p.name];
-    h += `<tr class="${rank<=3&&p.pts>0?'top':''}"><td class="no">${rank}</td><td class="nm">${esc(p.name)}${rank<=3&&p.pts>0?'<span class="cap">주장권</span>':''}${up?`<span class="up">+${up}</span>`:''}</td><td class="pt">${p.pts}</td><td>${p.w}</td><td>${p.d}</td><td>${p.l}</td><td>${p.g}</td><td>${p.a}</td><td>${p.days}</td></tr>`;
+    const v = p.val||0;
+    if(v !== prev){ rank = i+1; prev = v; }
+    const dv = p.dv||0;
+    h += `<tr class="${rank<=3&&v>0?'top':''}"><td class="no">${rank}</td><td class="nm">${esc(p.name)}${rank<=3&&v>0?'<span class="cap">주장권</span>':''}${dv>0?`<span class="up">▲${dv}</span>`:dv<0?`<span class="up dn">▼${-dv}</span>`:''}</td><td class="pt val">${won(v)}</td><td>${p.pts}</td><td>${p.g}</td><td>${p.a}</td><td>${p.days}</td></tr>`;
   });
-  h += `</table><div class="bnote">· 내 팀이 라운드에서 이기면 +${B.rule.win}, 비기면 +${B.rule.draw} · 초록 숫자는 최근 경기(${mmdd(last.date)})에서 얻은 승점<br>· 상위 3명은 정규리그 주장 후보 · 팀원 승점 평균이 팀 출발 승점이 돼요</div></div>`;
+  h += `</table><div class="bnote">· 모두 0원에서 시작 · ▲▼는 최근 경기(${mmdd(last.date)})의 몸값 변동(억)<br>· 출석 +${V.att}억 · 라운드 승 +${V.win}억 / 무 +${V.draw}억 · 골 +${V.goal}억 · 도움 +${V.assist}억 · 결석 −${V.absent}억<br>· 몸값 상위 3명은 정규리그 주장 후보</div></div>`;
   // 골·도움
   const tg = B.players.filter(p=>p.g>0).sort((a,b)=>b.g-a.g).slice(0,5), ta = B.players.filter(p=>p.a>0).sort((a,b)=>b.a-a.a).slice(0,5);
   if(tg.length || ta.length) h += '<div class="sec">골 · 도움 TOP 5</div><div class="mini2"><div class="sc box"><h5>⚽ 골</h5>' + (tg.map(p=>`<div class="li"><span>${esc(p.name)}</span><b>${p.g}</b></div>`).join('')||'<div class="muted">-</div>') +
@@ -1360,13 +1365,14 @@ function renderBoard(){
   }
   el.innerHTML = h + ruleHTML();
 }
+function won(v){ return v ? Number(v).toLocaleString('ko-KR') + '억' : '0원'; }
 function ruleHTML(){
   return `<details class="sc rule"><summary>📜 26/27 오지리그 프리시즌 규정 (가안)</summary><ul style="margin-top:8px">
     <li>매 경기일 블라인드 드래프트로 3팀을 새로 편성해요.</li>
     <li>하루 9라운드 · 라운드마다 승 3점 / 무 1점 / 패 0점.</li>
-    <li>내 팀이 얻은 라운드 승점이 <b>내 개인 승점</b>으로 쌓여요. 결석한 날은 0점.</li>
-    <li>26/27 오지리그(정규리그) 팀이 정해지면 <b>팀원 개인 승점 평균 = 팀 출발 승점</b>.</li>
-    <li>개인 승점 상위 3명이 정규리그 주장 후보.</li>
+    <li>모든 선수는 <b>몸값 0원</b>에서 시작해요. 출석·팀 승리·골·도움으로 오르고, 결석하면 내려가요(0원 아래로는 안 내려감).</li>
+    <li>출석 +100억 · 라운드 승 +30억 / 무 +10억 · 골 +20억 · 도움 +10억 · 결석 −50억.</li>
+    <li><b>몸값 상위 3명</b>이 정규리그 주장 후보 · 정규리그 팀 구성은 몸값을 기준으로 해요.</li>
     <li>정규리그: 연속 3주 결석 시 휴면 · 게스트는 3회 참석 시 입단 자격.</li></ul></details>`;
 }
 
