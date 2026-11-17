@@ -603,6 +603,44 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 .rank .cap.mvp{background:var(--neon);color:#fff;}
 .rank th{white-space:nowrap;}
 .rank th,.rank td{padding-left:3px;padding-right:3px;}
+
+/* 라운드 경기 화면 (밝은 구장 톤) */
+.rchips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;margin-top:10px;-webkit-overflow-scrolling:touch;}
+.rchips button{flex:none;display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:10px;border:1px solid #d0d5dd;background:#fff;color:var(--navy);font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:17px;}
+.rchips button em{font-style:italic;font-size:11px;color:#98a2b3;margin-right:1px;}
+.rchips button i{width:8px;height:8px;border-radius:50%;background:currentColor;}
+.rchips button.on{border-color:var(--navy);box-shadow:0 0 0 2px var(--navy) inset;}
+.mv{border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 6px 20px rgba(16,24,40,.08);border:1px solid var(--line);}
+.mv-top{position:relative;padding:14px 12px 0;text-align:center;background:linear-gradient(180deg,#cfe6ff 0%,#e9f5ff 46%,#f3fbf4 100%);overflow:hidden;}
+.mv-top .lb{font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:3px;font-size:13px;color:#475467;}
+.mv-top .score{display:flex;justify-content:center;align-items:center;gap:14px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:54px;line-height:1.05;color:var(--navy);}
+.mv-top .score i{font-style:normal;font-size:30px;opacity:.5;}
+.tms{display:flex;justify-content:center;gap:58px;margin-top:2px;position:relative;z-index:2;}
+.tm{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:74px;}
+.tm .shield{width:58px;height:66px;background:currentColor;clip-path:polygon(50% 0,100% 12%,100% 58%,50% 100%,0 58%,0 12%);display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 4px 6px rgba(16,24,40,.25));position:relative;}
+.tm .shield:after{content:'';position:absolute;inset:4px;clip-path:inherit;border:0;background:linear-gradient(160deg,rgba(255,255,255,.35),rgba(255,255,255,0) 55%);}
+.tm .shield span{color:#fff;font-weight:900;font-size:24px;position:relative;z-index:1;margin-top:-4px;}
+.tm b{font-size:15px;font-weight:900;}
+.tm u{text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-style:italic;font-size:11px;letter-spacing:1px;color:#fff;background:var(--navy);border-radius:999px;padding:1px 8px;}
+.tm u.cs{font-family:'Noto Sans KR',sans-serif;font-style:normal;background:var(--neon);letter-spacing:0;}
+.pw{perspective:420px;height:84px;margin:6px -12px 0;position:relative;z-index:1;}
+.pitch{position:absolute;left:6%;right:6%;top:8px;height:150px;transform:rotateX(62deg);transform-origin:50% 0;border:3px solid #fff;border-radius:3px;
+  background:repeating-linear-gradient(90deg,#58c26d 0 12.5%,#4cb863 12.5% 25%);box-shadow:0 18px 0 -6px #8a6a44,0 30px 30px rgba(16,24,40,.18);}
+.pitch i{position:absolute;border:3px solid #fff;}
+.pitch .l{left:50%;top:0;bottom:0;border-width:0 0 0 3px;}
+.pitch .c{left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;}
+.pitch .b1{left:-3px;top:28%;bottom:28%;width:13%;} .pitch .b2{right:-3px;top:28%;bottom:28%;width:13%;}
+.tl{position:relative;padding:14px 10px 10px;background:radial-gradient(120% 70% at 50% 0,#eaf7ee 0,#fff 70%);min-height:74px;}
+.tl:before{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:#dfe4ea;}
+.tl .row{display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;margin:9px 0;position:relative;}
+.tl .nd{width:34px;height:34px;border-radius:50%;background:#fff;border:2px solid #dfe4ea;display:flex;align-items:center;justify-content:center;font-size:15px;margin:0 auto;box-shadow:0 2px 6px rgba(16,24,40,.08);}
+.tl .ev b{display:block;font-size:17px;font-weight:900;color:var(--text);letter-spacing:.3px;}
+.tl .ev span{display:block;font-size:12.5px;color:#667085;font-weight:500;}
+.tl .ev.L{text-align:right;padding-right:8px;border-right:4px solid currentColor;} .tl .ev.R{text-align:left;padding-left:8px;border-left:4px solid currentColor;}
+.tl .none{text-align:center;font-size:13px;color:#667085;padding:14px 0;position:relative;background:#fff;border-radius:8px;}
+.mv .nav{display:flex;border-top:1px solid var(--line);}
+.mv .nav button{flex:1;padding:11px;border:0;background:#f8fafc;font-weight:800;font-size:13px;color:var(--navy);font-family:'Noto Sans KR',sans-serif;}
+.mv .nav button+button{border-left:1px solid var(--line);} .mv .nav button:disabled{color:#c0c6d0;}
 </style>
 </head>
 <body>
@@ -1360,15 +1398,33 @@ function renderBoard(){
     if(D0.rounds.length) h += '<table class="ttab"><tr><th style="text-align:left">팀</th><th>경기</th><th>승</th><th>무</th><th>패</th><th>득실</th><th>승점</th></tr>' +
       D0.table.map(t=>`<tr><td class="tn ${TCL[t.team]}">${TKO[t.team]}</td><td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gf-t.ga>0?'+':''}${t.gf-t.ga}</td><td class="pt">${t.pts}</td></tr>`).join('') + '</table>';
     h += '<div class="squads">' + TK.map(k=>`<div class="squad ${TCL[k]}"><div class="sh">TEAM ${k.toUpperCase()}</div><div class="sm">${D0.teams[k].map(m=>m.role==='주장'?`<b>${esc(m.name)}(C)</b>`:esc(m.name)).join(' · ')||'-'}</div></div>`).join('') + '</div>';
-    h += D0.rounds.map(R=>{
-      const gl = R.goals.map(g=>`<span class="${TCL[g.team]}">●</span> ${esc(g.scorer||'?')}${g.assist?` <span style="opacity:.7">(${esc(g.assist)})</span>`:''}`).join(' &nbsp;');
-      return `<div class="rd"><span class="rn">R${R.r}</span><span class="ta ${TCL[R.a]} ${R.sa<R.sb?'lose':''}">${TKO[R.a]}</span><span class="sc3">${R.sa} : ${R.sb}</span><span class="tb2 ${TCL[R.b]} ${R.sb<R.sa?'lose':''}">${TKO[R.b]}</span>${gl?`<span class="gl2">${gl}</span>`:''}</div>`;
-    }).join('') || '<div class="muted" style="padding:10px;text-align:center">라운드 기록이 아직 없어요</div>';
+    h += '</div>' + matchHTML(D0) + '<div style="display:none">';
     h += '</div>';
   }
   el.innerHTML = h + ruleHTML();
 }
 function won(v){ v = Number(v)||0; if(!v) return '0'; const e = Math.floor(v/10000), m = v%10000; return (e ? e + '억' + (m ? ' ' : '') : '') + (m ? m.toLocaleString('ko-KR') + '만' : ''); }   // 단위: 만 BP
+/* ── 라운드 경기 화면: 위에 구장+스코어, 아래 가운데 선을 기준으로 왼쪽 팀 / 오른쪽 팀 득점 ── */
+let bRound = {};
+function matchHTML(D0){
+  if(!D0.rounds.length) return '<div class="sc"><div class="muted" style="padding:14px;text-align:center">라운드 기록이 아직 없어요</div></div>';
+  const cur = D0.rounds.find(R=>R.r===bRound[D0.date]) || D0.rounds[D0.rounds.length-1];
+  const og = n => !n || n==='자책골' || n==='자살골' || n==='OG';
+  const side = (R,k) => R.goals.filter(g=>g.team===k);
+  const ev = (g,cls) => g ? `<div class="ev ${cls}"><b>${og(g.scorer)?'자책골':esc(g.scorer)}</b><span>${og(g.scorer)?'Own Goal':'Goal'}${g.assist&&!og(g.scorer)?` · 도움 ${esc(g.assist)}`:''}</span></div>` : '<div></div>';
+  let h = '<div class="rchips">' + D0.rounds.map(R=>`<button class="${R.r===cur.r?'on':''}" onclick="bRound['${D0.date}']=${R.r};renderBoard()"><em>R${R.r}</em><i class="${TCL[R.a]}"></i>${R.sa}:${R.sb}<i class="${TCL[R.b]}"></i></button>`).join('') + '</div>';
+  const A = side(cur,cur.a), Bb = side(cur,cur.b), n = Math.max(A.length, Bb.length);
+  const badge = (k,cs,win) => `<div class="tm ${TCL[k]}"><div class="shield"><span>${TKO[k][0]}</span></div><b>${TKO[k]}</b>${win?'<u>WIN</u>':''}${cs?'<u class="cs">무실점</u>':''}</div>`;
+  h += `<div class="mv"><div class="mv-top"><div class="lb">ROUND ${cur.r} · ${mmdd(D0.date)}</div>
+    <div class="score"><span>${cur.sa}</span><i>:</i><span>${cur.sb}</span></div>
+    <div class="tms">${badge(cur.a, cur.sb===0, cur.sa>cur.sb)}${badge(cur.b, cur.sa===0, cur.sb>cur.sa)}</div>
+    <div class="pw"><div class="pitch"><i class="c"></i><i class="l"></i><i class="b1"></i><i class="b2"></i></div></div></div>
+    <div class="tl">`;
+  if(!n) h += '<div class="none">득점 없이 끝난 라운드 · 두 팀 모두 무실점</div>';
+  for(let k=0;k<n;k++) h += `<div class="row">${ev(A[k],'L '+TCL[cur.a])}<div class="nd">⚽</div>${ev(Bb[k],'R '+TCL[cur.b])}</div>`;
+  h += `</div><div class="nav"><button ${cur.r===D0.rounds[0].r?'disabled':''} onclick="bRound['${D0.date}']=${(D0.rounds[D0.rounds.indexOf(cur)-1]||cur).r};renderBoard()">‹ 이전 라운드</button><button ${cur.r===D0.rounds[D0.rounds.length-1].r?'disabled':''} onclick="bRound['${D0.date}']=${(D0.rounds[D0.rounds.indexOf(cur)+1]||cur).r};renderBoard()">다음 라운드 ›</button></div></div>`;
+  return h;
+}
 function ruleHTML(){
   return `<details class="sc rule"><summary>📜 26/27 오지리그 프리시즌 규정 (가안)</summary><ul style="margin-top:8px">
     <li>매 경기일 블라인드 드래프트로 3팀을 새로 편성해요.</li>
