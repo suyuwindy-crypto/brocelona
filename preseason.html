@@ -675,7 +675,35 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 .mv .nav button{background:#0f2a33;color:#fff;} .mv .nav button+button{border-left:1px solid rgba(255,255,255,.12);} .mv .nav button:disabled{color:rgba(255,255,255,.3);}
 .tl .ev.tA b:before,.tl .ev.tA b:after{background:var(--A);} .tl .ev.tB b:before,.tl .ev.tB b:after{background:#f5b301;} .tl .ev.tC b:before,.tl .ev.tC b:after{background:#ff5a4f;}
 .tms{gap:8%;} .tm{width:120px;flex:none;} .tm .tg{justify-content:center;}
+
+/* 경기 화면 다듬기: 얇고 작은 글자, 넓은 간격 */
+.mv,.mv *{font-family:'Montserrat','Noto Sans KR',sans-serif;}
+.mv-top{aspect-ratio:720/430;padding:16px 12px 0;}
+.mv-top .lb{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:600;letter-spacing:1.5px;}
+.mv-top .score{font-family:'Montserrat',sans-serif;font-size:25px;font-weight:700;gap:16px;margin-top:10px;}
+.mv-top .score i{font-size:14px;opacity:.9;font-weight:400;}
+.tms{top:39%;gap:13%;}
+.tm{width:96px;}
+.tm .shield{width:46px;height:54px;clip-path:polygon(50% 0,96% 10%,100% 16%,100% 60%,50% 100%,0 60%,0 16%,4% 10%);}
+.tm .shield:after{inset:3px;background:linear-gradient(150deg,rgba(255,255,255,.42),rgba(255,255,255,0) 50%);}
+.tm .shield span{font-size:19px;font-weight:700;margin-top:-3px;}
+.tm .tg{margin-top:5px;gap:3px;min-height:14px;}
+.tm u{font-family:'Montserrat','Noto Sans KR',sans-serif;font-style:normal;font-weight:600;font-size:9px;line-height:14px;letter-spacing:.5px;padding:0 6px;background:rgba(255,255,255,.92);}
+.tm u.cs{background:rgba(34,197,94,.95);}
+.tl{padding:26px 8px 30px;min-height:190px;background:radial-gradient(80% 46% at 66% 6%,#8fb09a 0,#4c7a70 30%,#1c434a 62%,#0b2029 100%);}
+.tl:before{background:rgba(255,255,255,.22);}
+.tl .row{grid-template-columns:1fr 34px 1fr;margin:0;padding:17px 0;}
+.tl .nd{width:30px;height:30px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;background:rgba(226,234,232,.62);color:#17262c;box-shadow:none;border:1px solid rgba(255,255,255,.35);}
+.tl .ev{gap:9px;padding:0 10px !important;align-items:flex-start;}
+.tl .ev.L{flex-direction:row;justify-content:flex-end;text-align:left;}
+.tl .ev em{filter:none;color:#fff;line-height:0;margin-top:1px;} .tl .ev .ic{width:19px;height:19px;}
+.tl .ev b{font-size:14.5px;font-weight:700;letter-spacing:.6px;line-height:1.25;}
+.tl .ev span{font-size:12.5px;font-weight:400;color:rgba(255,255,255,.82);line-height:1.35;}
+.tl .ev b:before,.tl .ev.L b:before{display:none !important;} .tl .ev b:after,.tl .ev.L b:after{display:inline-block !important;width:6px;height:6px;margin-left:6px;top:-1px;}
+.tl .none{font-size:12.5px;padding:40px 0;}
+.mv .nav button{font-size:12px;font-weight:600;padding:12px;background:#0b1c24;color:rgba(255,255,255,.85);}
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="toast" id="toast"></div>
@@ -1445,16 +1473,19 @@ function matchHTML(D0){
   const cur = D0.rounds.find(R=>R.r===bRound[D0.date]) || D0.rounds[D0.rounds.length-1];
   const og = n => !n || n==='자책골' || n==='자살골' || n==='OG';
   const side = (R,k) => R.goals.filter(g=>g.team===k);
-  const ev = (g,cls) => g ? `<div class="ev ${cls}"><em>⚽</em><div><b>${og(g.scorer)?'자책골':esc(g.scorer)}</b><span>${og(g.scorer)?'Own Goal':'Goal'}${g.assist&&!og(g.scorer)?` · 도움 ${esc(g.assist)}`:''}</span></div></div>` : '<div></div>';
+  const ev = (g,cls) => g ? `<div class="ev ${cls}"><em><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 7.6l4 2.9-1.5 4.7h-5L8 10.5z" fill="currentColor"/><path d="M12 7.6V3M16 10.5l4.4-1.6M14.5 15.2l2.8 3.9M9.5 15.2l-2.8 3.9M8 10.5L3.6 8.9"/></svg></em><div><b>${og(g.scorer)?'자책골':esc(g.scorer)}</b><span>${og(g.scorer)?'Own Goal':'Goal'}${g.assist&&!og(g.scorer)?` · 도움 ${esc(g.assist)}`:''}</span></div></div>` : '<div></div>';
   let h = '<div class="rchips">' + D0.rounds.map(R=>`<button class="${R.r===cur.r?'on':''}" onclick="bRound['${D0.date}']=${R.r};renderBoard()"><em>R${R.r}</em><i class="${TCL[R.a]}"></i>${R.sa}:${R.sb}<i class="${TCL[R.b]}"></i></button>`).join('') + '</div>';
   const A = side(cur,cur.a), Bb = side(cur,cur.b), n = Math.max(A.length, Bb.length);
-  const badge = (k,cs,win) => `<div class="tm ${TCL[k]}"><div class="shield"><span>${TKO[k][0]}</span></div><b>${TKO[k]}</b><div class="tg">${win?'<u>WIN</u>':''}${cs?'<u class="cs">무실점</u>':''}</div></div>`;
+  const badge = (k,cs,win) => `<div class="tm ${TCL[k]}"><div class="shield"><span>${TKO[k][0]}</span></div><div class="tg">${win?'<u>WIN</u>':''}${cs?'<u class="cs">무실점</u>':''}</div></div>`;
   h += `<div class="mv"><div class="mv-top"><div class="lb">ROUND ${cur.r}</div>
     <div class="score"><span>${cur.sa}</span><i>:</i><span>${cur.sb}</span></div>
     <div class="tms">${badge(cur.a, cur.sb===0, cur.sa>cur.sb)}${badge(cur.b, cur.sa===0, cur.sb>cur.sa)}</div></div>
     <div class="tl">`;
   if(!n) h += '<div class="none">득점 없이 끝난 라운드 · 두 팀 모두 무실점</div>';
-  for(let k=0;k<n;k++) h += `<div class="row">${ev(A[k],'L '+TCL[cur.a])}<div class="nd">${k+1}</div>${ev(Bb[k],'R '+TCL[cur.b])}</div>`;
+  for(let k=0;k<n;k++){
+    if(A[k])  h += `<div class="row">${ev(A[k],'L '+TCL[cur.a])}<div class="nd">${k+1}</div><div></div></div>`;
+    if(Bb[k]) h += `<div class="row"><div></div><div class="nd">${k+1}</div>${ev(Bb[k],'R '+TCL[cur.b])}</div>`;
+  }
   h += `</div><div class="nav"><button ${cur.r===D0.rounds[0].r?'disabled':''} onclick="bRound['${D0.date}']=${(D0.rounds[D0.rounds.indexOf(cur)-1]||cur).r};renderBoard()">‹ 이전 라운드</button><button ${cur.r===D0.rounds[D0.rounds.length-1].r?'disabled':''} onclick="bRound['${D0.date}']=${(D0.rounds[D0.rounds.indexOf(cur)+1]||cur).r};renderBoard()">다음 라운드 ›</button></div></div>`;
   return h;
 }
