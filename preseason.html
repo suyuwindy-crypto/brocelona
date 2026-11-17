@@ -641,6 +641,39 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 .mv .nav{display:flex;border-top:1px solid var(--line);}
 .mv .nav button{flex:1;padding:11px;border:0;background:#f8fafc;font-weight:800;font-size:13px;color:var(--navy);font-family:'Noto Sans KR',sans-serif;}
 .mv .nav button+button{border-left:1px solid var(--line);} .mv .nav button:disabled{color:#c0c6d0;}
+
+/* 경기 화면: 야간 구장 + 떠 있는 피치 + 청록 타임라인 */
+.mv{border:0;background:#0d2530;box-shadow:0 10px 26px rgba(16,24,40,.25);}
+.mv-top{background:#06131f url(stadium.webp) center bottom/cover no-repeat;aspect-ratio:720/470;padding:14px 12px 0;}
+.mv-top .lb{color:#fff;font-family:'Barlow Condensed',sans-serif;font-style:normal;font-weight:700;font-size:19px;letter-spacing:2px;}
+.mv-top .score{color:#fff;font-style:normal;font-weight:700;font-size:44px;gap:22px;margin-top:2px;text-shadow:0 2px 10px rgba(0,0,0,.5);}
+.mv-top .score i{font-size:22px;opacity:.8;}
+.tms{position:absolute;left:0;right:0;top:36%;gap:19%;margin:0;}
+.tm{min-width:0;gap:1px;}
+.tm .shield{width:60px;height:70px;filter:drop-shadow(0 8px 8px rgba(0,0,0,.45));border:0;}
+.tm .shield span{font-size:26px;}
+.tm b{color:#fff;font-size:14px;text-shadow:0 1px 4px rgba(0,0,0,.7);margin-top:2px;}
+.tm .tg{display:flex;gap:4px;min-height:17px;}
+.tm u{background:#fff;color:#0b1f4b;font-size:10.5px;padding:0 7px;}
+.tm u.cs{background:#22c55e;color:#fff;}
+.tl{background:radial-gradient(85% 55% at 62% 8%,#7fa892 0,#3f6f68 34%,#173c44 68%,#0d2530 100%);padding:20px 8px 14px;min-height:150px;}
+.tl:before{background:rgba(255,255,255,.28);width:1px;margin-left:0;}
+.tl .row{grid-template-columns:1fr 46px 1fr;margin:16px 0;}
+.tl .nd{width:38px;height:38px;border:0;background:rgba(233,240,238,.72);color:#1f2d33;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:17px;box-shadow:0 2px 8px rgba(0,0,0,.25);}
+.tl .ev{display:flex;align-items:center;gap:9px;border:0 !important;padding:0 6px !important;}
+.tl .ev.L{flex-direction:row-reverse;text-align:right;} .tl .ev.R{text-align:left;}
+.tl .ev em{font-style:normal;font-size:20px;filter:grayscale(1) brightness(1.6);flex:none;}
+.tl .ev b{color:#fff;font-size:17px;font-weight:800;letter-spacing:1px;}
+.tl .ev span{color:rgba(255,255,255,.85);font-size:13px;font-weight:400;}
+.tl .ev span{white-space:nowrap;} .tl .ev b{white-space:nowrap;}
+.tl .ev b:after{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;margin-left:6px;vertical-align:middle;position:relative;top:-2px;}
+.tl .ev.L b:after{display:none;} .tl .ev.L b:before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;margin-right:6px;vertical-align:middle;position:relative;top:-2px;}
+.tl .ev{gap:7px;padding:0 2px !important;} .tl .row{grid-template-columns:1fr 42px 1fr;}
+.tm u{line-height:16px;display:inline-block;}
+.tl .none{background:transparent;color:rgba(255,255,255,.85);}
+.mv .nav{border-top:1px solid rgba(255,255,255,.12);}
+.mv .nav button{background:#0f2a33;color:#fff;} .mv .nav button+button{border-left:1px solid rgba(255,255,255,.12);} .mv .nav button:disabled{color:rgba(255,255,255,.3);}
+.tl .ev.tA b:before,.tl .ev.tA b:after{background:var(--A);} .tl .ev.tB b:before,.tl .ev.tB b:after{background:#f5b301;} .tl .ev.tC b:before,.tl .ev.tC b:after{background:#ff5a4f;}
 </style>
 </head>
 <body>
@@ -1377,7 +1410,7 @@ function renderBoard(){
   let h = `<div class="kpis"><div class="sc kpi"><b>${B.days.length}</b><span>경기일</span></div><div class="sc kpi"><b>${rounds}</b><span>라운드</span></div><div class="sc kpi"><b>${B.players.length}</b><span>참가 선수</span></div></div>`;
   // 몸값 순위 (동점 = 같은 순위)
   const V = B.rule.val || {};
-  h += '<div class="sec">몸값 순위 · 정규리그로 이어짐</div><div class="sc" style="padding:6px 8px 10px"><table class="rank"><tr><th>#</th><th style="text-align:left">선수</th><th>몸값(BP)</th><th>골</th><th>도움</th><th>클린</th><th>출석</th></tr>';
+  h += '<div class="sec">선수 가치 순위 (BP) · 정규리그로 이어짐</div><div class="sc" style="padding:6px 8px 10px"><table class="rank"><tr><th>#</th><th style="text-align:left">선수</th><th>몸값(BP)</th><th>골</th><th>도움</th><th>클린</th><th>출석</th></tr>';
   let rank = 0, prev = null;
   B.players.forEach((p,i)=>{
     const v = p.val||0;
@@ -1411,17 +1444,16 @@ function matchHTML(D0){
   const cur = D0.rounds.find(R=>R.r===bRound[D0.date]) || D0.rounds[D0.rounds.length-1];
   const og = n => !n || n==='자책골' || n==='자살골' || n==='OG';
   const side = (R,k) => R.goals.filter(g=>g.team===k);
-  const ev = (g,cls) => g ? `<div class="ev ${cls}"><b>${og(g.scorer)?'자책골':esc(g.scorer)}</b><span>${og(g.scorer)?'Own Goal':'Goal'}${g.assist&&!og(g.scorer)?` · 도움 ${esc(g.assist)}`:''}</span></div>` : '<div></div>';
+  const ev = (g,cls) => g ? `<div class="ev ${cls}"><em>⚽</em><div><b>${og(g.scorer)?'자책골':esc(g.scorer)}</b><span>${og(g.scorer)?'Own Goal':'Goal'}${g.assist&&!og(g.scorer)?` · 도움 ${esc(g.assist)}`:''}</span></div></div>` : '<div></div>';
   let h = '<div class="rchips">' + D0.rounds.map(R=>`<button class="${R.r===cur.r?'on':''}" onclick="bRound['${D0.date}']=${R.r};renderBoard()"><em>R${R.r}</em><i class="${TCL[R.a]}"></i>${R.sa}:${R.sb}<i class="${TCL[R.b]}"></i></button>`).join('') + '</div>';
   const A = side(cur,cur.a), Bb = side(cur,cur.b), n = Math.max(A.length, Bb.length);
-  const badge = (k,cs,win) => `<div class="tm ${TCL[k]}"><div class="shield"><span>${TKO[k][0]}</span></div><b>${TKO[k]}</b>${win?'<u>WIN</u>':''}${cs?'<u class="cs">무실점</u>':''}</div>`;
-  h += `<div class="mv"><div class="mv-top"><div class="lb">ROUND ${cur.r} · ${mmdd(D0.date)}</div>
+  const badge = (k,cs,win) => `<div class="tm ${TCL[k]}"><div class="shield"><span>${TKO[k][0]}</span></div><b>${TKO[k]}</b><div class="tg">${win?'<u>WIN</u>':''}${cs?'<u class="cs">무실점</u>':''}</div></div>`;
+  h += `<div class="mv"><div class="mv-top"><div class="lb">ROUND ${cur.r}</div>
     <div class="score"><span>${cur.sa}</span><i>:</i><span>${cur.sb}</span></div>
-    <div class="tms">${badge(cur.a, cur.sb===0, cur.sa>cur.sb)}${badge(cur.b, cur.sa===0, cur.sb>cur.sa)}</div>
-    <div class="pw"><div class="pitch"><i class="c"></i><i class="l"></i><i class="b1"></i><i class="b2"></i></div></div></div>
+    <div class="tms">${badge(cur.a, cur.sb===0, cur.sa>cur.sb)}${badge(cur.b, cur.sa===0, cur.sb>cur.sa)}</div></div>
     <div class="tl">`;
   if(!n) h += '<div class="none">득점 없이 끝난 라운드 · 두 팀 모두 무실점</div>';
-  for(let k=0;k<n;k++) h += `<div class="row">${ev(A[k],'L '+TCL[cur.a])}<div class="nd">⚽</div>${ev(Bb[k],'R '+TCL[cur.b])}</div>`;
+  for(let k=0;k<n;k++) h += `<div class="row">${ev(A[k],'L '+TCL[cur.a])}<div class="nd">${k+1}</div>${ev(Bb[k],'R '+TCL[cur.b])}</div>`;
   h += `</div><div class="nav"><button ${cur.r===D0.rounds[0].r?'disabled':''} onclick="bRound['${D0.date}']=${(D0.rounds[D0.rounds.indexOf(cur)-1]||cur).r};renderBoard()">‹ 이전 라운드</button><button ${cur.r===D0.rounds[D0.rounds.length-1].r?'disabled':''} onclick="bRound['${D0.date}']=${(D0.rounds[D0.rounds.indexOf(cur)+1]||cur).r};renderBoard()">다음 라운드 ›</button></div></div>`;
   return h;
 }
