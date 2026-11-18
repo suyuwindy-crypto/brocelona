@@ -1477,7 +1477,8 @@ const CREST = {
 };
 /* 저장소에 emblem_blue.png / emblem_yellow.png / emblem_red.png 파일이 있으면 그 그림을 팀 엠블럼으로 사용 (없으면 기본 엠블럼) */
 const EMBLEM = {};
-['blue','yellow','red'].forEach(k=>{ const im = new Image(); im.onload = ()=>{ EMBLEM[k] = im.src; if(document.querySelector('.mv')) renderBoard(); }; im.src = 'emblem_' + k + '.png'; });
+const EMBLEM_FILE = { yellow:'IMG_8878.png', red:'IMG_8879.png', blue:'IMG_8880.png' };   // 운영자가 저장소에 올린 팀 엠블럼 파일 이름
+['blue','yellow','red'].forEach(k=>{ const im = new Image(); im.onload = ()=>{ EMBLEM[k] = im.src; if(document.querySelector('.mv')) renderBoard(); }; im.src = EMBLEM_FILE[k]; });
 function crestSVG(k){
   if(EMBLEM[k]) return `<img class="crest" src="${EMBLEM[k]}" alt="" style="object-fit:contain">`;
   const c = CREST[k];
