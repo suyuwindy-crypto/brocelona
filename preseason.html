@@ -702,6 +702,7 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 .tl .ev b:before,.tl .ev.L b:before{display:none !important;} .tl .ev b:after,.tl .ev.L b:after{display:inline-block !important;width:6px;height:6px;margin-left:6px;top:-1px;}
 .tl .none{font-size:12.5px;padding:40px 0;}
 .mv .nav button{font-size:12px;font-weight:600;padding:12px;background:#0b1c24;color:rgba(255,255,255,.85);}
+.tm .crest{width:50px;height:58px;filter:drop-shadow(0 8px 7px rgba(0,0,0,.5));display:block;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -1468,6 +1469,20 @@ function renderBoard(){
 function won(v){ v = Number(v)||0; if(!v) return '0'; const e = Math.floor(v/10000), m = v%10000; return (e ? e + '억' + (m ? ' ' : '') : '') + (m ? m.toLocaleString('ko-KR') + '만' : ''); }   // 단위: 만 BP
 /* ── 라운드 경기 화면: 위에 구장+스코어, 아래 가운데 선을 기준으로 왼쪽 팀 / 오른쪽 팀 득점 ── */
 let bRound = {};
+/* 팀 엠블럼 (직접 그린 오리지널): 블루 = 별과 물결 · 옐로 = 번개 · 레드 = 불꽃 */
+const CREST = {
+  blue:  { c1:'#3d8bff', c2:'#0f3fa8', m:'<path d="M30 15l3 6.6 7.2.8-5.4 4.9 1.5 7.1L30 30.8l-6.3 3.6 1.5-7.1-5.4-4.9 7.2-.8z"/><path d="M14 43c4-3.4 8-3.4 12 0s8 3.4 12 0 6-2.6 8-1.2M16 50c4-3.4 8-3.4 12 0s8 3.4 12 0" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>' },
+  yellow:{ c1:'#ffd23a', c2:'#e08a00', m:'<path d="M34 12L18 37h10l-4 19 18-27H31z"/>' },
+  red:   { c1:'#ff6a5e', c2:'#b81d14', m:'<path d="M31 12c2 8 12 12 12 24a13 13 0 0 1-26 0c0-6 3-9 5-13 1 4 3 6 5 6 0-6 1-12 4-17z"/><path d="M30 34c3 3 5 5 5 9a5 5 0 0 1-10 0c0-3 2-5 5-9z" fill="#b81d14"/>' },
+};
+function crestSVG(k){
+  const c = CREST[k];
+  return `<svg class="crest" viewBox="0 0 60 70"><defs><linearGradient id="cg-${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.c1}"/><stop offset="1" stop-color="${c.c2}"/></linearGradient></defs>
+    <path d="M30 2l25 7v27c0 15-11 26-25 32C16 62 5 51 5 36V9z" fill="#fff"/>
+    <path d="M30 6.2l21 5.9v24c0 12.6-9.2 22.2-21 27.6C18.200 58.300 9 48.700 9 36.100v-24z" fill="url(#cg-${k})"/>
+    <path d="M30 6.2l21 5.9v24c0 12.6-9.2 22.200-21 27.600z" fill="rgba(0,0,0,.10)"/>
+    <g fill="#fff">${c.m}</g></svg>`;
+}
 function matchHTML(D0){
   if(!D0.rounds.length) return '<div class="sc"><div class="muted" style="padding:14px;text-align:center">라운드 기록이 아직 없어요</div></div>';
   const cur = D0.rounds.find(R=>R.r===bRound[D0.date]) || D0.rounds[D0.rounds.length-1];
@@ -1476,7 +1491,7 @@ function matchHTML(D0){
   const ev = (g,cls) => g ? `<div class="ev ${cls}"><em><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 7.6l4 2.9-1.5 4.7h-5L8 10.5z" fill="currentColor"/><path d="M12 7.6V3M16 10.5l4.4-1.6M14.5 15.2l2.8 3.9M9.5 15.2l-2.8 3.9M8 10.5L3.6 8.9"/></svg></em><div><b>${og(g.scorer)?'자책골':esc(g.scorer)}</b><span>${og(g.scorer)?'Own Goal':'Goal'}${g.assist&&!og(g.scorer)?` · 도움 ${esc(g.assist)}`:''}</span></div></div>` : '<div></div>';
   let h = '<div class="rchips">' + D0.rounds.map(R=>`<button class="${R.r===cur.r?'on':''}" onclick="bRound['${D0.date}']=${R.r};renderBoard()"><em>R${R.r}</em><i class="${TCL[R.a]}"></i>${R.sa}:${R.sb}<i class="${TCL[R.b]}"></i></button>`).join('') + '</div>';
   const A = side(cur,cur.a), Bb = side(cur,cur.b), n = Math.max(A.length, Bb.length);
-  const badge = (k,cs,win) => `<div class="tm ${TCL[k]}"><div class="shield"><span>${TKO[k][0]}</span></div><div class="tg">${win?'<u>WIN</u>':''}${cs?'<u class="cs">무실점</u>':''}</div></div>`;
+  const badge = (k,cs,win) => `<div class="tm ${TCL[k]}">${crestSVG(k)}<div class="tg">${win?'<u>WIN</u>':''}${cs?'<u class="cs">무실점</u>':''}</div></div>`;
   h += `<div class="mv"><div class="mv-top"><div class="lb">ROUND ${cur.r}</div>
     <div class="score"><span>${cur.sa}</span><i>:</i><span>${cur.sb}</span></div>
     <div class="tms">${badge(cur.a, cur.sb===0, cur.sa>cur.sb)}${badge(cur.b, cur.sa===0, cur.sb>cur.sa)}</div></div>
