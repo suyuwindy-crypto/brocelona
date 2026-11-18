@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="theme-color" content="#0b1f4b">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>26/27 오지리그 · 브로셀로나</title>
+<title>BRO ONLINE · NEXT LEAGUE</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Barlow+Condensed:ital,wght@0,600;0,700;1,600;1,700;1,800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -717,6 +717,7 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 .bpi.hl{background:#f0faf4;border-radius:10px;border-bottom:0;padding:9px 8px;margin:2px -4px;}
 .bpi.neg em{color:#e0392f;}
 .bpf{margin-top:12px;text-align:center;font-size:13px;color:#fff;background:var(--navy);border-radius:10px;padding:9px;} .bpf b{color:#7dffb4;}
+.sb-logo{display:flex;align-items:flex-end;gap:8px;} .sb-logo img{height:36px;display:block;} .sb-logo span{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;font-size:11px;letter-spacing:2px;color:#7dffb4;padding-bottom:1px;white-space:nowrap;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -736,7 +737,7 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 <div class="wrap">
   <div class="sbar sc">
     <div class="sb-l"><a class="sb-back" href="lightwar_main.html">◀</a><span class="sb-dot"></span>
-      <div><div class="sb-title">26/27 오지리그</div><div class="sb-sub">BROCELONA · PRE-SEASON</div></div></div>
+      <div class="sb-logo"><img src="bro_online_logo.png" alt="BRO ONLINE · NEXT LEAGUE"><span>PRE-SEASON</span></div></div>
     <button class="sb-lock" id="lock" onclick="lockTap()" aria-label="운영자">🔒</button>
   </div>
   <div class="hd">
@@ -1397,7 +1398,7 @@ function scoreCanvas(){
   [[40,40,1,1],[W-40,H-40,-1,-1]].forEach(([a,b,sx,sy])=>{ x.beginPath(); x.moveTo(a,b+44*sy); x.lineTo(a,b); x.lineTo(a+44*sx,b); x.stroke(); });
   x.textAlign='center';
   x.fillStyle='#0b1f4b'; x.font='700 40px '+F; x.fillText('BLIND DRAFT · 누가 누구일까?', W/2, 150);
-  x.fillStyle='#667085'; x.font='500 28px '+F; x.fillText('26/27 오지리그 · PRE-SEASON', W/2, 200);
+  x.fillStyle='#667085'; x.font='500 28px '+F; x.fillText('BRO ONLINE · PRE-SEASON', W/2, 200);
   const hit = myHits(), n = D.pool.length;
   x.fillStyle=G; x.shadowBlur=0; x.font='900 200px '+F; x.fillText(hit+' / '+n, W/2, 430); x.shadowBlur=0;
   x.fillStyle='#101828'; x.font='900 52px '+F; x.fillText('명 맞췄어요  '+gradeOf(hit), W/2, 520);
@@ -1542,7 +1543,7 @@ function matchHTML(D0){
   return h;
 }
 function ruleHTML(){
-  return `<details class="sc rule"><summary>📜 26/27 오지리그 프리시즌 규정 (가안)</summary><ul style="margin-top:8px">
+  return `<details class="sc rule"><summary>📜 BRO ONLINE 프리시즌 규정 (가안)</summary><ul style="margin-top:8px">
     <li>매 경기일 블라인드 드래프트로 3팀을 새로 편성해요.</li>
     <li>하루 9라운드 · 라운드마다 승 3점 / 무 1점 / 패 0점.</li>
     <li>모든 선수는 <b>몸값 0 BP</b>에서 시작해요. 출석·팀 승리·골·도움·무실점으로 오르고, 결석하면 내려가요(0 아래로는 안 내려감).</li>
