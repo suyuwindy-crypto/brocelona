@@ -703,6 +703,20 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 .tl .none{font-size:12.5px;padding:40px 0;}
 .mv .nav button{font-size:12px;font-weight:600;padding:12px;background:#0b1c24;color:rgba(255,255,255,.85);}
 .tm .crest{width:50px;height:58px;filter:drop-shadow(0 8px 7px rgba(0,0,0,.5));display:block;}
+
+/* BP 안내 카드 */
+.bpg{padding:12px 12px 14px;}
+.bph{font-size:13px;color:#475467;background:#f2f4f7;border-radius:10px;padding:9px 12px;text-align:center;} .bph b{color:var(--navy);}
+.bpl{font-family:'Barlow Condensed','Noto Sans KR',sans-serif;font-style:italic;font-weight:800;font-size:13px;color:var(--navy);margin:14px 2px 4px;letter-spacing:.3px;}
+.bpl small{font-family:'Noto Sans KR',sans-serif;font-style:normal;font-weight:500;font-size:11px;color:#98a2b3;margin-left:6px;}
+.bpi{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #f0f2f5;}
+.bpi i{font-style:normal;font-size:19px;width:26px;text-align:center;flex:none;}
+.bpi div{flex:1;min-width:0;} .bpi b{display:block;font-size:14.5px;font-weight:800;color:var(--text);}
+.bpi span{display:block;font-size:11.5px;color:#98a2b3;margin-top:1px;}
+.bpi em{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:21px;color:var(--neon);white-space:nowrap;}
+.bpi.hl{background:#f0faf4;border-radius:10px;border-bottom:0;padding:9px 8px;margin:2px -4px;}
+.bpi.neg em{color:#e0392f;}
+.bpf{margin-top:12px;text-align:center;font-size:13px;color:#fff;background:var(--navy);border-radius:10px;padding:9px;} .bpf b{color:#7dffb4;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -1448,7 +1462,24 @@ function renderBoard(){
     const dv = p.dv||0;
     h += `<tr class="${rank<=3&&v>0?'top':''}"><td class="no">${rank}</td><td class="nm">${esc(p.name)}${rank<=3&&v>0?'<span class="cap">주장권</span>':''}${(last.mvp||[]).includes(p.name)?'<span class="cap mvp">MVP</span>':''}${dv>0?`<span class="up">▲${dv}</span>`:dv<0?`<span class="up dn">▼${-dv}</span>`:''}</td><td class="pt val">${won(v)}</td><td>${p.g}</td><td>${p.a}</td><td>${p.cs||0}</td><td>${p.days}</td></tr>`;
   });
-  h += `</table><div class="bnote">· 모두 0 BP에서 시작 · ▲▼는 최근 경기(${mmdd(last.date)})의 몸값 변동(만 BP) · 클린 = 무실점 라운드 수<br>· 출석 +${V.att}만 · 라운드 승 +${V.win}만 / 무 +${V.draw}만 · 골 +${V.goal}만 · 도움 +${V.assist}만<br>· <b>무실점 라운드 +${V.clean}만</b> (팀원 전원 · 골과 같은 값) · 그날 가장 많이 번 <b>MVP +${V.mvp}만</b> · 결석 −${V.absent}만<br>· 몸값 상위 3명은 정규리그 주장 후보</div></div>`;
+  h += `</table><div class="bnote" style="margin:8px 4px 0">▲▼ = 최근 경기(${mmdd(last.date)}) 변동(만 BP) · 클린 = 무실점 라운드 수</div></div>`;
+  const bp = (ic,t,v,sub,cls) => `<div class="bpi ${cls||''}"><i>${ic}</i><div><b>${t}</b>${sub?`<span>${sub}</span>`:''}</div><em>${v}</em></div>`;
+  h += `<div class="sec">BP 이렇게 쌓여요</div><div class="sc bpg">
+    <div class="bph">모두 <b>0 BP</b>에서 시작 · 경기마다 아래 금액이 더해져요</div>
+    <div class="bpl">기본</div>
+    ${bp('📅','출석','+'+V.att+'만','그날 팀 명단에 있으면')}
+    <div class="bpl">팀 성적 <small>팀원 전원이 똑같이</small></div>
+    ${bp('🏆','라운드 승리','+'+V.win+'만')}
+    ${bp('🤝','라운드 무승부','+'+V.draw+'만')}
+    ${bp('🛡️','무실점 라운드','+'+V.clean+'만','한 골도 안 먹은 라운드 · 골과 같은 값','hl')}
+    <div class="bpl">개인 기록</div>
+    ${bp('⚽','골','+'+V.goal+'만')}
+    ${bp('🎯','도움','+'+V.assist+'만')}
+    ${bp('⭐','오늘의 MVP','+'+V.mvp+'만','그날 BP를 가장 많이 번 선수','hl')}
+    <div class="bpl">차감</div>
+    ${bp('💤','결석','−'+V.absent+'만','0 아래로는 안 내려가요','neg')}
+    <div class="bpf">BP 상위 3명은 <b>정규리그 주장 후보</b></div>
+  </div>`;
   // 골·도움
   const tg = B.players.filter(p=>p.g>0).sort((a,b)=>b.g-a.g).slice(0,5), ta = B.players.filter(p=>p.a>0).sort((a,b)=>b.a-a.a).slice(0,5);
   if(tg.length || ta.length) h += '<div class="sec">골 · 도움 TOP 5</div><div class="mini2"><div class="sc box"><h5>⚽ 골</h5>' + (tg.map(p=>`<div class="li"><span>${esc(p.name)}</span><b>${p.g}</b></div>`).join('')||'<div class="muted">-</div>') +
