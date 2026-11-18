@@ -718,6 +718,69 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
 .bpi.neg em{color:#e0392f;}
 .bpf{margin-top:12px;text-align:center;font-size:13px;color:#fff;background:var(--navy);border-radius:10px;padding:9px;} .bpf b{color:#7dffb4;}
 .sb-logo{display:flex;align-items:flex-end;gap:8px;} .sb-logo img{height:36px;display:block;} .sb-logo span{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;font-size:11px;letter-spacing:2px;color:#7dffb4;padding-bottom:1px;white-space:nowrap;}
+
+/* ═══ 대시보드 탭: 어두운 구장 톤 ═══ */
+body.dk{background:linear-gradient(180deg,#081826 0,#0a1f2b 40%,#07141c 100%) fixed;}
+body.dk #b-body{--panel:#0f2630;--line:rgba(255,255,255,.1);--text:#fff;--dim:rgba(255,255,255,.62);color:#fff;}
+body.dk #b-body .sec{color:rgba(255,255,255,.6);}
+body.dk #b-body .sc,body.dk #b-body .card{background:#0f2630;border:0;box-shadow:0 0 0 1px rgba(255,255,255,.08);color:#fff;}
+.hero,.rk,.hero *,.rk *{font-family:'Montserrat','Noto Sans KR',sans-serif;}
+.hero{border-radius:16px;overflow:hidden;background:#06131f url(stadium.webp) center 18%/170% no-repeat;box-shadow:0 0 0 1px rgba(255,255,255,.08);position:relative;color:#fff;}
+.hero:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,19,31,.25) 0,rgba(6,19,31,.1) 40%,rgba(11,32,41,.96) 78%);}
+.hero>*{position:relative;z-index:1;}
+.h-top{text-align:center;padding:16px 12px 0;} .h-top small{font-size:11px;font-weight:600;letter-spacing:2.5px;opacity:.85;} .h-top h1{font-size:19px;font-weight:700;letter-spacing:1.5px;margin-top:3px;}
+.pod{display:flex;justify-content:center;align-items:flex-end;gap:10px;padding:16px 10px 0;min-height:120px;}
+.pc{width:98px;padding:9px 6px 10px;text-align:center;clip-path:polygon(0 8%,50% 0,100% 8%,100% 100%,0 100%);background:linear-gradient(160deg,#f0c9a4,#a8683a);color:#2b1608;border-radius:4px;}
+.pc.r1{width:112px;padding:12px 6px 13px;background:linear-gradient(160deg,#ffe9a6,#d9a437 55%,#a8771f);color:#2a1d04;}
+.pc.r2{background:linear-gradient(160deg,#eef2f6,#9aa7b6);color:#18222c;}
+.pc i{font-style:italic;font-weight:700;font-size:22px;line-height:1;display:block;}
+.pc .td{display:block;margin:5px auto 2px;} .td{width:7px;height:7px;border-radius:50%;display:inline-block;background:currentColor;}
+.td.tA{background:#3d8bff;} .td.tB{background:#f5b301;} .td.tC{background:#ff5a4f;}
+.pc b{display:block;font-size:14px;font-weight:800;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pc em{display:block;font-style:normal;font-weight:700;font-size:13px;margin-top:3px;white-space:nowrap;} .pc em small{font-size:9px;font-weight:600;opacity:.75;}
+.pc u{text-decoration:none;display:inline-block;margin-top:5px;font-size:8.5px;font-weight:700;letter-spacing:.5px;background:rgba(0,0,0,.72);color:#fff;border-radius:99px;padding:1px 6px;}
+.pc.img{background:none !important;clip-path:none;padding:0;color:#fff;} .pc.img img{width:100%;display:block;filter:drop-shadow(0 8px 10px rgba(0,0,0,.5));}
+.pc.img b{margin-top:5px;} .pc.img u{background:#22c55e;}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);margin-top:16px;border-top:1px solid rgba(255,255,255,.14);}
+.kp div{padding:11px 4px 12px;text-align:center;} .kp div+div{border-left:1px solid rgba(255,255,255,.14);}
+.kp b{display:block;font-size:19px;font-weight:700;} .kp span{font-size:10.5px;opacity:.75;letter-spacing:.5px;}
+.rk{margin-top:14px;border-radius:16px;overflow:hidden;color:#fff;background:radial-gradient(90% 240px at 70% 0,#5b8a7c 0,#28545a 38%,#0f2a33 75%,#0b2029 100%);box-shadow:0 0 0 1px rgba(255,255,255,.08);}
+.rk h2{font-size:13px;font-weight:600;letter-spacing:2px;text-align:center;padding:14px 0 10px;} .rk h2 small{display:block;font-size:10px;font-weight:400;letter-spacing:.5px;opacity:.7;margin-top:3px;}
+.rk .row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid rgba(255,255,255,.08);}
+.rk .no{width:28px;height:28px;border-radius:50%;background:rgba(226,234,232,.6);color:#17262c;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none;}
+.rk .row.t .no{background:#f2cf6b;}
+.rk .th{width:30px;height:40px;object-fit:contain;flex:none;}
+.rk .nm{flex:1;min-width:0;} .rk .nm b{font-size:14.5px;font-weight:700;letter-spacing:.5px;color:#fff;} .rk .nm b .td{margin-left:6px;width:6px;height:6px;position:relative;top:-2px;}
+.rk .nm u{text-decoration:none;font-size:8.5px;font-weight:700;background:#22c55e;border-radius:99px;padding:1px 6px;margin-left:6px;position:relative;top:-2px;}
+.rk .nm span{display:block;font-size:11.5px;opacity:.72;margin-top:2px;}
+.rk .bp{text-align:right;flex:none;} .rk .bp b{font-size:16px;font-weight:700;white-space:nowrap;} .rk .bp span{display:block;font-size:10.5px;color:#7dffb4;margin-top:1px;} .rk .bp span.dn{color:#ff8a80;}
+.rk .more{text-align:center;font-size:11.5px;opacity:.8;padding:12px;border-top:1px solid rgba(255,255,255,.08);cursor:pointer;}
+.rk-note{font-size:10.5px;opacity:.6;text-align:center;padding:9px 10px 11px;border-top:1px solid rgba(255,255,255,.08);}
+
+/* 어두운 톤: 대시보드 안 나머지 요소 */
+body.dk .wrap>.intro,body.dk .hero-t{color:#fff;}
+body.dk #b-body .sec{color:#fff;background:none;border-color:#22c55e;}
+body.dk #b-body .ttab td,body.dk #b-body .mini2 .li,body.dk #b-body .squad .sm,body.dk #b-body details.rule li{color:rgba(255,255,255,.88);}
+body.dk #b-body .ttab td,body.dk #b-body .ttab th{border-bottom-color:rgba(255,255,255,.08);}
+body.dk #b-body .ttab td.pt,body.dk #b-body .mini2 .li b{color:#7dffb4;}
+body.dk #b-body .mini2 h5,body.dk #b-body details.rule summary{color:#fff;}
+body.dk #b-body .squad{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);border-top-color:currentColor;}
+body.dk #b-body .ttab td.tn.tB,body.dk #b-body .squad.tB{color:#f5b301;} body.dk #b-body .ttab td.tn.tC,body.dk #b-body .squad.tC{color:#ff6a5e;} body.dk #b-body .ttab td.tn.tA,body.dk #b-body .squad.tA{color:#5a9bff;}
+body.dk #b-body .dchips button,body.dk #b-body .rchips button{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);color:#fff;}
+body.dk #b-body .dchips button.on{background:#22c55e;border-color:#22c55e;color:#04200f;}
+body.dk #b-body .rchips button.on{border-color:#7dffb4;box-shadow:0 0 0 1.5px #7dffb4 inset;} body.dk #b-body .rchips button em{color:rgba(255,255,255,.5);}
+body.dk #b-body .bph{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8);} body.dk #b-body .bph b{color:#7dffb4;}
+body.dk #b-body .bpl{color:#7dffb4;} body.dk #b-body .bpl small{color:rgba(255,255,255,.5);}
+body.dk #b-body .bpi{border-bottom-color:rgba(255,255,255,.07);} body.dk #b-body .bpi b{color:#fff;} body.dk #b-body .bpi span{color:rgba(255,255,255,.55);}
+body.dk #b-body .bpi em{color:#7dffb4;} body.dk #b-body .bpi.neg em{color:#ff8a80;}
+body.dk #b-body .bpi.hl{background:rgba(34,197,94,.12);}
+body.dk #b-body .bpf{background:rgba(255,255,255,.08);}
+body.dk #b-body .muted,body.dk #b-body .empty{color:rgba(255,255,255,.6);}
+body.dk .hd h1{color:#fff;} body.dk .hd p{color:rgba(255,255,255,.7);} body.dk .hd p b{color:#7dffb4 !important;}
+body.dk #b-body .sec{color:#fff !important;-webkit-text-fill-color:#fff;text-shadow:none;opacity:1;}
+body.dk{background:linear-gradient(180deg,#081826 0,#0a1f2b 40%,#07141c 100%) fixed !important;}
+html:has(body.dk){background:#07141c;}
+body.dk .tabs{background:#0b1c24;border-top-color:rgba(255,255,255,.1);} body.dk .tabs button{color:rgba(255,255,255,.55);} body.dk .tabs button.on{color:#7dffb4;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -742,7 +805,7 @@ details.rule summary{color:var(--navy);} details.rule li{color:#344054;}
   </div>
   <div class="hd">
     <h1>프리시즌</h1>
-    <p>매 경기 블라인드 드래프트로 새 팀 편성<br>출석·승리·골로 쌓는 <b style="color:var(--neon)">몸값</b>이 정규리그로 이어져요</p>
+    <p>매 경기 블라인드 드래프트로 새 팀 편성<br>출석·승리·골·무실점으로 쌓는 <b style="color:var(--neon)">BP</b>가 정규리그로 이어져요</p>
   </div>
 
   <!-- ═══ 성향 검사 ═══ -->
@@ -1451,19 +1514,28 @@ function mmdd(d){ const p = d.split('-'); return (+p[1])+'/'+(+p[2]); }
 function renderBoard(){
   const el = document.getElementById('b-body');
   if(!B.days.length){ el.innerHTML = '<div class="card empty">📊 아직 프리시즌 경기 기록이 없어요.<br>첫 경기 기록이 입력되면 몸값 순위가 여기에 떠요.</div>' + ruleHTML(); return; }
+  loadCards(B.players.map(p=>p.name));
   const last = B.days[B.days.length-1], rounds = B.days.reduce((n,d)=>n+d.rounds.length,0);
-  let h = `<div class="kpis"><div class="sc kpi"><b>${B.days.length}</b><span>경기일</span></div><div class="sc kpi"><b>${rounds}</b><span>라운드</span></div><div class="sc kpi"><b>${B.players.length}</b><span>참가 선수</span></div></div>`;
-  // 몸값 순위 (동점 = 같은 순위)
   const V = B.rule.val || {};
-  h += '<div class="sec">선수 가치 순위 (BP) · 정규리그로 이어짐</div><div class="sc" style="padding:6px 8px 10px"><table class="rank"><tr><th>#</th><th style="text-align:left">선수</th><th>몸값(BP)</th><th>골</th><th>도움</th><th>클린</th><th>출석</th></tr>';
-  let rank = 0, prev = null;
-  B.players.forEach((p,i)=>{
-    const v = p.val||0;
-    if(v !== prev){ rank = i+1; prev = v; }
-    const dv = p.dv||0;
-    h += `<tr class="${rank<=3&&v>0?'top':''}"><td class="no">${rank}</td><td class="nm">${esc(p.name)}${rank<=3&&v>0?'<span class="cap">주장권</span>':''}${(last.mvp||[]).includes(p.name)?'<span class="cap mvp">MVP</span>':''}${dv>0?`<span class="up">▲${dv}</span>`:dv<0?`<span class="up dn">▼${-dv}</span>`:''}</td><td class="pt val">${won(v)}</td><td>${p.g}</td><td>${p.a}</td><td>${p.cs||0}</td><td>${p.days}</td></tr>`;
-  });
-  h += `</table><div class="bnote" style="margin:8px 4px 0">▲▼ = 최근 경기(${mmdd(last.date)}) 변동(만 BP) · 클린 = 무실점 라운드 수</div></div>`;
+  const goalsAll = B.days.reduce((n,d)=>n+d.rounds.reduce((m,R)=>m+R.sa+R.sb,0),0);
+  const teamOf = {}; B.days.forEach(d=>TK.forEach(k=>d.teams[k].forEach(m=>{ teamOf[m.name] = k; })));   // 가장 최근 소속 팀
+  const dot = n => teamOf[n] ? `<i class="td ${TCL[teamOf[n]]}"></i>` : '';
+  const isMvp = n => (last.mvp||[]).includes(n);
+  let rank = 0, prev = null; const R = B.players.map((p,i)=>{ const v = p.val||0; if(v !== prev){ rank = i+1; prev = v; } return Object.assign({rank}, p); });
+  // 상단 요약: TOP 3 시상대 + 숫자 3개
+  const pod = (p,cls) => !p ? '' : (CARD[p.name]
+    ? `<div class="pc img ${cls}"><img src="${CARD[p.name]}" alt=""><b>${esc(p.name)}</b><em>${won(p.val)}<small> BP</small></em>${isMvp(p.name)?'<u>MVP</u>':''}</div>`
+    : `<div class="pc ${cls}"><i>${p.rank}</i>${dot(p.name)}<b>${esc(p.name)}</b><em>${won(p.val)}<small> BP</small></em>${isMvp(p.name)?'<u>MVP</u>':''}</div>`);
+  let h = `<div class="hero"><div class="h-top"><small>PRE-SEASON · MATCHDAY ${B.days.length}</small><h1>TOP 3 PLAYERS</h1></div>
+    <div class="pod">${pod(R[1],'r2')}${pod(R[0],'r1')}${pod(R[2],'r3')}</div>
+    <div class="kp"><div><b>${B.players.length}</b><span>참가 선수</span></div><div><b>${rounds}</b><span>라운드</span></div><div><b>${goalsAll}</b><span>총 득점</span></div></div></div>`;
+  // 순위표: 한 줄에 한 명
+  const stat = p => [p.g?p.g+'골':'', p.a?p.a+'도움':'', p.cs?'무실점 '+p.cs:''].filter(Boolean).join(' · ') || '기록 없음';
+  const shown = bAll ? R : R.slice(0,7);
+  h += `<div class="rk"><h2>PLAYER VALUE<small>선수 가치 순위 · 단위 BP · 정규리그로 이어짐</small></h2>` + shown.map(p=>{ const dv = p.dv||0;
+    return `<div class="row ${p.rank<=3&&p.val>0?'t':''}"><div class="no">${p.rank}</div>${CARD[p.name]?`<img class="th" src="${CARD[p.name]}" alt="">`:''}<div class="nm"><b>${esc(p.name)}${dot(p.name)}</b>${isMvp(p.name)?'<u>MVP</u>':''}<span>${stat(p)} · 출석 ${p.days}</span></div><div class="bp"><b>${won(p.val)}</b>${dv>0?`<span>▲ ${dv.toLocaleString('ko-KR')}</span>`:dv<0?`<span class="dn">▼ ${(-dv).toLocaleString('ko-KR')}</span>`:''}</div></div>`; }).join('') +
+    (R.length>7 ? `<div class="more" onclick="bAll=!bAll;renderBoard()">${bAll?'접기 ▴':`전체 ${R.length}명 보기 ▾`}</div>` : '') +
+    `<div class="rk-note">▲▼ = 최근 경기(${mmdd(last.date)}) 변동(만 BP) · 상위 3명은 정규리그 주장 후보</div></div>`;
   const bp = (ic,t,v,sub,cls) => `<div class="bpi ${cls||''}"><i>${ic}</i><div><b>${t}</b>${sub?`<span>${sub}</span>`:''}</div><em>${v}</em></div>`;
   h += `<div class="sec">BP 이렇게 쌓여요</div><div class="sc bpg">
     <div class="bph">모두 <b>0 BP</b>에서 시작 · 경기마다 아래 금액이 더해져요</div>
@@ -1500,7 +1572,10 @@ function renderBoard(){
 }
 function won(v){ v = Number(v)||0; if(!v) return '0'; const e = Math.floor(v/10000), m = v%10000; return (e ? e + '억' + (m ? ' ' : '') : '') + (m ? m.toLocaleString('ko-KR') + '만' : ''); }   // 단위: 만 BP
 /* ── 라운드 경기 화면: 위에 구장+스코어, 아래 가운데 선을 기준으로 왼쪽 팀 / 오른쪽 팀 득점 ── */
-let bRound = {};
+let bRound = {}, bAll = false;
+/* 선수 카드: 저장소에 card_이름.png 파일이 있으면 시상대와 순위표에 그 그림을 띄움 */
+const CARD = {}, cardTried = {};
+function loadCards(names){ names.forEach(n=>{ if(cardTried[n]) return; cardTried[n] = 1; const im = new Image(); im.onload = ()=>{ CARD[n] = im.src; if(document.getElementById('b-body')) renderBoard(); }; im.src = 'card_' + encodeURIComponent(n) + '.png'; }); }
 /* 팀 엠블럼 (직접 그린 오리지널): 블루 = 별과 물결 · 옐로 = 번개 · 레드 = 불꽃 */
 const CREST = {
   blue:  { c1:'#3d8bff', c2:'#0f3fa8', m:'<path d="M30 15l3 6.6 7.2.8-5.4 4.9 1.5 7.1L30 30.8l-6.3 3.6 1.5-7.1-5.4-4.9 7.2-.8z"/><path d="M14 43c4-3.4 8-3.4 12 0s8 3.4 12 0 6-2.6 8-1.2M16 50c4-3.4 8-3.4 12 0s8 3.4 12 0" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>' },
@@ -1654,6 +1729,7 @@ function syncLock(){ const l=document.getElementById('lock'); if(!l) return; con
 /* ── 탭 ── */
 function go(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on', x.id==='v-'+v));
+  document.body.classList.toggle('dk', v==='board');
   document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
   window.scrollTo(0,0);
   clearInterval(poll);
