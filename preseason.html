@@ -1477,10 +1477,11 @@ const CREST = {
 };
 /* 저장소에 emblem_blue.png / emblem_yellow.png / emblem_red.png 파일이 있으면 그 그림을 팀 엠블럼으로 사용 (없으면 기본 엠블럼) */
 const EMBLEM = {};
+const EMBLEM_SCALE = { blue:1.24 };   // 그림 둘레 빈 여백만큼 키워서 다른 팀과 크기를 맞춤
 const EMBLEM_FILE = { yellow:'IMG_8878.png', red:'IMG_8879.png', blue:'IMG_8880.png' };   // 운영자가 저장소에 올린 팀 엠블럼 파일 이름
 ['blue','yellow','red'].forEach(k=>{ const im = new Image(); im.onload = ()=>{ EMBLEM[k] = im.src; if(document.querySelector('.mv')) renderBoard(); }; im.src = EMBLEM_FILE[k]; });
 function crestSVG(k){
-  if(EMBLEM[k]) return `<img class="crest" src="${EMBLEM[k]}" alt="" style="object-fit:contain">`;
+  if(EMBLEM[k]) return `<img class="crest" src="${EMBLEM[k]}" alt="" style="object-fit:contain;transform:scale(${EMBLEM_SCALE[k]||1})">`;
   const c = CREST[k];
   return `<svg class="crest" viewBox="0 0 60 70"><defs><linearGradient id="cg-${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.c1}"/><stop offset="1" stop-color="${c.c2}"/></linearGradient></defs>
     <path d="M30 2l25 7v27c0 15-11 26-25 32C16 62 5 51 5 36V9z" fill="#fff"/>
