@@ -1475,7 +1475,11 @@ const CREST = {
   yellow:{ c1:'#ffd23a', c2:'#e08a00', m:'<path d="M34 12L18 37h10l-4 19 18-27H31z"/>' },
   red:   { c1:'#ff6a5e', c2:'#b81d14', m:'<path d="M31 12c2 8 12 12 12 24a13 13 0 0 1-26 0c0-6 3-9 5-13 1 4 3 6 5 6 0-6 1-12 4-17z"/><path d="M30 34c3 3 5 5 5 9a5 5 0 0 1-10 0c0-3 2-5 5-9z" fill="#b81d14"/>' },
 };
+/* 저장소에 emblem_blue.png / emblem_yellow.png / emblem_red.png 파일이 있으면 그 그림을 팀 엠블럼으로 사용 (없으면 기본 엠블럼) */
+const EMBLEM = {};
+['blue','yellow','red'].forEach(k=>{ const im = new Image(); im.onload = ()=>{ EMBLEM[k] = im.src; if(document.querySelector('.mv')) renderBoard(); }; im.src = 'emblem_' + k + '.png'; });
 function crestSVG(k){
+  if(EMBLEM[k]) return `<img class="crest" src="${EMBLEM[k]}" alt="" style="object-fit:contain">`;
   const c = CREST[k];
   return `<svg class="crest" viewBox="0 0 60 70"><defs><linearGradient id="cg-${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.c1}"/><stop offset="1" stop-color="${c.c2}"/></linearGradient></defs>
     <path d="M30 2l25 7v27c0 15-11 26-25 32C16 62 5 51 5 36V9z" fill="#fff"/>
