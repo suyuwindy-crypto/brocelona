@@ -789,6 +789,7 @@ body.dk .tabs{background:#0b1c24;border-top-color:rgba(255,255,255,.1);} body.dk
 .pwbox input{width:100%;padding:13px 12px;border:1.5px solid #d0d5dd;border-radius:10px;font-size:16px;background:#fff;color:#101828;}
 .pwbtn{display:flex;gap:8px;margin-top:12px;} .pwbtn button{flex:1;padding:12px;border-radius:10px;border:1px solid #d0d5dd;background:#f2f4f7;font-weight:800;font-size:14px;color:#344054;font-family:'Noto Sans KR',sans-serif;}
 .pwbtn button.go{background:#0b1f4b;border-color:#0b1f4b;color:#fff;}
+.pod .pc{border:0 !important;box-shadow:none !important;min-height:0;} .pod .pc.img{border-radius:0;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -1549,6 +1550,7 @@ function renderBoard(){
     <div class="bph">모두 <b>0 BP</b>에서 시작 · 경기마다 아래 금액이 더해져요</div>
     <div class="bpl">기본</div>
     ${bp('📅','출석','+'+V.att+'만','그날 팀 명단에 있으면')}
+    ${V.captain?bp('🧢','임시 주장','+'+V.captain+'만','그날 팀을 꾸린 주장'):''}
     <div class="bpl">팀 성적 <small>팀원 전원이 똑같이</small></div>
     ${bp('🏆','라운드 승리','+'+V.win+'만')}
     ${bp('🤝','라운드 무승부','+'+V.draw+'만')}
@@ -1583,7 +1585,34 @@ function won(v){ v = Number(v)||0; if(!v) return '0'; const e = Math.floor(v/100
 let bRound = {}, bAll = false;
 /* 선수 카드: 저장소에 card_이름.png 파일이 있으면 시상대와 순위표에 그 그림을 띄움 */
 const CARD = {}, cardTried = {};
-function loadCards(names){ names.forEach(n=>{ if(cardTried[n]) return; cardTried[n] = 1; const im = new Image(); im.onload = ()=>{ CARD[n] = im.src; if(document.getElementById('b-body')) renderBoard(); }; im.src = 'card_' + encodeURIComponent(n) + '.png'; }); }
+function loadCards(names){ names.forEach(n=>{ if(cardTried[n]) return; cardTried[n] = 1;
+  // 휴대폰에서 올린 한글 파일 이름은 자모가 풀린 형태(NFD)인 경우가 많아 두 가지를 모두 시도
+  const cand = []; ['.png','.PNG','.jpg','.jpeg'].forEach(e=>['NFC','NFD'].forEach(f=>cand.push('card_' + encodeURIComponent(n.normalize(f)) + e)));
+  let k = 0; const im = new Image();
+  im.onload = ()=>{ CARD[n] = trimCard(im); if(document.getElementById('b-body')) renderBoard(); };
+  im.onerror = ()=>{ k++; if(k < cand.length) im.src = cand[k]; };
+  im.src = cand[0]; }); }
+// 카드 그림 정리: 화면용으로 줄이고, 둘레의 투명·흰 여백을 지운 뒤 카드 부분만 남김
+function trimCard(im){
+  try{
+    const H = Math.min(520, im.naturalHeight), W = Math.max(1, Math.round(im.naturalWidth * H / im.naturalHeight));
+    const c = document.createElement('canvas'); c.width = W; c.height = H;
+    const x = c.getContext('2d'); x.drawImage(im, 0, 0, W, H);
+    const d = x.getImageData(0, 0, W, H), a = d.data;
+    const blank = i => a[i+3] < 24 || (a[i] > 236 && a[i+1] > 236 && a[i+2] > 236);
+    const seen = new Uint8Array(W*H), st = [];
+    for(let px=0;px<W;px++){ st.push(px, px + (H-1)*W); } for(let py=0;py<H;py++){ st.push(py*W, py*W + W-1); }
+    while(st.length){ const q = st.pop(); if(seen[q]) continue; seen[q] = 1; if(!blank(q*4)) continue; a[q*4+3] = 0;
+      const qx = q % W, qy = (q - qx) / W; if(qx>0) st.push(q-1); if(qx<W-1) st.push(q+1); if(qy>0) st.push(q-W); if(qy<H-1) st.push(q+W); }
+    let x0=W, y0=H, x1=0, y1=0;
+    for(let py=0;py<H;py++) for(let px=0;px<W;px++) if(a[(py*W+px)*4+3] > 40){ if(px<x0)x0=px; if(px>x1)x1=px; if(py<y0)y0=py; if(py>y1)y1=py; }
+    if(x1 <= x0 || y1 <= y0) return im.src;
+    x.putImageData(d, 0, 0);
+    const o = document.createElement('canvas'); o.width = x1-x0+1; o.height = y1-y0+1;
+    o.getContext('2d').drawImage(c, x0, y0, o.width, o.height, 0, 0, o.width, o.height);
+    return o.toDataURL('image/png');
+  }catch(e){ return im.src; }
+}
 /* 팀 엠블럼 (직접 그린 오리지널): 블루 = 별과 물결 · 옐로 = 번개 · 레드 = 불꽃 */
 const CREST = {
   blue:  { c1:'#3d8bff', c2:'#0f3fa8', m:'<path d="M30 15l3 6.6 7.2.8-5.4 4.9 1.5 7.1L30 30.8l-6.3 3.6 1.5-7.1-5.4-4.9 7.2-.8z"/><path d="M14 43c4-3.4 8-3.4 12 0s8 3.4 12 0 6-2.6 8-1.2M16 50c4-3.4 8-3.4 12 0s8 3.4 12 0" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>' },
@@ -1630,7 +1659,7 @@ function ruleHTML(){
     <li>매 경기일 블라인드 드래프트로 3팀을 새로 편성해요.</li>
     <li>하루 9라운드 · 라운드마다 승 3점 / 무 1점 / 패 0점.</li>
     <li>모든 선수는 <b>몸값 0 BP</b>에서 시작해요. 출석·팀 승리·골·도움·무실점으로 오르고, 결석하면 내려가요(0 아래로는 안 내려감).</li>
-    <li>출석 +100만 · 라운드 승 +60만 / 무 +20만 · 골 +60만 · 도움 +30만 · 결석 −50만.</li>
+    <li>출석 +100만 · 임시 주장 +10만 · 라운드 승 +60만 / 무 +20만 · 골 +60만 · 도움 +30만 · 결석 −50만.</li>
     <li><b>무실점 라운드 +60만</b>: 한 골도 안 먹은 라운드는 팀원 전원이 골 1개와 같은 값을 받아요. 수비도 득점만큼 인정!</li>
     <li><b>오늘의 MVP +200만</b>: 그날 몸값을 가장 많이 번 선수에게 추가 지급(동률이면 모두).</li>
     <li><b>몸값 상위 3명</b>이 정규리그 주장 후보 · 정규리그 팀 구성은 몸값을 기준으로 해요.</li>
