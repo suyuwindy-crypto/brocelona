@@ -781,6 +781,14 @@ body.dk #b-body .sec{color:#fff !important;-webkit-text-fill-color:#fff;text-sha
 body.dk{background:linear-gradient(180deg,#081826 0,#0a1f2b 40%,#07141c 100%) fixed !important;}
 html:has(body.dk){background:#07141c;}
 body.dk .tabs{background:#0b1c24;border-top-color:rgba(255,255,255,.1);} body.dk .tabs button{color:rgba(255,255,255,.55);} body.dk .tabs button.on{color:#7dffb4;}
+
+#pwpop{position:fixed;inset:0;z-index:999;background:rgba(4,12,20,.6);display:none;align-items:center;justify-content:center;padding:24px;}
+#pwpop.on{display:flex;}
+.pwbox{width:100%;max-width:320px;background:#fff;border-radius:16px;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,.35);color:#101828;}
+.pwbox h3{font-size:16px;font-weight:900;margin-bottom:12px;color:#0b1f4b;}
+.pwbox input{width:100%;padding:13px 12px;border:1.5px solid #d0d5dd;border-radius:10px;font-size:16px;background:#fff;color:#101828;}
+.pwbtn{display:flex;gap:8px;margin-top:12px;} .pwbtn button{flex:1;padding:12px;border-radius:10px;border:1px solid #d0d5dd;background:#f2f4f7;font-weight:800;font-size:14px;color:#344054;font-family:'Noto Sans KR',sans-serif;}
+.pwbtn button.go{background:#0b1f4b;border-color:#0b1f4b;color:#fff;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -1322,7 +1330,7 @@ function renderAdmin(force){
   if(!force && sig === adminSig && a.innerHTML) return;
   adminSig = sig;
   if(!adminPw || (D && !D.admin)){
-    a.innerHTML = `<h3>🔐 운영자</h3><div style="display:flex;gap:6px;"><input type="password" id="ad-pw" placeholder="운영자 비밀번호"><button class="btn" style="width:90px;padding:12px;" onclick="adminLogin()">확인</button></div>`;
+    a.style.display = 'none'; a.innerHTML = '';   // 로그인은 우측 상단 자물쇠에서
     return;
   }
   let h = '<h3>🔐 운영자 패널</h3>';
@@ -1648,7 +1656,7 @@ function recLoadDay(){
 function renderRec(){
   const a = document.getElementById('b-admin'); a.style.display = 'block'; syncLock2();
   if(!adminPw || !B.admin){
-    a.innerHTML = `<h3>🔐 운영자</h3><div style="display:flex;gap:6px;"><input type="password" id="bd-pw" placeholder="운영자 비밀번호"><button class="btn" style="width:90px;padding:12px;" onclick="adminPw=document.getElementById('bd-pw').value.trim();ss.set('ps_admin',adminPw);loadBoard()">확인</button></div>`;
+    a.style.display = 'none'; a.innerHTML = '';   // 로그인은 우측 상단 자물쇠에서
     return;
   }
   if(!REC.teams) recInit();
@@ -1721,9 +1729,22 @@ async function recDel(r){
 /* ── 우상단 자물쇠: 운영자 진입 ── */
 function lockTap(){
   const cur = (document.querySelector('.view.on')||{}).id === 'v-board' ? 'board' : 'draft';
+  const ok = isAdminPage && adminPw && (cur==='board' ? (B && B.admin) : (D && D.admin));
+  if(ok){ const a = document.getElementById(cur==='board'?'b-admin':'admin'); if(a) a.scrollIntoView({behavior:'smooth'}); return; }
+  let m = document.getElementById('pwpop');
+  if(!m){ m = document.createElement('div'); m.id = 'pwpop'; document.body.appendChild(m); }
+  m.innerHTML = `<div class="pwbox"><h3>🔐 운영자 로그인</h3><input type="password" id="pw-in" placeholder="운영자 비밀번호" onkeydown="if(event.key==='Enter')pwGo('${cur}')"><div class="pwbtn"><button onclick="document.getElementById('pwpop').classList.remove('on')">취소</button><button class="go" onclick="pwGo('${cur}')">확인</button></div></div>`;
+  m.onclick = e => { if(e.target === m) m.classList.remove('on'); };
+  m.classList.add('on'); setTimeout(()=>{ const i = document.getElementById('pw-in'); if(i) i.focus(); }, 50);
+}
+function pwGo(cur){
+  const v = document.getElementById('pw-in').value.trim(); if(!v) return;
+  adminPw = v; ss.set('ps_admin', v);
   if(!isAdminPage){ location.href = location.pathname + '?admin#' + cur; return; }
-  go(cur);
-  setTimeout(()=>{ const a=document.getElementById(cur==='board'?'b-admin':'admin'); if(a){ a.scrollIntoView({behavior:'smooth'}); const i=a.querySelector('input[type=password]'); if(i) i.focus(); } }, 400);
+  document.getElementById('pwpop').classList.remove('on');
+  loadDraft._warned = false;
+  if(cur==='board'){ loadBoard().then(()=>{ if(B && !B.admin) toast('운영자 비밀번호가 틀렸어요'); else { const a=document.getElementById('b-admin'); if(a) setTimeout(()=>a.scrollIntoView({behavior:'smooth'}),300); } }); }
+  else loadDraft();
 }
 function syncLock(){ const l=document.getElementById('lock'); if(!l) return; const ok = isAdminPage && D && D.admin; l.textContent = ok ? '🔓' : '🔒'; l.classList.toggle('on', !!ok); }
 /* ── 탭 ── */
