@@ -793,6 +793,15 @@ body.dk .tabs{background:#0b1c24;border-top-color:rgba(255,255,255,.1);} body.dk
 .pnames{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 10px 10px;margin:10px 0;}
 .pnames b{font-size:12.5px;font-weight:800;color:var(--navy);} .pnames span{font-size:11px;color:#98a2b3;margin-left:6px;}
 .pnames div{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px;} .pnames i{font-style:normal;font-size:12px;font-weight:600;color:#344054;background:#f2f4f7;border-radius:999px;padding:3px 9px;}
+
+/* 이름 맞추기: 하단 고정 이름 줄 */
+#gdock{position:fixed;left:0;right:0;z-index:19;background:#fff;border-top:2px solid var(--navy);box-shadow:0 -6px 18px rgba(16,24,40,.14);padding:6px 0 8px;display:none;}
+#gdock .gd-h{font-size:11px;color:#667085;padding:0 12px 5px;} #gdock .gd-h b{color:var(--navy);font-size:12.5px;}
+#gdock .gchips{flex-wrap:nowrap;overflow-x:auto;gap:6px;padding:0 12px 2px;-webkit-overflow-scrolling:touch;touch-action:pan-x;scrollbar-width:none;}
+#gdock .gchips::-webkit-scrollbar{display:none;}
+#gdock .gchip{flex:none;padding:9px 13px;font-size:14px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
+body.hasdock #v-draft{padding-bottom:84px;}
+#gdock .gchip{touch-action:pan-x;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -1172,6 +1181,7 @@ function renderDraft(){
   }).join('') + '</div>';
   const revealNow = wasRevealed === false && D.revealed;
   el.innerHTML = h;
+  renderDock();
   D.pool.filter(p=>p.pick!==null).forEach(p=>seenPicks.add(p.id));
   if(revealNow){ flipSequence();
     if(Object.keys(GUESS).length) setTimeout(showScorePop, D.pool.length*450 + 1300);   // 다 뒤집힌 뒤 점수 발표 팝업
@@ -1415,9 +1425,23 @@ function guessHTML(){
   const used = new Set(Object.values(GUESS));
   const n = Object.keys(GUESS).length;
   return `<div class="sc gbox"><div class="gt">🕵️ 누가 누구일까? · ${n} / ${D.nameList.length}</div>
-    <div class="gs">이름을 <b>끌어서</b> 카드 위에 놓거나, 이름을 누른 뒤 카드를 누르세요. 추측은 내 폰에만 저장돼요.</div>
-    <div class="gchips">${D.nameList.map(nm=>`<span class="gchip ${used.has(nm)?'used':''} ${gSel===nm?'sel':''}" data-n="${esc(nm)}">${esc(nm)}</span>`).join('')}</div>
+    <div class="gs">화면 <b>맨 아래 이름 줄</b>에서 이름을 누른 뒤 카드를 누르거나, 이름을 <b>위로 끌어서</b> 카드에 놓으세요. 이름 줄은 옆으로 밀면 더 나와요. 추측은 내 폰에만 저장돼요.</div>
     ${n?'<div class="gbtns"><button onclick="clearGuess()">추측 전부 지우기</button></div>':''}</div>`;
+}
+// 화면 아래(메뉴 바로 위)에 항상 떠 있는 이름 줄 — 카드를 보면서 바로 고를 수 있게
+function renderDock(){
+  let d = document.getElementById('gdock');
+  const on = guessOn() && (document.querySelector('.view.on')||{}).id === 'v-draft';
+  if(!on){ if(d) d.style.display = 'none'; document.body.classList.remove('hasdock'); return; }
+  if(!d){ d = document.createElement('div'); d.id = 'gdock'; document.body.appendChild(d); }
+  const used = new Set(Object.values(GUESS));
+  const list = D.nameList.filter(n=>!used.has(n)).concat(D.nameList.filter(n=>used.has(n)));   // 아직 안 쓴 이름이 앞으로
+  const keep = d.querySelector('.gchips') ? d.querySelector('.gchips').scrollLeft : 0;
+  d.innerHTML = `<div class="gd-h">${gSel?`<b>${esc(gSel)}</b> 선택됨 → 카드를 누르세요`:`이름 ${D.nameList.length - used.size}명 남음 · 누르거나 위로 끌기`}</div>
+    <div class="gchips">${list.map(nm=>`<span class="gchip ${used.has(nm)?'used':''} ${gSel===nm?'sel':''}" data-n="${esc(nm)}">${esc(nm)}</span>`).join('')}</div>`;
+  d.style.display = 'block'; d.style.bottom = (document.querySelector('.tabs').offsetHeight) + 'px';
+  d.querySelector('.gchips').scrollLeft = gSel ? keep : 0;
+  document.body.classList.add('hasdock');
 }
 function assignGuess(id, nm){
   Object.keys(GUESS).forEach(k=>{ if(GUESS[k]===nm) delete GUESS[k]; });  // 한 이름은 한 카드에만
@@ -1439,22 +1463,26 @@ document.addEventListener('pointerdown', e=>{
 });
 window.addEventListener('pointermove', e=>{
   if(!gDrag) return;
-  if(!gDrag.moved && Math.hypot(e.clientX-gDrag.x, e.clientY-gDrag.y) < 8) return;
+  const dx = e.clientX-gDrag.x, dy = e.clientY-gDrag.y;
+  if(!gDrag.moved){ if(Math.hypot(dx,dy) < 8) return; if(Math.abs(dx) > Math.abs(dy)){ gDrag = null; return; } }   // 옆으로 밀면 이름 줄 스크롤
   e.preventDefault();
+  gDrag.cy = e.clientY;
+  if(!gDrag.timer) gDrag.timer = setInterval(()=>{ if(!gDrag) return; const y = gDrag.cy, H = window.innerHeight;
+    if(y < 150) window.scrollBy(0, -14); else if(y > H - 230 && y < H - 150) window.scrollBy(0, 14); }, 16);
   if(!gDrag.moved){ gDrag.moved = true; const g=document.createElement('div'); g.className='gghost'; g.textContent=gDrag.nm; document.body.appendChild(g); gDrag.ghost=g; }
   gDrag.ghost.style.left = e.clientX+'px'; gDrag.ghost.style.top = e.clientY+'px';
   document.querySelectorAll('.tcard.drop').forEach(x=>x.classList.remove('drop'));
   const t = document.elementFromPoint(e.clientX, e.clientY); const card = t && t.closest('.tcard'); if(card) card.classList.add('drop');
 }, { passive:false });
 window.addEventListener('pointerup', e=>{
-  if(!gDrag) return; const d = gDrag; gDrag = null;
+  if(!gDrag) return; const d = gDrag; gDrag = null; if(d.timer) clearInterval(d.timer);
   document.querySelectorAll('.tcard.drop').forEach(x=>x.classList.remove('drop'));
   if(d.ghost){ d.ghost.remove();
     const t = document.elementFromPoint(e.clientX, e.clientY); const card = t && t.closest('.tcard');
     if(card) assignGuess(card.dataset.id, d.nm);
   } else { gSel = (gSel===d.nm ? null : d.nm); renderDraft(); }   // 탭 = 선택
 });
-window.addEventListener('pointercancel', ()=>{ if(gDrag && gDrag.ghost) gDrag.ghost.remove(); gDrag = null; });
+window.addEventListener('pointercancel', ()=>{ if(gDrag){ if(gDrag.ghost) gDrag.ghost.remove(); if(gDrag.timer) clearInterval(gDrag.timer); } gDrag = null; });
 
 /* ── 점수 발표 · 카톡 공유 (점수 카드 이미지 생성 → 공유 시트에서 카카오톡 선택) ── */
 function gradeOf(hit){ const n = D.pool.length; return hit>=n*0.6?'🕵️ 명탐정!':hit>=n*0.3?'👀 꽤 하는데요':'🙈 다음엔 더 잘할 수 있어요'; }
@@ -1786,6 +1814,7 @@ function syncLock(){ const l=document.getElementById('lock'); if(!l) return; con
 function go(v){
   document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on', x.id==='v-'+v));
   document.body.classList.toggle('dk', v==='board');
+  if(typeof renderDock === 'function') renderDock();
   document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
   window.scrollTo(0,0);
   clearInterval(poll);
