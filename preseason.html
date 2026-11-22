@@ -1416,7 +1416,8 @@ function guessHTML(){
   const ids = D.pool.map(p=>p.id);
   Object.keys(GUESS).forEach(k=>{ if(!ids.includes(k)) delete GUESS[k]; });   // 다른 드래프트의 추측 정리
   if(D.revealed){
-    const tried = Object.keys(GUESS).length; if(!tried) return '';
+    const tried = Object.keys(GUESS).length;
+    if(!tried) return `<div class="sc gscore"><div class="gt" style="font-size:11px;color:var(--dim);letter-spacing:2px">MY GUESS RESULT</div><div class="muted" style="padding:6px 0 2px;line-height:1.6">이 기기에는 추측 기록이 없어요.<br>추측했던 폰·브라우저(카톡 안에서 열었다면 카톡)로 다시 열면 점수가 나와요.</div></div>`;
     const hit = D.pool.filter(p=>GUESS[p.id] && GUESS[p.id]===p.name).length;
     return `<div class="sc gscore"><div class="gt" style="font-size:11px;color:var(--dim);letter-spacing:2px">MY GUESS RESULT</div><b>${hit} / ${D.pool.length}</b><div class="muted">명 맞췄어요 ${gradeOf(hit)}</div>
       <div class="gshare-hint">📸 내 점수를 단톡방에 자랑해 주세요!</div>
