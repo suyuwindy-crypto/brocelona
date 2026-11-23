@@ -802,6 +802,18 @@ body.dk .tabs{background:#0b1c24;border-top-color:rgba(255,255,255,.1);} body.dk
 #gdock .gchip{flex:none;padding:9px 13px;font-size:14px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
 body.hasdock #v-draft{padding-bottom:84px;}
 #gdock .gchip{touch-action:pan-x;}
+
+/* 동료 추천 */
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid #d0d5dd;box-shadow:none;}
+.pvintro{margin:12px 0 0 18px;font-size:13.5px;line-height:1.75;color:#475467;}
+.pvhead{display:flex;align-items:center;gap:12px;margin-top:14px;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;}
+.pvhead span{font-size:34px;line-height:1;} .pvhead b{display:block;font-size:22px;font-weight:900;font-style:italic;} .pvhead em{display:block;font-style:normal;font-size:13.5px;opacity:.85;margin-top:2px;}
+.pvnames{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.pvnames button{padding:12px 4px;border-radius:10px;border:1.5px solid #d0d5dd;background:#fff;font-size:14.5px;font-weight:700;color:var(--text);font-family:'Noto Sans KR',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pvnames button.on{background:var(--neon);border-color:var(--neon);color:#fff;}
+.pvb{display:inline-block;margin:6px 0 2px;font-size:11.5px;font-weight:600;color:#0b5c33;background:#e6f7ee;border:1px solid #b7e4c9;border-radius:999px;padding:3px 9px;} .pvb b{font-weight:900;}
+.pvs{position:absolute;left:6px;bottom:4px;font-size:9.5px;font-weight:800;color:#0b5c33;background:#e6f7ee;border-radius:999px;padding:1px 6px;white-space:nowrap;}
+.rk .nm u.pvu{background:rgba(255,255,255,.16);color:#d9ffe9;border:1px solid rgba(125,255,180,.45);}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -844,6 +856,7 @@ body.hasdock #v-draft{padding-bottom:84px;}
         <select id="t-name" class="sel"><option value="">불러오는 중…</option></select></div>
       <button class="btn" style="margin-top:14px;" id="t-start" onclick="startTest()" disabled>검사 시작</button>
       <div class="muted" style="margin-top:10px;text-align:center;" id="t-prev"></div>
+      <button class="btn ghost" style="margin-top:12px" onclick="startVote()">🤝 동료 추천만 하기 (1분)</button>
     </div>
     <div id="t-q" class="card" style="display:none;">
       <div class="qnum" id="q-num"></div>
@@ -861,8 +874,10 @@ body.hasdock #v-draft{padding-bottom:84px;}
     <div id="t-res" style="display:none;">
       <div id="res-card"></div>
       <div class="muted" id="res-msg" style="text-align:center;margin:12px 0;"></div>
-      <button class="btn" onclick="go('draft')">드래프트 보러 가기 →</button>
+      <button class="btn" onclick="startVote()">🤝 동료 추천하기 (1분) →</button>
+      <button class="btn ghost" style="margin-top:8px" onclick="go('draft')">드래프트 보러 가기</button>
     </div>
+    <div id="t-vote" class="card" style="display:none;"></div>
   </section>
 
   <!-- ═══ 드래프트 ═══ -->
@@ -1028,7 +1043,7 @@ function startTest(){
   qi = 0; answers = new Array(QS.length).fill(null); gk = null; shuffleOpts();
   show('t-q'); renderQ();
 }
-function show(id){ ['t-intro','t-q','t-gk','t-res'].forEach(x=>document.getElementById(x).style.display = x===id?'block':'none'); window.scrollTo(0,0); }
+function show(id){ ['t-intro','t-q','t-gk','t-res','t-vote'].forEach(x=>document.getElementById(x).style.display = x===id?'block':'none'); window.scrollTo(0,0); }
 function renderQ(){
   const q = QS[qi];
   document.getElementById('q-num').textContent = 'Q' + String(qi+1).padStart(2,'0') + ' / ' + QS.length;
@@ -1096,6 +1111,53 @@ function showResult(r, fromPrev){
   show('t-res');
 }
 function resetTest(){ show('t-intro'); }
+
+/* ═══ 동료 추천 ═══ */
+const PV = { ST:['스트라이커','골 냄새를 제일 잘 맡는 사람','🎯'], PM:['플레이메이커','패스로 경기를 풀어주는 사람','🎼'], BW:['볼 위너','공을 제일 잘 뺏어오는 사람','🦅'],
+             SW:['스위퍼','맨 뒤에서 든든하게 막아주는 사람','🛡️'], BB:['박스 투 박스','제일 많이 뛰는 사람','🔋'], CP:['캡틴','말과 리딩으로 팀을 움직이는 사람','📣'] };
+const PVK = Object.keys(PV);
+function peerB(c){ return c && PV[c] ? `<div class="pvb">${PV[c][2]} 동료 추천 · <b>${PV[c][0]}</b></div>` : ''; }
+let pv = { i:0, picks:{}, roster:[], me:'' };
+async function startVote(){
+  const box = document.getElementById('t-vote'); show('t-vote');
+  box.innerHTML = '<div class="empty">불러오는 중…</div>';
+  let d; try{ d = await api({ action:'psRoster', name: ls.get('ps_name')||'' }); }catch(e){ d = null; }
+  if(!d || d.error || !Array.isArray(d.roster)){ box.innerHTML = '<div class="empty">아직 준비 중이에요. 잠시 뒤 다시 시도해 주세요.</div><button class="btn ghost" onclick="resetTest()">돌아가기</button>'; return; }
+  if(!d.roster.length){ box.innerHTML = '<div class="empty">참가명단이 등록되면 추천할 수 있어요.</div><button class="btn ghost" onclick="resetTest()">돌아가기</button>'; return; }
+  pv = { i:-1, picks:{}, roster:d.roster, me: d.roster.includes(ls.get('ps_name')) ? ls.get('ps_name') : '', voted:d.voted };
+  renderVote();
+}
+function renderVote(){
+  const box = document.getElementById('t-vote');
+  if(pv.i < 0){   // 안내 + 내 이름 확인
+    box.innerHTML = `<div class="qnum">TEAMMATE PICK</div><div class="qtext">우리 팀의 OO는 누구?</div>
+      <ul class="pvintro"><li>6가지 유형마다 <b>어울리는 사람을 2명까지</b> 골라 주세요.</li><li>누가 누구를 뽑았는지, 몇 표인지는 <b>아무에게도 보이지 않아요.</b></li><li>잘 모르겠으면 건너뛰어도 돼요.</li><li>여러 사람에게 추천받은 선수 카드에는 <b>동료 추천 배지</b>가 붙어요.</li></ul>
+      <label class="lbl" style="margin-top:14px">내 이름</label><select id="pv-me" class="sel"><option value="">이름을 선택하세요</option>${pv.roster.map(n=>`<option ${n===pv.me?'selected':''}>${esc(n)}</option>`).join('')}</select>
+      ${pv.voted?'<div class="muted" style="margin-top:8px">오늘 이미 추천했어요. 다시 내면 오늘 것만 새로 바뀌어요.</div>':''}
+      <button class="btn" style="margin-top:14px" onclick="pvBegin()">시작</button><button class="btn ghost" style="margin-top:8px" onclick="resetTest()">돌아가기</button>`;
+    return;
+  }
+  const k = PVK[pv.i], cur = pv.picks[k] || [];
+  box.innerHTML = `<div class="qnum">${pv.i+1} / ${PVK.length}</div><div class="prog"><i style="width:${(pv.i+1)/PVK.length*100}%"></i></div>
+    <div class="pvhead"><span>${PV[k][2]}</span><div><b>${PV[k][0]}</b><em>${PV[k][1]}</em></div></div>
+    <div class="muted" style="margin:10px 0 8px">2명까지 선택 · ${cur.length}/2</div>
+    <div class="pvnames">${pv.roster.filter(n=>n!==pv.me).map(n=>`<button class="${cur.includes(n)?'on':''}" onclick="pvPick('${esc(n).replace(/'/g,"\\'")}')">${esc(n)}</button>`).join('')}</div>
+    <button class="btn" style="margin-top:16px" onclick="pvNext()">${cur.length ? (pv.i===PVK.length-1?'제출하기':'다음 →') : (pv.i===PVK.length-1?'건너뛰고 제출':'잘 모르겠어요 · 건너뛰기')}</button>
+    <div class="qnav"><button onclick="pvPrev()">← 이전</button><span class="muted">본인은 고를 수 없어요</span></div>`;
+}
+function pvBegin(){ const n = document.getElementById('pv-me').value; if(!n){ toast('내 이름을 선택해 주세요'); return; } pv.me = n; if(!ls.get('ps_name')) ls.set('ps_name', n); pv.i = 0; renderVote(); }
+function pvPick(n){ const k = PVK[pv.i], a = pv.picks[k] || (pv.picks[k] = []), i = a.indexOf(n);
+  if(i >= 0) a.splice(i,1); else if(a.length >= 2){ toast('2명까지만 고를 수 있어요'); return; } else a.push(n); renderVote(); }
+function pvPrev(){ pv.i = Math.max(-1, pv.i-1); renderVote(); }
+async function pvNext(){
+  if(pv.i < PVK.length-1){ pv.i++; renderVote(); window.scrollTo({top:0,behavior:'smooth'}); return; }
+  const box = document.getElementById('t-vote'), total = PVK.reduce((n,k)=>n+(pv.picks[k]||[]).length,0);
+  if(!total){ toast('한 명도 고르지 않았어요'); return; }
+  box.innerHTML = '<div class="empty">제출하는 중…</div>';
+  let d; try{ d = await api({ action:'psVote', name:pv.me, votes:JSON.stringify(pv.picks) }); }catch(e){ d = null; }
+  if(!d || !d.ok){ box.innerHTML = `<div class="empty">⚠️ 제출하지 못했어요${d&&d.msg==='not_roster'?' — 참가명단에 없는 이름이에요':''}.<br>잠시 뒤 다시 시도해 주세요.</div><button class="btn" onclick="renderVote()">다시 시도</button>`; return; }
+  box.innerHTML = `<div class="empty" style="font-size:15px">🤝 추천 완료!<br><span style="font-size:13px">${total}명을 추천했어요. 고마워요.</span></div><button class="btn" onclick="go('draft')">드래프트 보러 가기 →</button>`;
+}
 
 /* ═══ 드래프트 ═══ */
 const isAdminPage = new URLSearchParams(location.search).has('admin') || location.hash==='#admin';
@@ -1174,7 +1236,7 @@ function renderDraft(){
   h += '<div class="pool">' + list.map(p=>{
     const t = TYPES[p.code], taken = p.pick !== null; let dt;
     return `<div class="pc ${taken?'taken':''}" id="pc-${p.id}" onclick="openSheet('${p.id}')"><div class="no">PLAYER #${String(p.no).padStart(2,'0')}</div><div class="em">${t[0]}</div>
-      <div class="cd">${p.code}${(dt=diffTags(p))?`<span class="dup">같은 유형 ${dt.n}명</span>`:''}</div><div class="w4s">${words4(p.code).join(' · ')}</div><div class="nm">${t[1]}</div>${t[3]?`<div class="st2">${FLAG[t[3]]||'⚽'} ${esc(t[3])} 스타일</div>`:''}<div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
+      <div class="cd">${p.code}${(dt=diffTags(p))?`<span class="dup">같은 유형 ${dt.n}명</span>`:''}</div>${peerB(p.peer)}<div class="w4s">${words4(p.code).join(' · ')}</div><div class="nm">${t[1]}</div>${t[3]?`<div class="st2">${FLAG[t[3]]||'⚽'} ${esc(t[3])} 스타일</div>`:''}<div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
       ${dt?`<div class="diff">${dt.tags.length?dt.tags.map(x=>`<span>✦ ${x.txt}</span>`).join(''):'<span>✦ 같은 유형과 응답이 완전히 같아요</span>'}</div>`:''}
       ${miniBars(p.scores||{}, p.code)}${showName(p)?`<div class="real">👤 ${esc(p.name)}</div>`:''}
       ${taken?`<div class="tag ${TEAM_CLS[p.pick]}">${TEAM_LBL[p.pick]}</div>`:(myTurn?`<button class="pickbtn" onclick="event.stopPropagation();pick('${p.id}',${p.no})">이 선수 픽</button>`:'')}${p.ans?'<div class="more">평소 습관 18가지 보기 ›</div>':''}</div>`;
@@ -1259,7 +1321,7 @@ function teamsHTML(done, turn){
     const cards = mem.map((m,k)=>{
       const t = TYPES[m.code], isNew = !seenPicks.has(m.id), flip = showName(m) && (!flipAnim || flipDone.has(m.id));
       return `<div class="tcard ${flip?'flip':''} ${isNew?'new':''}" data-id="${m.id}" data-k="${m.pickNo}" onclick="cardTap('${m.id}')"><div class="in">
-        <div class="f front"><span class="e">${t[0]}</span><span class="t"><b>${m.code}${m.gk?' 🧤':''}</b><span>#${String(m.no).padStart(2,'0')} ${esc(t[3] ? t[3].replace(/ \(.*\)$/,'')+'형' : t[1])}</span></span>${guessOn() && GUESS[m.id] ? `<span class="gl">${esc(GUESS[m.id])}</span>` : ''}</div>
+        <div class="f front"><span class="e">${t[0]}</span><span class="t"><b>${m.code}${m.gk?' 🧤':''}${m.peer&&PV[m.peer]?' '+PV[m.peer][2]:''}</b><span>#${String(m.no).padStart(2,'0')} ${esc(t[3] ? t[3].replace(/ \(.*\)$/,'')+'형' : t[1])}</span></span>${guessOn() && GUESS[m.id] ? `<span class="gl">${esc(GUESS[m.id])}</span>` : ''}</div>
         <div class="f back"><span class="nm2">${esc(m.name||'')}</span><span class="cd2">${m.code} · #${String(m.no).padStart(2,'0')}</span>${D.revealed && GUESS[m.id] ? `<span class="gr ${GUESS[m.id]===m.name?'ok':'no'}">${GUESS[m.id]===m.name?'✓':'✗ '+esc(GUESS[m.id])}</span>` : ''}</div></div></div>`;
     }).join('');
     const empty = Math.max(0, per - mem.length);
@@ -1285,7 +1347,7 @@ function openSheet(id, refresh){
   const t = TYPES[p.code], taken = p.pick !== null, done = D.status==='done';
   const myTurn = me && !done && me.cap === D.turn;
   let h = `<div class="grab"></div><div class="hd2"><div class="e">${t[0]}</div><div><div class="muted">PLAYER #${String(p.no).padStart(2,'0')}${p.gk?' · 🧤 키퍼 가능':''}</div><div class="c">${p.code}</div><div class="n">${t[1]}</div></div></div><div class="w4" style="justify-content:flex-start;margin-top:8px">${words4(p.code).map((w,i)=>`<span><b>${p.code[i]}</b>${w}</span>`).join('')}</div>
-    ${t[3]?starHTML(t[3],1):''}<div class="muted" style="margin-top:6px;font-size:13px;color:#475467">${t[2]}</div>${showName(p)?`<div class="real" style="margin-top:6px;color:var(--gold);font-weight:700">👤 ${esc(p.name)}</div>`:''}`;
+    ${peerB(p.peer)}${t[3]?starHTML(t[3],1):''}<div class="muted" style="margin-top:6px;font-size:13px;color:#475467">${t[2]}</div>${showName(p)?`<div class="real" style="margin-top:6px;color:var(--gold);font-weight:700">👤 ${esc(p.name)}</div>`:''}`;
   if(p.ans && p.ans.length === QS.length){
     h += '<div class="sec" style="margin-top:16px">평소 이렇게 플레이해요</div>';
     AXES.forEach(ax=>{
@@ -1577,7 +1639,7 @@ function renderBoard(){
   const stat = p => [p.g?p.g+'골':'', p.a?p.a+'도움':'', p.cs?'무실점 '+p.cs:''].filter(Boolean).join(' · ') || '기록 없음';
   const shown = bAll ? R : R.slice(0,7);
   h += `<div class="rk"><h2>PLAYER VALUE<small>선수 가치 순위 · 단위 BP · 정규리그로 이어짐</small></h2>` + shown.map(p=>{ const dv = p.dv||0;
-    return `<div class="row ${p.rank<=3&&p.val>0?'t':''}"><div class="no">${p.rank}</div>${CARD[p.name]?`<img class="th" src="${CARD[p.name]}" alt="">`:''}<div class="nm"><b>${esc(p.name)}${dot(p.name)}</b>${isMvp(p.name)?'<u>MVP</u>':''}<span>${stat(p)} · 출석 ${p.days}</span></div><div class="bp"><b>${won(p.val)}</b>${dv>0?`<span>▲ ${dv.toLocaleString('ko-KR')}</span>`:dv<0?`<span class="dn">▼ ${(-dv).toLocaleString('ko-KR')}</span>`:''}</div></div>`; }).join('') +
+    return `<div class="row ${p.rank<=3&&p.val>0?'t':''}"><div class="no">${p.rank}</div>${CARD[p.name]?`<img class="th" src="${CARD[p.name]}" alt="">`:''}<div class="nm"><b>${esc(p.name)}${dot(p.name)}</b>${isMvp(p.name)?'<u>MVP</u>':''}${p.peer&&PV[p.peer]?`<u class="pvu">${PV[p.peer][0]}</u>`:''}<span>${stat(p)} · 출석 ${p.days}</span></div><div class="bp"><b>${won(p.val)}</b>${dv>0?`<span>▲ ${dv.toLocaleString('ko-KR')}</span>`:dv<0?`<span class="dn">▼ ${(-dv).toLocaleString('ko-KR')}</span>`:''}</div></div>`; }).join('') +
     (R.length>7 ? `<div class="more" onclick="bAll=!bAll;renderBoard()">${bAll?'접기 ▴':`전체 ${R.length}명 보기 ▾`}</div>` : '') +
     `<div class="rk-note">▲▼ = 최근 경기(${mmdd(last.date)}) 변동(만 BP) · 상위 3명은 정규리그 주장 후보</div></div>`;
   const bp = (ic,t,v,sub,cls) => `<div class="bpi ${cls||''}"><i>${ic}</i><div><b>${t}</b>${sub?`<span>${sub}</span>`:''}</div><em>${v}</em></div>`;
@@ -1595,7 +1657,8 @@ function renderBoard(){
     ${bp('🎯','도움','+'+V.assist+'만')}
     ${bp('⭐','오늘의 MVP','+'+V.mvp+'만','그날 BP를 가장 많이 번 선수','hl')}
     <div class="bpl">차감</div>
-    ${bp('💤','결석','−'+V.absent+'만','0 아래로는 안 내려가요','neg')}
+    ${bp('💤','결석', V.absentRate ? '−'+Math.round(V.absentRate*100)+'%' : '−'+V.absent+'만', V.absentRate ? '그때 BP의 '+Math.round(V.absentRate*100)+'% (최소 '+V.absent+'만)' : '0 아래로는 안 내려가요','neg')}
+    ${V.dormantAt?bp('📉', V.dormantAt+'번 연속 결석','−'+Math.round(V.dormantRate*100)+'%', V.dormantAt+'번째부터는 빠질 때마다 절반으로','neg'):''}
     <div class="bpf">BP 상위 3명은 <b>정규리그 주장 후보</b></div>
   </div>`;
   // 골·도움
@@ -1694,7 +1757,8 @@ function ruleHTML(){
     <li>매 경기일 블라인드 드래프트로 3팀을 새로 편성해요.</li>
     <li>하루 9라운드 · 라운드마다 승 3점 / 무 1점 / 패 0점.</li>
     <li>모든 선수는 <b>몸값 0 BP</b>에서 시작해요. 출석·팀 승리·골·도움·무실점으로 오르고, 결석하면 내려가요(0 아래로는 안 내려감).</li>
-    <li>출석 +100만 · 임시 주장 +10만 · 라운드 승 +60만 / 무 +20만 · 골 +60만 · 도움 +30만 · 결석 −50만.</li>
+    <li>출석 +100만 · 임시 주장 +10만 · 라운드 승 +60만 / 무 +20만 · 골 +60만 · 도움 +30만.</li>
+    <li>결석하면 그때 BP의 <b>10%</b>(최소 50만)가 깎이고, <b>4번 연속 결석</b>부터는 빠질 때마다 <b>절반</b>이 깎여요.</li>
     <li><b>무실점 라운드 +60만</b>: 한 골도 안 먹은 라운드는 팀원 전원이 골 1개와 같은 값을 받아요. 수비도 득점만큼 인정!</li>
     <li><b>오늘의 MVP +200만</b>: 그날 몸값을 가장 많이 번 선수에게 추가 지급(동률이면 모두).</li>
     <li><b>몸값 상위 3명</b>이 정규리그 주장 후보 · 정규리그 팀 구성은 몸값을 기준으로 해요.</li>
