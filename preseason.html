@@ -823,6 +823,11 @@ body.hasdock #v-draft{padding-bottom:84px;}
 .sg.k16{padding:8px 2px 7px;} .sg.k16 em{font-family:'Noto Sans KR',sans-serif;font-style:normal;font-weight:900;font-size:13.5px;white-space:nowrap;} .sg.k16 span{font-size:10px;font-weight:500;}
 .tcard .t b.c16s{white-space:nowrap;display:block;overflow:hidden;text-overflow:clip;}
 .pvnote{margin-top:12px;font-size:13.5px;line-height:1.6;color:#475467;background:#f2f4f7;border-radius:10px;padding:10px 12px;}
+.pod{align-items:flex-end;}
+.pod .pc.img{display:flex;flex-direction:column;align-items:center;}
+.pod .pc.img img{width:100%;aspect-ratio:7/10;object-fit:contain;object-position:center bottom;}
+.pod .pc.img b{line-height:1.2;height:18px;} .pod .pc.img em{height:18px;} .pod .pc.img u{position:absolute;top:-6px;right:-4px;margin:0;}
+.pod .pc.img{position:relative;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -1716,8 +1721,17 @@ function trimCard(im){
     for(let px=0;px<W;px++){ st.push(px, px + (H-1)*W); } for(let py=0;py<H;py++){ st.push(py*W, py*W + W-1); }
     while(st.length){ const q = st.pop(); if(seen[q]) continue; seen[q] = 1; if(!blank(q*4)) continue; a[q*4+3] = 0;
       const qx = q % W, qy = (q - qx) / W; if(qx>0) st.push(q-1); if(qx<W-1) st.push(q+1); if(qy>0) st.push(q-W); if(qy<H-1) st.push(q+W); }
-    let x0=W, y0=H, x1=0, y1=0;
-    for(let py=0;py<H;py++) for(let px=0;px<W;px++) if(a[(py*W+px)*4+3] > 40){ if(px<x0)x0=px; if(px>x1)x1=px; if(py<y0)y0=py; if(py>y1)y1=py; }
+    // 카드 테두리 찾기: 옅은 빛 번짐·얼룩은 무시하고, 진한 픽셀이 충분히 있는 줄·칸만 카드로 봄
+    const solid = i => a[i+3] > 150 && !(a[i] > 215 && a[i+1] > 215 && a[i+2] > 215);
+    const col = new Uint16Array(W), row = new Uint16Array(H);
+    for(let py=0;py<H;py++) for(let px=0;px<W;px++) if(solid((py*W+px)*4)){ col[px]++; row[py]++; }
+    let x0=0, x1=W-1, y0=0, y1=H-1; const cm = H*0.12, rm = W*0.12;
+    while(x0 < W-1 && col[x0] < cm) x0++; while(x1 > 0 && col[x1] < cm) x1--;
+    while(y0 < H-1 && row[y0] < rm) y0++; while(y1 > 0 && row[y1] < rm) y1--;
+    // 위·아래 뾰족한 끝은 좁아서 위 기준에 안 걸리므로, 가운데 폭 안에서 진한 픽셀이 있는 곳까지 넓힘
+    const mx0 = Math.round(x0 + (x1-x0)*0.3), mx1 = Math.round(x0 + (x1-x0)*0.7);
+    const has = py => { for(let px=mx0;px<=mx1;px++) if(solid((py*W+px)*4)) return true; return false; };
+    while(y0 > 0 && has(y0-1)) y0--; while(y1 < H-1 && has(y1+1)) y1++;
     if(x1 <= x0 || y1 <= y0) return im.src;
     x.putImageData(d, 0, 0);
     const o = document.createElement('canvas'); o.width = x1-x0+1; o.height = y1-y0+1;
