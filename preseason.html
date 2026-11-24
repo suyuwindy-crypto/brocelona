@@ -822,6 +822,7 @@ body.hasdock #v-draft{padding-bottom:84px;}
 .w4 span{padding:3px 9px;}
 .sg.k16{padding:8px 2px 7px;} .sg.k16 em{font-family:'Noto Sans KR',sans-serif;font-style:normal;font-weight:900;font-size:13.5px;white-space:nowrap;} .sg.k16 span{font-size:10px;font-weight:500;}
 .tcard .t b.c16s{white-space:nowrap;display:block;overflow:hidden;text-overflow:clip;}
+.pvnote{margin-top:12px;font-size:13.5px;line-height:1.6;color:#475467;background:#f2f4f7;border-radius:10px;padding:10px 12px;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -854,7 +855,7 @@ body.hasdock #v-draft{padding-bottom:84px;}
     <div id="t-intro" class="card intro">
       <div style="font-family:'Noto Sans KR';font-size:22px;margin-bottom:8px;">⚽ 풋살 성향 검사</div>
       <ul>
-        <li>18문항 · 약 1분 30초 · <b>포지션 4 × 스타일 4 = 16가지 유형</b></li>
+        <li>내 성향 18문항 + 동료 추천 6문항 · 약 2분 30초 · <b>포지션 4 × 스타일 4 = 16가지 유형</b></li>
         <li>결과와 플레이 스타일이 닮은 <b>레전드 선수</b>도 알려줘요.</li>
         <li><b>하고 싶은 플레이</b>가 아니라 <b>평소 경기에서 실제로 자주 하는 선택</b>을 고르세요.</li>
         <li>정답도, 더 좋은 유형도 없어요. 덤덤하게 고를수록 정확해요.</li>
@@ -864,7 +865,6 @@ body.hasdock #v-draft{padding-bottom:84px;}
         <select id="t-name" class="sel"><option value="">불러오는 중…</option></select></div>
       <button class="btn" style="margin-top:14px;" id="t-start" onclick="startTest()" disabled>검사 시작</button>
       <div class="muted" style="margin-top:10px;text-align:center;" id="t-prev"></div>
-      <button class="btn ghost" style="margin-top:12px" onclick="startVote()">🤝 동료 추천만 하기 (1분)</button>
     </div>
     <div id="t-q" class="card" style="display:none;">
       <div class="qnum" id="q-num"></div>
@@ -877,13 +877,12 @@ body.hasdock #v-draft{padding-bottom:84px;}
       <div class="qnum">LAST</div>
       <div class="qtext">키퍼를 맡아도 괜찮나요?</div>
       <div class="gkrow"><button onclick="setGK(true,this)">🧤 가능</button><button onclick="setGK(false,this)">🙅 웬만하면 필드</button></div>
-      <button class="btn" style="margin-top:16px;" id="gk-next" disabled onclick="finishTest()">결과 보기</button>
+      <button class="btn" style="margin-top:16px;" id="gk-next" disabled onclick="afterGK()">다음 →</button>
     </div>
     <div id="t-res" style="display:none;">
       <div id="res-card"></div>
       <div class="muted" id="res-msg" style="text-align:center;margin:12px 0;"></div>
-      <button class="btn" onclick="startVote()">🤝 동료 추천하기 (1분) →</button>
-      <button class="btn ghost" style="margin-top:8px" onclick="go('draft')">드래프트 보러 가기</button>
+      <button class="btn" onclick="go('draft')">드래프트 보러 가기 →</button>
     </div>
     <div id="t-vote" class="card" style="display:none;"></div>
   </section>
@@ -1107,6 +1106,7 @@ async function finishTest(){
     else if(d.msg==='not_roster') msg.textContent = '⚠️ 이번 경기 참가명단에 없는 이름이라 저장되지 않았어요.';
     else if(d.msg==='already') msg.textContent = '⚠️ 이미 검사를 마친 이름이에요. 처음 제출한 결과가 그대로 쓰여요. (재검사는 운영자에게)';
     else msg.textContent = '저장 실패 — 잠시 후 다시 시도해 주세요.';
+    if(d.msg !== 'not_roster'){ const v = await sendVotes(); if(v) msg.innerHTML += v; }
   }catch(e){ msg.textContent = '네트워크 오류 — 다시 검사하기로 재시도해 주세요.'; }
 }
 /* 결과 표시: 포지션 4개 중 하나 + 스타일 4개 중 하나 */
@@ -1138,45 +1138,38 @@ const PV = { ST:['피보','맨 앞에서 받아 주고 골을 넣는 사람','�
 const PVK = Object.keys(PV);
 function peerB(c){ return c && PV[c] ? `<div class="pvb">${PV[c][2]} 동료 추천 · <b>${PV[c][0]}</b></div>` : ''; }
 let pv = { i:0, picks:{}, roster:[], me:'' };
-async function startVote(){
-  const box = document.getElementById('t-vote'); show('t-vote');
-  box.innerHTML = '<div class="empty">불러오는 중…</div>';
+// 성향 검사 마지막(키퍼 문항) 뒤에 바로 이어지는 단계 — 따로 들어가는 메뉴는 없음
+async function afterGK(){
+  const btn = document.getElementById('gk-next'); btn.disabled = true; btn.textContent = '불러오는 중…';
   let d; try{ d = await api({ action:'psRoster', name: ls.get('ps_name')||'' }); }catch(e){ d = null; }
-  if(!d || d.error || !Array.isArray(d.roster)){ box.innerHTML = '<div class="empty">아직 준비 중이에요. 잠시 뒤 다시 시도해 주세요.</div><button class="btn ghost" onclick="resetTest()">돌아가기</button>'; return; }
-  if(!d.roster.length){ box.innerHTML = '<div class="empty">참가명단이 등록되면 추천할 수 있어요.</div><button class="btn ghost" onclick="resetTest()">돌아가기</button>'; return; }
-  pv = { i:-1, picks:{}, roster:d.roster, me: d.roster.includes(ls.get('ps_name')) ? ls.get('ps_name') : '', voted:d.voted };
-  renderVote();
+  btn.disabled = false; btn.textContent = '다음 →';
+  const me = ls.get('ps_name')||'', roster = (d && Array.isArray(d.roster)) ? d.roster.filter(n=>n!==me) : [];
+  if(roster.length < 2){ pv = { i:0, picks:{}, roster:[], me }; finishTest(); return; }   // 명단이 없으면 추천 단계는 건너뜀
+  pv = { i:0, picks:{}, roster, me };
+  show('t-vote'); renderVote();
 }
 function renderVote(){
-  const box = document.getElementById('t-vote');
-  if(pv.i < 0){   // 안내 + 내 이름 확인
-    box.innerHTML = `<div class="qnum">TEAMMATE PICK</div><div class="qtext">우리 팀의 OO는 누구?</div>
-      <ul class="pvintro"><li>6가지 유형마다 <b>어울리는 사람을 2명까지</b> 골라 주세요.</li><li>누가 누구를 뽑았는지, 몇 표인지는 <b>아무에게도 보이지 않아요.</b></li><li>잘 모르겠으면 건너뛰어도 돼요.</li><li>여러 사람에게 추천받은 선수 카드에는 <b>동료 추천 배지</b>가 붙어요.</li></ul>
-      <label class="lbl" style="margin-top:14px">내 이름</label><select id="pv-me" class="sel"><option value="">이름을 선택하세요</option>${pv.roster.map(n=>`<option ${n===pv.me?'selected':''}>${esc(n)}</option>`).join('')}</select>
-      ${pv.voted?'<div class="muted" style="margin-top:8px">오늘 이미 추천했어요. 다시 내면 오늘 것만 새로 바뀌어요.</div>':''}
-      <button class="btn" style="margin-top:14px" onclick="pvBegin()">시작</button><button class="btn ghost" style="margin-top:8px" onclick="resetTest()">돌아가기</button>`;
-    return;
-  }
-  const k = PVK[pv.i], cur = pv.picks[k] || [];
-  box.innerHTML = `<div class="qnum">${pv.i+1} / ${PVK.length}</div><div class="prog"><i style="width:${(pv.i+1)/PVK.length*100}%"></i></div>
+  const box = document.getElementById('t-vote'), k = PVK[pv.i], cur = pv.picks[k] || [], lastStep = pv.i === PVK.length-1;
+  box.innerHTML = `<div class="qnum">동료 추천 ${pv.i+1} / ${PVK.length}</div><div class="prog"><i style="width:${(pv.i+1)/PVK.length*100}%"></i></div>
+    ${pv.i===0?'<div class="pvnote">마지막 단계! 유형마다 <b>어울리는 동료를 2명까지</b> 골라 주세요. 누가 누구를 뽑았는지는 <b>아무에게도 보이지 않아요.</b></div>':''}
     <div class="pvhead"><span>${PV[k][2]}</span><div><b>${PV[k][0]}</b><em>${PV[k][1]}</em></div></div>
     <div class="muted" style="margin:10px 0 8px">2명까지 선택 · ${cur.length}/2</div>
-    <div class="pvnames">${pv.roster.filter(n=>n!==pv.me).map(n=>`<button class="${cur.includes(n)?'on':''}" onclick="pvPick('${esc(n).replace(/'/g,"\\'")}')">${esc(n)}</button>`).join('')}</div>
-    <button class="btn" style="margin-top:16px" onclick="pvNext()">${cur.length ? (pv.i===PVK.length-1?'제출하기':'다음 →') : (pv.i===PVK.length-1?'건너뛰고 제출':'잘 모르겠어요 · 건너뛰기')}</button>
-    <div class="qnav"><button onclick="pvPrev()">← 이전</button><span class="muted">본인은 고를 수 없어요</span></div>`;
+    <div class="pvnames">${pv.roster.map(n=>`<button class="${cur.includes(n)?'on':''}" onclick="pvPick('${esc(n).replace(/'/g,"\\'")}')">${esc(n)}</button>`).join('')}</div>
+    <button class="btn" style="margin-top:16px" onclick="pvNext()">${lastStep ? '결과 보기' : (cur.length ? '다음 →' : '잘 모르겠어요 · 건너뛰기')}</button>
+    <div class="qnav"><button onclick="pvPrev()">← 이전</button><span class="muted">본인은 목록에 없어요</span></div>`;
 }
-function pvBegin(){ const n = document.getElementById('pv-me').value; if(!n){ toast('내 이름을 선택해 주세요'); return; } pv.me = n; if(!ls.get('ps_name')) ls.set('ps_name', n); pv.i = 0; renderVote(); }
 function pvPick(n){ const k = PVK[pv.i], a = pv.picks[k] || (pv.picks[k] = []), i = a.indexOf(n);
   if(i >= 0) a.splice(i,1); else if(a.length >= 2){ toast('2명까지만 고를 수 있어요'); return; } else a.push(n); renderVote(); }
-function pvPrev(){ pv.i = Math.max(-1, pv.i-1); renderVote(); }
-async function pvNext(){
+function pvPrev(){ if(pv.i === 0){ show('t-gk'); return; } pv.i--; renderVote(); }
+function pvNext(){
   if(pv.i < PVK.length-1){ pv.i++; renderVote(); window.scrollTo({top:0,behavior:'smooth'}); return; }
-  const box = document.getElementById('t-vote'), total = PVK.reduce((n,k)=>n+(pv.picks[k]||[]).length,0);
-  if(!total){ toast('한 명도 고르지 않았어요'); return; }
-  box.innerHTML = '<div class="empty">제출하는 중…</div>';
-  let d; try{ d = await api({ action:'psVote', name:pv.me, votes:JSON.stringify(pv.picks) }); }catch(e){ d = null; }
-  if(!d || !d.ok){ box.innerHTML = `<div class="empty">⚠️ 제출하지 못했어요${d&&d.msg==='not_roster'?' — 참가명단에 없는 이름이에요':''}.<br>잠시 뒤 다시 시도해 주세요.</div><button class="btn" onclick="renderVote()">다시 시도</button>`; return; }
-  box.innerHTML = `<div class="empty" style="font-size:15px">🤝 추천 완료!<br><span style="font-size:13px">${total}명을 추천했어요. 고마워요.</span></div><button class="btn" onclick="go('draft')">드래프트 보러 가기 →</button>`;
+  finishTest();
+}
+// 검사 결과가 저장된 뒤 동료 추천도 함께 저장
+async function sendVotes(){
+  const total = PVK.reduce((n,k)=>n+((pv.picks||{})[k]||[]).length,0); if(!total || !pv.me) return '';
+  try{ const d = await api({ action:'psVote', name:pv.me, votes:JSON.stringify(pv.picks) }); return d && d.ok ? ` · 동료 추천 ${total}명도 저장했어요.` : ' · 동료 추천은 저장하지 못했어요.'; }
+  catch(e){ return ' · 동료 추천은 저장하지 못했어요.'; }
 }
 
 /* ═══ 드래프트 ═══ */
