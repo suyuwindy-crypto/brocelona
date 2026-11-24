@@ -1433,13 +1433,16 @@ function renderAdmin(force){
       `<div style="height:12px"></div><div class="muted">재검사 허용 — 선택한 사람의 결과만 삭제</div>` +
       `<div style="display:flex;gap:6px;margin-top:6px;"><select id="ad-del" class="sel" style="padding:10px;font-size:14px;"><option value="">선택</option>${(D.submitted||[]).map(n=>`<option>${esc(n)}</option>`).join('')}</select>` +
       `<button class="btn ghost" style="width:90px;padding:10px;font-size:13px;" onclick="delOne()">삭제</button></div>` +
-      `<div class="row"><button class="warn" onclick="adminOp('wipe','검사 결과까지 전부 삭제할까요?')">검사 결과 전체 삭제</button></div>`;
+      `<div style="height:10px"></div><div class="muted">매주 새로 검사받으려면 — 지난 검사 결과를 모두 지워요 (동료 추천·BP 기록은 그대로)</div>` +
+      `<div class="row"><button class="warn" onclick="adminOp('wipe','지난 검사 결과를 모두 지우고 새 주차를 시작할까요?')">🆕 새 주차 시작 (지난 검사 결과 지우기)</button></div>`;
   } else {
     h += '<div class="muted">주장에게 각자 PIN을 알려주세요</div><div class="pins">' + D.captains.map((c,i)=>`<div class="${TEAM_CLS[i]}">${esc(c)}<b>${(D.pins||[])[i]||'----'}</b></div>`).join('') + '</div>' +
       `<div class="row"><button onclick="adminPeek=!adminPeek;renderAdmin(true);renderDraft()">${adminPeek?'🙈 내 화면 이름 숨기기':'🔍 내 화면에서만 이름 보기'}</button></div>` +
       `<div class="muted" style="margin-top:4px">화면 공유로 중계할 땐 숨김 상태로 두세요</div>` +
       `<div class="row"><button onclick="adminOp('${D.revealed?'hide':'reveal'}')">${D.revealed?'🂠 카드 다시 덮기':'🃏 결과 확인 (카드 뒤집기)'}</button><button onclick="adminOp('undo','마지막 픽을 취소할까요?')">↩️ 마지막 픽 취소</button></div>` +
-      `<div class="row"><button class="warn" onclick="adminOp('reset','드래프트를 초기화할까요? (검사 결과는 유지)')">드래프트 초기화</button></div>`;
+      `<div style="height:10px"></div><div class="muted">이번 주가 끝났으면 ↓ (드래프트와 지난 검사 결과를 지움 · 동료 추천·BP 기록은 그대로)</div>` +
+      `<div class="row"><button class="warn" onclick="adminOp('wipe','이번 드래프트와 검사 결과를 모두 지우고 새 주차를 시작할까요?')">🆕 새 주차 시작</button></div>` +
+      `<div class="row"><button class="btn ghost" style="font-size:13px" onclick="adminOp('reset','같은 검사 결과로 드래프트만 처음부터 다시 할까요?')">드래프트만 다시 하기 (검사 결과 유지)</button></div>`;
   }
   a.innerHTML = h;
 }
