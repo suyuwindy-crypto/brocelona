@@ -862,6 +862,12 @@ body.hasdock #v-draft{padding-bottom:84px;}
 .gg-names button.used{opacity:.35;} .gg-names button.on{background:#22c55e;border-color:#22c55e;color:#04200f;opacity:1;}
 .gg-nav{display:flex;gap:8px;margin-top:14px;} .gg-nav button{flex:1;padding:13px;border-radius:12px;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:14px;font-weight:800;font-family:'Noto Sans KR',sans-serif;} .gg-nav button:last-child{background:#fff;color:#0b1f4b;} .gg-nav button:disabled{opacity:.3;}
 .gg-tip{font-size:11px;opacity:.55;text-align:center;margin-top:10px;}
+
+/* 대시보드 안쪽 탭 */
+.btabs{position:sticky;top:54px;z-index:5;display:flex;gap:6px;overflow-x:auto;margin:0 -12px 12px;padding:10px 12px;background:#0a1f2b;scrollbar-width:none;}
+.btabs::-webkit-scrollbar{display:none;}
+.btabs button{flex:1 0 auto;padding:8px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.8);font-size:13.5px;font-weight:800;font-family:'Noto Sans KR',sans-serif;}
+.btabs button.on{background:#22c55e;border-color:#22c55e;color:#04200f;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -1820,7 +1826,7 @@ function renderBoard(){
   const pod = (p,cls) => !p ? '' : (CARD[p.name]
     ? `<div class="pc img ${cls}"><img src="${CARD[p.name]}" alt=""><b>${esc(p.name)}</b><em>${won(p.val)}<small> BP</small></em>${isMvp(p.name)?'<u>MVP</u>':''}</div>`
     : `<div class="pc ${cls}"><i>${p.rank}</i>${dot(p.name)}<b>${esc(p.name)}</b><em>${won(p.val)}<small> BP</small></em>${isMvp(p.name)?'<u>MVP</u>':''}</div>`);
-  let h = `<div class="hero"><div class="h-top"><small>PRE-SEASON · MATCHDAY ${B.days.length}</small><h1>TOP 3 PLAYERS</h1></div>
+  let h = '\u0001rank\u0001' + `<div class="hero"><div class="h-top"><small>PRE-SEASON · MATCHDAY ${B.days.length}</small><h1>TOP 3 PLAYERS</h1></div>
     <div class="pod">${pod(R[1],'r2')}${pod(R[0],'r1')}${pod(R[2],'r3')}</div>
     <div class="kp"><div><b>${B.players.length}</b><span>참가 선수</span></div><div><b>${rounds}</b><span>라운드</span></div><div><b>${goalsAll}</b><span>총 득점</span></div></div></div>`;
   // 순위표: 한 줄에 한 명
@@ -1831,6 +1837,7 @@ function renderBoard(){
     (R.length>7 ? `<div class="more" onclick="bAll=!bAll;renderBoard()">${bAll?'접기 ▴':`전체 ${R.length}명 보기 ▾`}</div>` : '') +
     `<div class="rk-note">▲▼ = 최근 경기(${mmdd(last.date)}) 변동(만 BP) · 상위 3명은 정규리그 주장 후보</div></div>`;
   const bp = (ic,t,v,sub,cls) => `<div class="bpi ${cls||''}"><i>${ic}</i><div><b>${t}</b>${sub?`<span>${sub}</span>`:''}</div><em>${v}</em></div>`;
+  h += '\u0001bp\u0001';
   h += `<div class="sec">BP 이렇게 쌓여요</div><div class="sc bpg">
     <div class="bph">모두 <b>0 BP</b>에서 시작 · 경기마다 아래 금액이 더해져요</div>
     <div class="bpl">기본</div>
@@ -1854,12 +1861,14 @@ function renderBoard(){
   const GB = B.guess || { weeks:[], total:[] };
   if(GB.total.length){
     const lw = GB.weeks[GB.weeks.length-1], medal = i => ['🥇','🥈','🥉'][i] || (i+1)+'.';
+    h += '\u0001guess\u0001';
     h += '<div class="sec">MY GUESS 랭킹 · 이름 맞추기</div><div class="mini2"><div class="sc box"><h5>🎯 최근 (' + mmdd(lw.date) + ')</h5>' +
       lw.list.slice(0,8).map((p,i)=>`<div class="li"><span>${medal(i)} ${esc(p.name)}</span><b>${p.ok}<small>/${p.total}</small></b></div>`).join('') +
       '</div><div class="sc box"><h5>🏆 누적 맞춘 수</h5>' +
       GB.total.slice(0,8).map((p,i)=>`<div class="li"><span>${medal(i)} ${esc(p.name)}</span><b>${p.ok}<small> · ${p.n}회</small></b></div>`).join('') + '</div></div>' +
       '<div class="bnote" style="margin:6px 4px 0">드래프트 카드가 공개되면 내 추측이 자동으로 채점돼 올라가요 · 누적은 주차별 맞춘 수의 합</div>';
   }
+  h += '\u0001match\u0001';
   if(tg.length || ta.length) h += '<div class="sec">골 · 도움 TOP 5</div><div class="mini2"><div class="sc box"><h5>⚽ 골</h5>' + (tg.map(p=>`<div class="li"><span>${esc(p.name)}</span><b>${p.g}</b></div>`).join('')||'<div class="muted">-</div>') +
     '</div><div class="sc box"><h5>🅰️ 도움</h5>' + (ta.map(p=>`<div class="li"><span>${esc(p.name)}</span><b>${p.a}</b></div>`).join('')||'<div class="muted">-</div>') + '</div></div>';
   // 경기일별
@@ -1873,8 +1882,13 @@ function renderBoard(){
     h += '</div>' + matchHTML(D0) + '<div style="display:none">';
     h += '</div>';
   }
-  el.innerHTML = h + ruleHTML();
+  // 대시보드를 작은 탭으로 나눠서 한 번에 한 묶음만 보여줌 (스크롤 줄이기)
+  const parts = {}; String(h + '\u0001bp\u0001' + ruleHTML()).split('\u0001').forEach((x,i,a)=>{ if(i%2===1) parts[x] = (parts[x]||'') + (a[i+1]||''); });
+  const tabs = [['rank','🏆 순위'],['match','⚽ 경기'],['guess','🎯 맞추기'],['bp','📘 BP·규정']].filter(t=>parts[t[0]]);
+  if(!parts[bTab]) bTab = 'rank';
+  el.innerHTML = `<div class="btabs">${tabs.map(t=>`<button class="${t[0]===bTab?'on':''}" onclick="bTab='${t[0]}';renderBoard();window.scrollTo({top:0})">${t[1]}</button>`).join('')}</div>` + parts[bTab];
 }
+let bTab = 'rank';
 function won(v){ v = Number(v)||0; if(!v) return '0'; const e = Math.floor(v/10000), m = v%10000; return (e ? e + '억' + (m ? ' ' : '') : '') + (m ? m.toLocaleString('ko-KR') + '만' : ''); }   // 단위: 만 BP
 /* ── 라운드 경기 화면: 위에 구장+스코어, 아래 가운데 선을 기준으로 왼쪽 팀 / 오른쪽 팀 득점 ── */
 let bRound = {}, bAll = false;
@@ -2098,7 +2112,7 @@ function go(v){
 }
 initTest();
 // 폰 브라우저가 예전 페이지를 붙잡고 있을 때: 서버의 최신 페이지와 버전이 다르면 한 번 새로 불러옴
-const PAGE_VER = '2026-11-26d';
+const PAGE_VER = '2026-11-26e';
 (async()=>{ try{
   const t = await fetch(location.pathname + '?vc=' + Date.now(), { cache:'no-store' }).then(r=>r.text());
   const m = t.match(/const PAGE_VER = '([^']+)'/);
