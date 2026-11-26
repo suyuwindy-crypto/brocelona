@@ -1304,7 +1304,7 @@ function renderDraft(){
   h += '<div class="pool">' + list.map(p=>{
     const t = TYPES[p.code], taken = p.pick !== null; let dt;
     return `<div class="pc ${taken?'taken':''}" id="pc-${p.id}" onclick="openSheet('${p.id}')"><div class="no">PLAYER #${String(p.no).padStart(2,'0')}</div><div class="em">${t[0]}</div>
-      <div class="cd c16">${lab16(p.code)}${p.late?'<span class="dup late">늦은 합류</span>':''}${(dt=diffTags(p))?`<span class="dup">같은 유형 ${dt.n}명</span>`:''}</div>${peerB(p.peer)}<div class="w4s">${words4(p.code).join(' · ')}</div>${t[3]?`<div class="st2">${FLAG[t[3]]||'⚽'} ${esc(t[3])} 스타일</div>`:''}<div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
+      <div class="cd c16">${lab16(p.code)}${(dt=diffTags(p))?`<span class="dup">같은 유형 ${dt.n}명</span>`:''}</div>${peerB(p.peer)}<div class="w4s">${words4(p.code).join(' · ')}</div>${t[3]?`<div class="st2">${FLAG[t[3]]||'⚽'} ${esc(t[3])} 스타일</div>`:''}<div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
       ${dt?`<div class="diff">${dt.tags.length?dt.tags.map(x=>`<span>✦ ${x.txt}</span>`).join(''):'<span>✦ 같은 유형과 응답이 완전히 같아요</span>'}</div>`:''}
       ${miniBars(p.scores||{}, p.code)}${showName(p)?`<div class="real">👤 ${esc(p.name)}</div>`:''}
       ${taken?`<div class="tag ${TEAM_CLS[p.pick]}">${TEAM_LBL[p.pick]}</div>`:(myTurn?`<button class="pickbtn" onclick="event.stopPropagation();pick('${p.id}',${p.no})">이 선수 픽</button>`:'')}${p.ans?'<div class="more">평소 습관 18가지 보기 ›</div>':''}</div>`;
@@ -1505,7 +1505,10 @@ function renderAdmin(force){
       `<div style="height:10px"></div><div class="muted">매주 새로 검사받으려면 — 지난 검사 결과를 모두 지워요 (동료 추천·BP 기록은 그대로)</div>` +
       `<div class="row"><button class="warn" onclick="adminOp('wipe','지난 검사 결과를 모두 지우고 새 주차를 시작할까요?')">🆕 새 주차 시작 (지난 검사 결과 지우기)</button></div>`;
   } else {
-    h += '<div class="muted">주장에게 각자 PIN을 알려주세요</div><div class="pins">' + D.captains.map((c,i)=>`<div class="${TEAM_CLS[i]}">${esc(c)}<b>${(D.pins||[])[i]||'----'}</b></div>`).join('') + '</div>' +
+    h += (D.revealed ? '' : `<div class="muted">늦게 온 사람 명단에 추가 → 그 사람이 성향 검사를 하면 카드가 풀 맨 뒤에 들어가요</div>
+      <div style="display:flex;gap:6px;margin:6px 0 14px;"><input id="ad-late" class="sel" style="padding:10px;font-size:15px" placeholder="이름 (여러 명은 쉼표로)">
+      <button class="btn" style="width:90px;padding:10px;font-size:13px" onclick="addLate()">추가</button></div>`) +
+      '<div class="muted">주장에게 각자 PIN을 알려주세요</div><div class="pins">' + D.captains.map((c,i)=>`<div class="${TEAM_CLS[i]}">${esc(c)}<b>${(D.pins||[])[i]||'----'}</b></div>`).join('') + '</div>' +
       (adminBlind ? '' : `<div class="row"><button onclick="adminPeek=!adminPeek;renderAdmin(true);renderDraft()">${adminPeek?'🙈 내 화면 이름 숨기기':'🔍 내 화면에서만 이름 보기'}</button></div>` +
       `<div class="muted" style="margin-top:4px">화면 공유로 중계할 땐 숨김 상태로 두세요</div>`) +
       `<div class="row"><button onclick="adminOp('${D.revealed?'hide':'reveal'}')">${D.revealed?'🂠 카드 다시 덮기':'🃏 결과 확인 (카드 뒤집기)'}</button><button onclick="adminOp('undo','마지막 픽을 취소할까요?')">↩️ 마지막 픽 취소</button></div>` +
@@ -1535,6 +1538,18 @@ function capCandidates(){
 }
 function toggleCapIdx(i){ const c = capCandidates()[i]; if(c) toggleCap(c[0]); }
 function toggleCap(n){ const i = capSel.indexOf(n); if(i>=0) capSel.splice(i,1); else if(capSel.length<3) capSel.push(n); renderAdmin(); }
+// 드래프트 중 명단 추가: 지금 명단을 불러와 새 이름을 붙여서 저장
+async function addLate(){
+  const el = document.getElementById('ad-late'), add = (el.value||'').split(/[,\n]/).map(x=>x.trim()).filter(Boolean);
+  if(!add.length){ toast('이름을 입력해 주세요'); return; }
+  let r; try{ r = await api({ action:'psRoster', name:'' }); }catch(e){ r = null; }
+  if(!r || !Array.isArray(r.roster)){ toast('명단을 불러오지 못했어요'); return; }
+  const fresh = add.filter(n=>!r.roster.includes(n));
+  if(!fresh.length){ toast('이미 명단에 있어요'); el.value=''; return; }
+  const d = await api({ action:'psAdmin', admin:adminPw, op:'roster', names: r.roster.concat(fresh).join(',') });
+  if(d && d.ok){ el.value = ''; toast(fresh.join(', ') + ' 추가! 이제 성향 검사하면 카드가 들어가요'); }
+  else toast('추가하지 못했어요');
+}
 async function setupDraft(){
   if(!confirm(`주장: ${capSel.join(', ')}\n드래프트를 시작할까요? 시작 후에는 검사 제출이 막혀요.`)) return;
   const d = await api({ action:'psSetup', admin:adminPw, captains:capSel.join(',') });
