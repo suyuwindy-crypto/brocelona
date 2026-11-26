@@ -886,6 +886,15 @@ body.hasdock #v-draft{padding-bottom:84px;}
 #ggame .gchips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;max-height:30vh;overflow-y:auto;}
 #ggame .gchip{padding:8px 11px;border-radius:999px;background:#fff;color:#0b1f4b;font-size:14px;font-weight:800;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
 #ggame .gchip.used{opacity:.35;} #ggame .gchip.sel{background:#22c55e;color:#04200f;}
+
+#ggd{position:absolute;inset:0;z-index:5;display:none;align-items:flex-end;justify-content:center;background:rgba(5,16,24,.96);}
+#ggd.on{display:flex;}
+.ggd-in{width:100%;max-height:92%;overflow-y:auto;padding:0 12px calc(14px + env(safe-area-inset-bottom));animation:shUp .2s ease-out;}
+.ggd-in .gg-card{margin-top:10px;}
+.ggd-names{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;}
+.ggd-names button{padding:10px 2px;border-radius:9px;border:1.5px solid rgba(255,255,255,.22);background:#16323c;color:#fff;font-size:14px;font-weight:800;font-family:'Noto Sans KR',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ggd-names button.used{opacity:.35;} .ggd-names button.on{background:#22c55e;border-color:#22c55e;color:#04200f;opacity:1;}
+.ggd-btns{display:flex;gap:8px;margin-top:10px;} .ggd-btns button{flex:1;padding:12px;border-radius:11px;border:0;background:rgba(255,255,255,.12);color:#fff;font-weight:800;font-size:14px;font-family:'Noto Sans KR',sans-serif;} .ggd-btns button.cl{background:#fff;color:#0b1f4b;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -1701,14 +1710,36 @@ function renderGame(){
   g.innerHTML = `<div class="gg-top"><button onclick="closeGame()">✕</button><div><b>${done}</b> / ${cs.length} 연결</div><button class="gg-clr" onclick="if(confirm('추측을 전부 지울까요?')){GUESS={};saveGuess();renderGame();}">초기화</button></div>
     <div class="gg-bar"><i style="width:${Math.round(done/cs.length*100)}%"></i></div>
     <div class="gg-board">${[0,1,2].map(k=>`<div class="gg-col ${TEAM_CLS[k]}"><div class="gg-h">${esc(D.captains[k]||'')}<small>${TEAM_LBL[k]}</small></div>${col(k)}</div>`).join('')}</div>
-    <div class="gg-dock"><div class="gg-hint">${gSel ? `<b>${esc(gSel)}</b> 선택됨 → 카드를 누르세요` : '이름을 <b>카드 위로 끌어다 놓거나</b>, 이름을 누른 뒤 카드를 누르세요 · 카드를 다시 누르면 지워져요'}</div>
+    <div class="gg-dock"><div class="gg-hint">${gSel ? `<b>${esc(gSel)}</b> 선택됨 → 카드를 누르세요` : '이름을 <b>카드 위로 끌어다 놓으세요</b> · 카드를 누르면 <b>크게 보면서</b> 고를 수 있어요'}</div>
       <div class="gchips">${D.nameList.map(n=>`<span class="gchip ${used.has(n)?'used':''} ${gSel===n?'sel':''}" data-n="${esc(n)}">${esc(n)}</span>`).join('')}</div></div>`;
   g.querySelector('.gg-board').scrollTop = keep;
+  const old = document.getElementById('ggd'); if(old && !g.contains(old)) old.remove();
 }
 function gameTap(id){
   if(gSel){ Object.keys(GUESS).forEach(k=>{ if(GUESS[k]===gSel) delete GUESS[k]; }); GUESS[id] = gSel; gSel = null; saveGuess(); renderGame(); return; }
-  if(GUESS[id]){ delete GUESS[id]; saveGuess(); renderGame(); toast('추측을 지웠어요'); return; }
-  toast('아래에서 이름을 먼저 고르거나 끌어다 놓으세요');
+  gameDetail(id);
+}
+// 카드를 누르면 크게 펼쳐서 자세히 보고, 거기서 바로 이름을 고를 수 있음
+function gameDetail(id){
+  const g = document.getElementById('ggame'), c = D.pool.find(x=>x.id===id); if(!g || !c) return;
+  const t = TYPES[c.code], pp = peerP(c.peer), used = {}; Object.keys(GUESS).forEach(k=>{ used[GUESS[k]] = k; });
+  let m = document.getElementById('ggd'); if(!m){ m = document.createElement('div'); m.id = 'ggd'; g.appendChild(m); }
+  m.innerHTML = `<div class="ggd-in"><div class="gg-card ${TEAM_CLS[c.pick]||''}">
+      <div class="gg-tm">${TEAM_LBL[c.pick]||''} · ${c.pickNo}번째 픽</div>
+      <div class="gg-emo">${t[0]}</div><div class="gg-type">${t[1]}</div>
+      <div class="gg-w">${words4(c.code).map(w=>`<span>${w}</span>`).join('')}</div>
+      <div class="gg-d">${t[2]}</div>
+      <div class="gg-x">${c.gk?'<span>🧤 키퍼 가능</span>':''}${pp.pos.length?`<span>${pp.pos.map(k=>PV[k][2]).join('')} 동료 추천 · ${pp.pos.map(k=>PV[k][0]).join(' / ')}</span>`:''}${pp.cp?'<span>📣 캡틴</span>':''}${t[3]?`<span>${FLAG[t[3]]||'⚽'} ${esc(t[3])}형</span>`:''}</div>
+      <div class="gg-me">${GUESS[c.id] ? `내 추측 <b>${esc(GUESS[c.id])}</b>` : '이 카드의 주인은?'}</div></div>
+    <div class="ggd-names">${D.nameList.map(n=>`<button class="${GUESS[c.id]===n?'on':''} ${used[n]&&used[n]!==c.id?'used':''}" onclick="gameSet('${c.id}','${esc(n).replace(/'/g,"\\'")}')">${esc(n)}</button>`).join('')}</div>
+    <div class="ggd-btns">${GUESS[c.id]?`<button onclick="gameSet('${c.id}','')">추측 지우기</button>`:''}<button class="cl" onclick="document.getElementById('ggd').classList.remove('on')">닫기</button></div></div>`;
+  m.onclick = e => { if(e.target === m) m.classList.remove('on'); };
+  m.classList.add('on');
+}
+function gameSet(id, n){
+  Object.keys(GUESS).forEach(k=>{ if(GUESS[k]===n) delete GUESS[k]; });
+  if(n) GUESS[id] = n; else delete GUESS[id];
+  saveGuess(); const m = document.getElementById('ggd'); if(m) m.classList.remove('on'); renderGame();
 }
 function assignGuess(id, nm){
   Object.keys(GUESS).forEach(k=>{ if(GUESS[k]===nm) delete GUESS[k]; });  // 한 이름은 한 카드에만
@@ -2125,7 +2156,7 @@ function go(v){
 }
 initTest();
 // 폰 브라우저가 예전 페이지를 붙잡고 있을 때: 서버의 최신 페이지와 버전이 다르면 한 번 새로 불러옴
-const PAGE_VER = '2026-11-26f';
+const PAGE_VER = '2026-11-26g';
 (async()=>{ try{
   const t = await fetch(location.pathname + '?vc=' + Date.now(), { cache:'no-store' }).then(r=>r.text());
   const m = t.match(/const PAGE_VER = '([^']+)'/);
