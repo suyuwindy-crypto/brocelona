@@ -1172,8 +1172,10 @@ function showResult(r, fromPrev){
 // 내가 동료들에게 받은 추천 배지 (본인 답과 나란히 보여줌 · 득표수는 보여주지 않음)
 async function myPeer(name){
   const set = h => { const el = document.getElementById('res-peer'); if(el) el.innerHTML = h; };
-  let d; try{ d = await api({ action:'pbBoard' }); }catch(e){ d = null; }
-  const key = String(name||'').replace(/\s+/g,''), me = d && Array.isArray(d.players) ? d.players.find(p=>p.name === key) : null;
+  let d; try{ d = await api({ action:'psMyPeer', name: name||'' }); }catch(e){ d = null; }
+  if(!d || !d.ok){ set(''); return; }
+  if(d.hidden){ set('<span>동료 추천 배지는 드래프트 결과가 공개된 뒤에 볼 수 있어요</span>'); return; }
+  const me = { peer: d.peer };
   const pp = peerP(me && me.peer);
   if(pp.pos.length || pp.cp) set((pp.pos.length ? `<span class="on">${pp.pos.map(k=>PV[k][2]).join('')} 동료들이 본 나 · <b>${pp.pos.map(k=>PV[k][0]).join(' / ')}</b></span>` : '') + (pp.cp ? ` <span class="on cp">${PV.CP[2]} <b>캡틴</b></span>` : '') +
     `<em>${pp.pos.length ? pp.pos.map(k=>PV[k][1]).join(' · ') : PV.CP[1]}</em>`);
