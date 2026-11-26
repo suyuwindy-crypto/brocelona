@@ -831,6 +831,12 @@ body.hasdock #v-draft{padding-bottom:84px;}
 .blindbar{font-size:12.5px;color:#475467;background:#f2f4f7;border-radius:10px;padding:9px 11px;margin:6px 0 12px;line-height:1.5;} .blindbar a{color:var(--navy);font-weight:800;margin-left:4px;} .blindbar.on{background:#0b1f4b;color:#fff;} .blindbar.on a{color:#7dffb4;}
 .respeer{margin:12px 0 2px;font-size:12.5px;color:#667085;} .respeer span{display:inline-block;border:1px solid #d0d5dd;color:#475467;border-radius:999px;padding:5px 12px;font-weight:700;}
 .respeer span.on{background:#22c55e;border-color:#22c55e;color:#fff;font-size:14px;} .respeer span.on b{font-weight:900;} .respeer em{display:block;font-style:normal;font-size:11.5px;margin-top:5px;opacity:.85;}
+
+.pvw{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 2px;} .pvw .pvb{margin:0;} .pvb.cp{color:#7a4b00;background:#fff3d6;border-color:#f0d08a;}
+.respeer span.on.cp{background:#f5b301;border-color:#f5b301;color:#3a2600;}
+.greg{font-size:12px;color:var(--dim);margin-top:8px;} .greg.ok{color:#0b7a3e;font-weight:700;}
+.mini2 .li b small{font-family:'Noto Sans KR',sans-serif;font-style:normal;font-weight:500;font-size:10.5px;opacity:.7;}
+.mini2 .li span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -1168,7 +1174,9 @@ async function myPeer(name){
   const set = h => { const el = document.getElementById('res-peer'); if(el) el.innerHTML = h; };
   let d; try{ d = await api({ action:'pbBoard' }); }catch(e){ d = null; }
   const key = String(name||'').replace(/\s+/g,''), me = d && Array.isArray(d.players) ? d.players.find(p=>p.name === key) : null;
-  if(me && me.peer && PV[me.peer]) set(`<span class="on">${PV[me.peer][2]} 동료들이 본 나 · <b>${PV[me.peer][0]}</b></span><em>${PV[me.peer][1]}</em>`);
+  const pp = peerP(me && me.peer);
+  if(pp.pos.length || pp.cp) set((pp.pos.length ? `<span class="on">${pp.pos.map(k=>PV[k][2]).join('')} 동료들이 본 나 · <b>${pp.pos.map(k=>PV[k][0]).join(' / ')}</b></span>` : '') + (pp.cp ? ` <span class="on cp">${PV.CP[2]} <b>캡틴</b></span>` : '') +
+    `<em>${pp.pos.length ? pp.pos.map(k=>PV[k][1]).join(' · ') : PV.CP[1]}</em>`);
   else set('<span>동료 추천 배지는 아직 없어요</span><em>한 유형에서 3표 이상 모이면 여기에 붙어요 · 표는 매주 쌓여요</em>');
 }
 function resetTest(){ saveProg(''); show('t-intro'); }
@@ -1177,7 +1185,12 @@ function resetTest(){ saveProg(''); show('t-intro'); }
 const PV = { ST:['피보','맨 앞에서 받아 주고 골을 넣는 사람','🎯'], PM:['아라','측면에서 흔들고 이어 주는 사람','⚡'], SW:['픽소','맨 뒤에서 든든하게 막고 풀어 주는 사람','🛡️'],
              BW:['골레이로','골문을 맡기면 제일 믿음직한 사람','🧤'], BB:['유니버설','어느 자리에 세워도 잘하는 사람','🔗'], CP:['캡틴','말과 리딩으로 팀을 움직이는 사람','📣'] };
 const PVK = Object.keys(PV);
-function peerB(c){ return c && PV[c] ? `<div class="pvb">${PV[c][2]} 동료 추천 · <b>${PV[c][0]}</b></div>` : ''; }
+// 서버 배지 문자열 풀기: 'ST+SW|CP' → 포지션 [ST,SW] + 캡틴
+function peerP(c){ const [a,b] = String(c||'').split('|'); return { pos:(a ? a.split('+') : []).filter(k=>PV[k] && k!=='CP'), cp: b==='CP' || a==='CP' }; }
+function peerIcons(c){ const p = peerP(c); return p.pos.map(k=>PV[k][2]).join('') + (p.cp ? PV.CP[2] : ''); }
+function peerShort(c){ const p = peerP(c); return [p.pos.map(k=>PV[k][0]).join('/'), p.cp ? '캡틴' : ''].filter(Boolean).join(' · '); }
+function peerB(c){ const p = peerP(c); if(!p.pos.length && !p.cp) return '';
+  return '<div class="pvw">' + (p.pos.length ? `<span class="pvb">${p.pos.map(k=>PV[k][2]).join('')} 동료 추천 · <b>${p.pos.map(k=>PV[k][0]).join(' / ')}</b></span>` : '') + (p.cp ? `<span class="pvb cp">${PV.CP[2]} <b>캡틴</b></span>` : '') + '</div>'; }
 let pv = { i:0, picks:{}, roster:[], me:'' };
 // 성향 검사 마지막(키퍼 문항) 뒤에 바로 이어지는 단계 — 따로 들어가는 메뉴는 없음
 async function afterGK(){
@@ -1378,7 +1391,7 @@ function teamsHTML(done, turn){
     const cards = mem.map((m,k)=>{
       const t = TYPES[m.code], isNew = !seenPicks.has(m.id), flip = showName(m) && (!flipAnim || flipDone.has(m.id));
       return `<div class="tcard ${flip?'flip':''} ${isNew?'new':''}" data-id="${m.id}" data-k="${m.pickNo}" onclick="cardTap('${m.id}')"><div class="in">
-        <div class="f front"><span class="e">${t[0]}</span><span class="t"><b class="c16s">${lab16(m.code,1)}</b><span>${m.gk?'🧤':''}${m.peer&&PV[m.peer]?PV[m.peer][2]:''}#${String(m.no).padStart(2,'0')} ${esc(t[3] ? t[3].replace(/ \(.*\)$/,'')+'형' : t[1])}</span></span>${guessOn() && GUESS[m.id] ? `<span class="gl">${esc(GUESS[m.id])}</span>` : ''}</div>
+        <div class="f front"><span class="e">${t[0]}</span><span class="t"><b class="c16s">${lab16(m.code,1)}</b><span>${m.gk?'🧤':''}${peerIcons(m.peer)}#${String(m.no).padStart(2,'0')} ${esc(t[3] ? t[3].replace(/ \(.*\)$/,'')+'형' : t[1])}</span></span>${guessOn() && GUESS[m.id] ? `<span class="gl">${esc(GUESS[m.id])}</span>` : ''}</div>
         <div class="f back"><span class="nm2">${esc(m.name||'')}</span><span class="cd2">${lab16(m.code,1)} · #${String(m.no).padStart(2,'0')}</span>${D.revealed && GUESS[m.id] ? `<span class="gr ${GUESS[m.id]===m.name?'ok':'no'}">${GUESS[m.id]===m.name?'✓':'✗ '+esc(GUESS[m.id])}</span>` : ''}</div></div></div>`;
     }).join('');
     const empty = Math.max(0, per - mem.length);
@@ -1544,7 +1557,13 @@ function guessHTML(){
     const tried = Object.keys(GUESS).length;
     if(!tried) return `<div class="sc gscore"><div class="gt" style="font-size:11px;color:var(--dim);letter-spacing:2px">MY GUESS RESULT</div><div class="muted" style="padding:6px 0 2px;line-height:1.6">이 기기에는 추측 기록이 없어요.<br>추측했던 폰·브라우저(카톡 안에서 열었다면 카톡)로 다시 열면 점수가 나와요.</div></div>`;
     const hit = D.pool.filter(p=>GUESS[p.id] && GUESS[p.id]===p.name).length;
+    sendGuess();
+    const gk = guessKey(), sent = ls.get('ps_gsent') === gk;
+    const reg = sent ? '<div class="greg ok">🏆 MY GUESS 랭킹에 자동으로 올라갔어요 · 대시보드에서 확인</div>'
+      : (ls.get('ps_name') ? '<div class="greg">랭킹에 올리는 중…</div>'
+        : `<div class="greg">랭킹에 올리려면 내 이름을 골라 주세요</div><div style="display:flex;gap:6px;margin-top:6px"><select id="g-name" class="sel" style="padding:10px;font-size:14px"><option value="">이름 선택</option>${D.captains.concat(D.nameList).map(n=>`<option>${esc(n)}</option>`).join('')}</select><button class="btn" style="width:110px;padding:10px;font-size:13px" onclick="regGuess()">올리기</button></div>`);
     return `<div class="sc gscore"><div class="gt" style="font-size:11px;color:var(--dim);letter-spacing:2px">MY GUESS RESULT</div><b>${hit} / ${D.pool.length}</b><div class="muted">명 맞췄어요 ${gradeOf(hit)}</div>
+      ${reg}
       <div class="gshare-hint">📸 내 점수를 단톡방에 자랑해 주세요!</div>
       <button class="btn" style="margin-top:8px" onclick="shareScore()">💬 카톡방에 점수 공유하기</button></div>`;
   }
@@ -1569,6 +1588,17 @@ function renderDock(){
   d.querySelector('.gchips').scrollLeft = gSel ? keep : 0;
   document.body.classList.add('hasdock');
 }
+// 공개된 뒤 내 추측을 서버로 보내 채점·기록 (드래프트마다 한 번 · 이름은 성향 검사 때 고른 이름)
+function guessKey(){ return (D && D.pool && D.pool[0]) ? (D.started||'') + ':' + D.pool[0].id : ''; }
+let gSending = false;
+async function sendGuess(name){
+  name = name || ls.get('ps_name') || ''; const key = guessKey();
+  if(!name || !key || gSending || ls.get('ps_gsent') === key || !D.revealed || !Object.keys(GUESS).length) return;
+  gSending = true;
+  try{ const d = await api({ action:'psGuess', name, g: JSON.stringify(GUESS) }); if(d && d.ok){ ls.set('ps_gsent', key); if(document.getElementById('d-body')) renderDraft(); } }catch(e){}
+  gSending = false;
+}
+function regGuess(){ const n = (document.getElementById('g-name')||{}).value; if(!n){ toast('이름을 골라 주세요'); return; } sendGuess(n); }
 function assignGuess(id, nm){
   Object.keys(GUESS).forEach(k=>{ if(GUESS[k]===nm) delete GUESS[k]; });  // 한 이름은 한 카드에만
   GUESS[id] = nm; gSel = null; saveGuess(); renderDraft();
@@ -1702,7 +1732,7 @@ function renderBoard(){
   const stat = p => [p.g?p.g+'골':'', p.a?p.a+'도움':'', p.cs?'무실점 '+p.cs:''].filter(Boolean).join(' · ') || '기록 없음';
   const shown = bAll ? R : R.slice(0,7);
   h += `<div class="rk"><h2>PLAYER VALUE<small>선수 가치 순위 · 단위 BP · 정규리그로 이어짐</small></h2>` + shown.map(p=>{ const dv = p.dv||0;
-    return `<div class="row ${p.rank<=3&&p.val>0?'t':''}"><div class="no">${p.rank}</div>${CARD[p.name]?`<img class="th" src="${CARD[p.name]}" alt="">`:''}<div class="nm"><b>${esc(p.name)}${dot(p.name)}</b>${isMvp(p.name)?'<u>MVP</u>':''}${p.peer&&PV[p.peer]?`<u class="pvu">${PV[p.peer][0]}</u>`:''}<span>${stat(p)} · 출석 ${p.days}</span></div><div class="bp"><b>${won(p.val)}</b>${dv>0?`<span>▲ ${dv.toLocaleString('ko-KR')}</span>`:dv<0?`<span class="dn">▼ ${(-dv).toLocaleString('ko-KR')}</span>`:''}</div></div>`; }).join('') +
+    return `<div class="row ${p.rank<=3&&p.val>0?'t':''}"><div class="no">${p.rank}</div>${CARD[p.name]?`<img class="th" src="${CARD[p.name]}" alt="">`:''}<div class="nm"><b>${esc(p.name)}${dot(p.name)}</b>${isMvp(p.name)?'<u>MVP</u>':''}${peerShort(p.peer)?`<u class="pvu">${peerShort(p.peer)}</u>`:''}<span>${stat(p)} · 출석 ${p.days}</span></div><div class="bp"><b>${won(p.val)}</b>${dv>0?`<span>▲ ${dv.toLocaleString('ko-KR')}</span>`:dv<0?`<span class="dn">▼ ${(-dv).toLocaleString('ko-KR')}</span>`:''}</div></div>`; }).join('') +
     (R.length>7 ? `<div class="more" onclick="bAll=!bAll;renderBoard()">${bAll?'접기 ▴':`전체 ${R.length}명 보기 ▾`}</div>` : '') +
     `<div class="rk-note">▲▼ = 최근 경기(${mmdd(last.date)}) 변동(만 BP) · 상위 3명은 정규리그 주장 후보</div></div>`;
   const bp = (ic,t,v,sub,cls) => `<div class="bpi ${cls||''}"><i>${ic}</i><div><b>${t}</b>${sub?`<span>${sub}</span>`:''}</div><em>${v}</em></div>`;
@@ -1726,6 +1756,15 @@ function renderBoard(){
   </div>`;
   // 골·도움
   const tg = B.players.filter(p=>p.g>0).sort((a,b)=>b.g-a.g).slice(0,5), ta = B.players.filter(p=>p.a>0).sort((a,b)=>b.a-a.a).slice(0,5);
+  const GB = B.guess || { weeks:[], total:[] };
+  if(GB.total.length){
+    const lw = GB.weeks[GB.weeks.length-1], medal = i => ['🥇','🥈','🥉'][i] || (i+1)+'.';
+    h += '<div class="sec">MY GUESS 랭킹 · 이름 맞추기</div><div class="mini2"><div class="sc box"><h5>🎯 최근 (' + mmdd(lw.date) + ')</h5>' +
+      lw.list.slice(0,8).map((p,i)=>`<div class="li"><span>${medal(i)} ${esc(p.name)}</span><b>${p.ok}<small>/${p.total}</small></b></div>`).join('') +
+      '</div><div class="sc box"><h5>🏆 누적 맞춘 수</h5>' +
+      GB.total.slice(0,8).map((p,i)=>`<div class="li"><span>${medal(i)} ${esc(p.name)}</span><b>${p.ok}<small> · ${p.n}회</small></b></div>`).join('') + '</div></div>' +
+      '<div class="bnote" style="margin:6px 4px 0">드래프트 카드가 공개되면 내 추측이 자동으로 채점돼 올라가요 · 누적은 주차별 맞춘 수의 합</div>';
+  }
   if(tg.length || ta.length) h += '<div class="sec">골 · 도움 TOP 5</div><div class="mini2"><div class="sc box"><h5>⚽ 골</h5>' + (tg.map(p=>`<div class="li"><span>${esc(p.name)}</span><b>${p.g}</b></div>`).join('')||'<div class="muted">-</div>') +
     '</div><div class="sc box"><h5>🅰️ 도움</h5>' + (ta.map(p=>`<div class="li"><span>${esc(p.name)}</span><b>${p.a}</b></div>`).join('')||'<div class="muted">-</div>') + '</div></div>';
   // 경기일별
