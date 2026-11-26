@@ -1733,7 +1733,7 @@ function renderBoard(){
   const stat = p => [p.g?p.g+'골':'', p.a?p.a+'도움':'', p.cs?'무실점 '+p.cs:''].filter(Boolean).join(' · ') || '기록 없음';
   const shown = bAll ? R : R.slice(0,7);
   h += `<div class="rk"><h2>PLAYER VALUE<small>선수 가치 순위 · 단위 BP · 정규리그로 이어짐</small></h2>` + shown.map(p=>{ const dv = p.dv||0;
-    return `<div class="row ${p.rank<=3&&p.val>0?'t':''}"><div class="no">${p.rank}</div>${CARD[p.name]?`<img class="th" src="${CARD[p.name]}" alt="">`:''}<div class="nm"><b>${esc(p.name)}${dot(p.name)}</b>${isMvp(p.name)?'<u>MVP</u>':''}${peerShort(p.peer)?`<u class="pvu">${peerShort(p.peer)}</u>`:''}<span>${stat(p)} · 출석 ${p.days}</span></div><div class="bp"><b>${won(p.val)}</b>${dv>0?`<span>▲ ${dv.toLocaleString('ko-KR')}</span>`:dv<0?`<span class="dn">▼ ${(-dv).toLocaleString('ko-KR')}</span>`:''}</div></div>`; }).join('') +
+    return `<div class="row ${p.rank<=3&&p.val>0?'t':''}"><div class="no">${p.rank}</div>${CARD[p.name]?`<img class="th" src="${CARD[p.name]}" alt="">`:''}<div class="nm"><b>${esc(p.name)}${dot(p.name)}</b>${isMvp(p.name)?'<u>MVP</u>':''}<span>${stat(p)} · 출석 ${p.days}</span></div><div class="bp"><b>${won(p.val)}</b>${dv>0?`<span>▲ ${dv.toLocaleString('ko-KR')}</span>`:dv<0?`<span class="dn">▼ ${(-dv).toLocaleString('ko-KR')}</span>`:''}</div></div>`; }).join('') +
     (R.length>7 ? `<div class="more" onclick="bAll=!bAll;renderBoard()">${bAll?'접기 ▴':`전체 ${R.length}명 보기 ▾`}</div>` : '') +
     `<div class="rk-note">▲▼ = 최근 경기(${mmdd(last.date)}) 변동(만 BP) · 상위 3명은 정규리그 주장 후보</div></div>`;
   const bp = (ic,t,v,sub,cls) => `<div class="bpi ${cls||''}"><i>${ic}</i><div><b>${t}</b>${sub?`<span>${sub}</span>`:''}</div><em>${v}</em></div>`;
