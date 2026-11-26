@@ -838,6 +838,30 @@ body.hasdock #v-draft{padding-bottom:84px;}
 .mini2 .li b small{font-family:'Noto Sans KR',sans-serif;font-style:normal;font-weight:500;font-size:10.5px;opacity:.7;}
 .mini2 .li span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 .dup.late{background:#fff3d6;color:#7a4b00;}
+
+/* 이름 맞추기 게임 */
+.ghero{margin:12px 0;border-radius:18px;padding:18px 16px 16px;text-align:center;color:#fff;background:radial-gradient(120% 90% at 70% 0,#2d6b62 0,#14353f 50%,#0b1f2a 100%);box-shadow:0 10px 26px rgba(16,24,40,.25);}
+.gh-k{font-size:11px;font-weight:700;letter-spacing:2px;color:#7dffb4;} .gh-t{font-size:22px;font-weight:900;margin-top:6px;} .gh-s{font-size:13px;line-height:1.6;opacity:.85;margin-top:8px;} .gh-s b{color:#7dffb4;}
+.gh-bar{height:6px;border-radius:6px;background:rgba(255,255,255,.15);margin:14px 6px 4px;overflow:hidden;} .gh-bar i{display:block;height:100%;background:#22c55e;}
+.gh-p{font-size:11.5px;opacity:.7;} .gh-go{margin-top:12px;width:100%;padding:15px;border:0;border-radius:12px;background:#22c55e;color:#04200f;font-size:17px;font-weight:900;font-family:'Noto Sans KR',sans-serif;}
+.gh-clr{margin-top:8px;background:none;border:0;color:rgba(255,255,255,.6);font-size:12px;text-decoration:underline;}
+#ggame{position:fixed;inset:0;z-index:300;display:none;flex-direction:column;overflow-y:auto;padding:0 14px 24px;color:#fff;background:linear-gradient(180deg,#081826 0,#0d2a33 55%,#07141c 100%);}
+#ggame.on{display:flex;}
+.gg-top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 8px;font-size:14px;} .gg-top b{font-size:20px;color:#7dffb4;} .gg-top button{background:none;border:0;color:#fff;font-size:22px;width:36px;} .gg-top span{width:36px;}
+.gg-bar{height:5px;border-radius:5px;background:rgba(255,255,255,.12);overflow:hidden;} .gg-bar i{display:block;height:100%;background:#22c55e;transition:width .3s;}
+.gg-card{margin-top:14px;border-radius:18px;padding:16px 14px 14px;text-align:center;background:#fff;color:#101828;border-top:8px solid #98a2b3;box-shadow:0 14px 30px rgba(0,0,0,.4);}
+.gg-card.tA{border-top-color:#1f6fe5;} .gg-card.tB{border-top-color:#e39a00;} .gg-card.tC{border-top-color:#e0392f;}
+.gg-tm{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#667085;} .gg-card.tA .gg-tm{color:#1f6fe5;} .gg-card.tB .gg-tm{color:#c58300;} .gg-card.tC .gg-tm{color:#e0392f;}
+.gg-emo{font-size:46px;margin-top:6px;line-height:1.1;} .gg-type{font-size:26px;font-weight:900;color:#0b1f4b;margin-top:2px;}
+.gg-w{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;margin-top:8px;} .gg-w span{font-size:12px;font-weight:700;background:#eef1f6;border-radius:999px;padding:3px 10px;color:#344054;}
+.gg-d{font-size:13.5px;color:#475467;margin-top:9px;line-height:1.5;}
+.gg-x{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;margin-top:9px;} .gg-x span{font-size:11.5px;font-weight:700;background:#e6f7ee;color:#0b5c33;border-radius:999px;padding:3px 9px;}
+.gg-me{margin-top:12px;padding-top:10px;border-top:1px dashed #d0d5dd;font-size:14px;color:#667085;} .gg-me b{font-size:20px;color:#0b1f4b;margin-left:4px;}
+.gg-names{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:14px;}
+.gg-names button{padding:12px 4px;border-radius:10px;border:1.5px solid rgba(255,255,255,.22);background:rgba(255,255,255,.07);color:#fff;font-size:15px;font-weight:700;font-family:'Noto Sans KR',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gg-names button.used{opacity:.35;} .gg-names button.on{background:#22c55e;border-color:#22c55e;color:#04200f;opacity:1;}
+.gg-nav{display:flex;gap:8px;margin-top:14px;} .gg-nav button{flex:1;padding:13px;border-radius:12px;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:14px;font-weight:800;font-family:'Noto Sans KR',sans-serif;} .gg-nav button:last-child{background:#fff;color:#0b1f4b;} .gg-nav button:disabled{opacity:.3;}
+.gg-tip{font-size:11px;opacity:.55;text-align:center;margin-top:10px;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -1598,14 +1622,18 @@ function guessHTML(){
   }
   const used = new Set(Object.values(GUESS));
   const n = Object.keys(GUESS).length;
-  return `<div class="sc gbox"><div class="gt">🕵️ 누가 누구일까? · ${n} / ${D.nameList.length}</div>
-    <div class="gs">화면 <b>맨 아래 이름 줄</b>에서 이름을 누른 뒤 카드를 누르거나, 이름을 <b>위로 끌어서</b> 카드에 놓으세요. 이름 줄은 옆으로 밀면 더 나와요. 추측은 내 폰에만 저장돼요.</div>
-    ${n?'<div class="gbtns"><button onclick="clearGuess()">추측 전부 지우기</button></div>':''}</div>`;
+  const all = D.pool.length;
+  return `<div class="ghero"><div class="gh-k">MY GUESS · 이름 맞추기 게임</div>
+    <div class="gh-t">🕵️ 이 카드의 주인은 누구?</div>
+    <div class="gh-s">드래프트 끝! 결과 공개 전에 카드 ${all}장의 주인을 맞혀 보세요.<br>공개되면 자동 채점돼 <b>MY GUESS 랭킹</b>에 올라가요.</div>
+    <div class="gh-bar"><i style="width:${Math.round(n/all*100)}%"></i></div><div class="gh-p">${n} / ${all} 추측함</div>
+    <button class="gh-go" onclick="openGame()">${n ? (n>=all ? '✏️ 추측 다시 보기' : '▶ 이어서 맞추기') : '▶ 게임 시작'}</button>
+    ${n?'<button class="gh-clr" onclick="clearGuess()">추측 전부 지우기</button>':''}</div>`;
 }
 // 화면 아래(메뉴 바로 위)에 항상 떠 있는 이름 줄 — 카드를 보면서 바로 고를 수 있게
 function renderDock(){
   let d = document.getElementById('gdock');
-  const on = guessOn() && (document.querySelector('.view.on')||{}).id === 'v-draft';
+  const on = false;   // 게임 화면으로 대체 (아래 이름 줄은 쓰지 않음)
   if(!on){ if(d) d.style.display = 'none'; document.body.classList.remove('hasdock'); return; }
   if(!d){ d = document.createElement('div'); d.id = 'gdock'; document.body.appendChild(d); }
   const used = new Set(Object.values(GUESS));
@@ -1628,6 +1656,43 @@ async function sendGuess(name){
   gSending = false;
 }
 function regGuess(){ const n = (document.getElementById('g-name')||{}).value; if(!n){ toast('이름을 골라 주세요'); return; } sendGuess(n); }
+/* ═══ 이름 맞추기 게임 화면: 카드 한 장씩 크게 보여주고 아래에서 이름을 고름 ═══ */
+let gi = 0;
+function gameCards(){ return D.pool.slice().sort((a,b)=>(a.pick-b.pick)||(a.pickNo-b.pickNo)); }
+function openGame(){
+  const cs = gameCards(), first = cs.findIndex(c=>!GUESS[c.id]); gi = first < 0 ? 0 : first;
+  let g = document.getElementById('ggame'); if(!g){ g = document.createElement('div'); g.id = 'ggame'; document.body.appendChild(g); }
+  g.classList.add('on'); document.body.style.overflow = 'hidden'; renderGame();
+}
+function closeGame(){ const g = document.getElementById('ggame'); if(g) g.classList.remove('on'); document.body.style.overflow = ''; renderDraft(); }
+function renderGame(){
+  const g = document.getElementById('ggame'); if(!g || !guessOn()){ if(g) closeGame(); return; }
+  const cs = gameCards(), c = cs[gi], t = TYPES[c.code], team = c.pick, done = Object.keys(GUESS).filter(k=>cs.some(x=>x.id===k)).length;
+  const used = {}; Object.keys(GUESS).forEach(k=>{ used[GUESS[k]] = k; });
+  const pp = peerP(c.peer);
+  g.innerHTML = `<div class="gg-top"><button onclick="closeGame()">✕</button><div><b>${done}</b> / ${cs.length} 추측</div><span></span></div>
+    <div class="gg-bar"><i style="width:${Math.round(done/cs.length*100)}%"></i></div>
+    <div class="gg-card ${TEAM_CLS[team]||''}">
+      <div class="gg-tm">${TEAM_LBL[team]||''} · ${c.pickNo}번째 픽</div>
+      <div class="gg-emo">${t[0]}</div><div class="gg-type">${t[1]}</div>
+      <div class="gg-w">${words4(c.code).map(w=>`<span>${w}</span>`).join('')}</div>
+      <div class="gg-d">${t[2]}</div>
+      <div class="gg-x">${c.gk?'<span>🧤 키퍼 가능</span>':''}${pp.pos.length?`<span>${pp.pos.map(k=>PV[k][2]).join('')} 동료 추천 · ${pp.pos.map(k=>PV[k][0]).join(' / ')}</span>`:''}${pp.cp?'<span>📣 캡틴</span>':''}${t[3]?`<span>${FLAG[t[3]]||'⚽'} ${esc(t[3])}형</span>`:''}</div>
+      <div class="gg-me">${GUESS[c.id] ? `내 추측 <b>${esc(GUESS[c.id])}</b>` : '이 카드의 주인은?'}</div>
+    </div>
+    <div class="gg-names">${D.nameList.map(n=>{ const on = GUESS[c.id]===n, el = used[n] && used[n]!==c.id;
+      return `<button class="${on?'on':''} ${el?'used':''}" onclick="gamePick('${esc(n).replace(/'/g,"\\'")}')">${esc(n)}</button>`; }).join('')}</div>
+    <div class="gg-nav"><button ${gi===0?'disabled':''} onclick="gi--;renderGame()">‹ 이전 카드</button><button onclick="${gi===cs.length-1?'closeGame()':'gi++;renderGame()'}">${gi===cs.length-1?'완료':'다음 카드 ›'}</button></div>
+    <div class="gg-tip">흐린 이름은 이미 다른 카드에 붙인 이름 · 누르면 이 카드로 옮겨져요</div>`;
+}
+function gamePick(n){
+  const cs = gameCards(), c = cs[gi];
+  if(GUESS[c.id] === n){ delete GUESS[c.id]; saveGuess(); renderGame(); return; }
+  Object.keys(GUESS).forEach(k=>{ if(GUESS[k]===n) delete GUESS[k]; });
+  GUESS[c.id] = n; saveGuess(); renderGame();
+  setTimeout(()=>{ const nx = cs.findIndex((x,i)=>i>gi && !GUESS[x.id]); if(nx >= 0){ gi = nx; renderGame(); }
+    else if(Object.keys(GUESS).length >= cs.length){ toast('🎉 전부 추측했어요! 결과 공개를 기다려 주세요'); } }, 260);
+}
 function assignGuess(id, nm){
   Object.keys(GUESS).forEach(k=>{ if(GUESS[k]===nm) delete GUESS[k]; });  // 한 이름은 한 카드에만
   GUESS[id] = nm; gSel = null; saveGuess(); renderDraft();
@@ -1635,6 +1700,7 @@ function assignGuess(id, nm){
 function clearGuess(){ if(!confirm('추측을 전부 지울까요?')) return; GUESS = {}; gSel = null; saveGuess(); renderDraft(); }
 function cardTap(id){
   if(guessOn()){
+    { const i = gameCards().findIndex(c=>c.id===id); if(i >= 0){ openGame(); gi = i; renderGame(); return; } }
     if(gSel){ assignGuess(id, gSel); return; }
     if(GUESS[id]){ delete GUESS[id]; saveGuess(); renderDraft(); toast('추측을 지웠어요'); return; }
   }
