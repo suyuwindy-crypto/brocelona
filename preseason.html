@@ -1560,6 +1560,7 @@ function guessHTML(){
     sendGuess();
     const gk = guessKey(), sent = ls.get('ps_gsent') === gk;
     const reg = sent ? '<div class="greg ok">🏆 MY GUESS 랭킹에 자동으로 올라갔어요 · 대시보드에서 확인</div>'
+      : gOff ? ''
       : (ls.get('ps_name') ? '<div class="greg">랭킹에 올리는 중…</div>'
         : `<div class="greg">랭킹에 올리려면 내 이름을 골라 주세요</div><div style="display:flex;gap:6px;margin-top:6px"><select id="g-name" class="sel" style="padding:10px;font-size:14px"><option value="">이름 선택</option>${D.captains.concat(D.nameList).map(n=>`<option>${esc(n)}</option>`).join('')}</select><button class="btn" style="width:110px;padding:10px;font-size:13px" onclick="regGuess()">올리기</button></div>`);
     return `<div class="sc gscore"><div class="gt" style="font-size:11px;color:var(--dim);letter-spacing:2px">MY GUESS RESULT</div><b>${hit} / ${D.pool.length}</b><div class="muted">명 맞췄어요 ${gradeOf(hit)}</div>
@@ -1590,12 +1591,12 @@ function renderDock(){
 }
 // 공개된 뒤 내 추측을 서버로 보내 채점·기록 (드래프트마다 한 번 · 이름은 성향 검사 때 고른 이름)
 function guessKey(){ return (D && D.pool && D.pool[0]) ? (D.started||'') + ':' + D.pool[0].id : ''; }
-let gSending = false;
+let gSending = false, gOff = false;   // gOff: 서버에 랭킹 기능이 아직 없거나 받을 수 없는 상태
 async function sendGuess(name){
   name = name || ls.get('ps_name') || ''; const key = guessKey();
-  if(!name || !key || gSending || ls.get('ps_gsent') === key || !D.revealed || !Object.keys(GUESS).length) return;
+  if(!name || !key || gSending || gOff || ls.get('ps_gsent') === key || !D.revealed || !Object.keys(GUESS).length) return;
   gSending = true;
-  try{ const d = await api({ action:'psGuess', name, g: JSON.stringify(GUESS) }); if(d && d.ok){ ls.set('ps_gsent', key); if(document.getElementById('d-body')) renderDraft(); } }catch(e){}
+  try{ const d = await api({ action:'psGuess', name, g: JSON.stringify(GUESS) }); if(d && d.ok){ ls.set('ps_gsent', key); if(document.getElementById('d-body')) renderDraft(); } else if(d && (d.error || d.msg)){ gOff = true; renderDraft(); } }catch(e){}
   gSending = false;
 }
 function regGuess(){ const n = (document.getElementById('g-name')||{}).value; if(!n){ toast('이름을 골라 주세요'); return; } sendGuess(n); }
