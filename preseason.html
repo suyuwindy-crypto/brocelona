@@ -837,6 +837,7 @@ body.hasdock #v-draft{padding-bottom:84px;}
 .greg{font-size:12px;color:var(--dim);margin-top:8px;} .greg.ok{color:#0b7a3e;font-weight:700;}
 .mini2 .li b small{font-family:'Noto Sans KR',sans-serif;font-style:normal;font-weight:500;font-size:10.5px;opacity:.7;}
 .mini2 .li span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.dup.late{background:#fff3d6;color:#7a4b00;}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -1139,8 +1140,10 @@ async function finishTest(){
   const msg = document.getElementById('res-msg'); msg.textContent = '서버에 저장 중…';
   try{
     const d = await api({ action:'psSubmit', name:r.name, code:r.code, scores:JSON.stringify(r.scores), gk: gk?'1':'0', ans: answers.join('') });
-    if(d.ok) msg.innerHTML = '✅ 저장 완료! 주장에게는 <b>익명 카드</b>로만 보여요.';
-    else if(d.msg==='draft_started') msg.textContent = '⚠️ 이미 드래프트가 시작돼서 이번 드래프트에는 반영되지 않아요.';
+    if(d.ok && d.late) msg.innerHTML = '✅ <b>늦은 합류</b>로 저장! 드래프트 카드 풀 맨 뒤에 익명 카드로 들어갔어요.';
+    else if(d.ok) msg.innerHTML = '✅ 저장 완료! 주장에게는 <b>익명 카드</b>로만 보여요.';
+    else if(d.msg==='captain') msg.textContent = '⚠️ 이번 주 주장은 카드로 들어가지 않아요. 결과는 내 화면에서만 볼 수 있어요.';
+    else if(d.msg==='draft_started') msg.textContent = '⚠️ 이미 드래프트 결과가 공개돼서 이번 주에는 반영되지 않아요.';
     else if(d.msg==='not_roster') msg.textContent = '⚠️ 이번 경기 참가명단에 없는 이름이라 저장되지 않았어요.';
     else if(d.msg==='already') msg.textContent = '⚠️ 이미 검사를 마친 이름이에요. 처음 제출한 결과가 그대로 쓰여요. (재검사는 운영자에게)';
     else msg.textContent = '저장 실패 — 잠시 후 다시 시도해 주세요.';
@@ -1301,7 +1304,7 @@ function renderDraft(){
   h += '<div class="pool">' + list.map(p=>{
     const t = TYPES[p.code], taken = p.pick !== null; let dt;
     return `<div class="pc ${taken?'taken':''}" id="pc-${p.id}" onclick="openSheet('${p.id}')"><div class="no">PLAYER #${String(p.no).padStart(2,'0')}</div><div class="em">${t[0]}</div>
-      <div class="cd c16">${lab16(p.code)}${(dt=diffTags(p))?`<span class="dup">같은 유형 ${dt.n}명</span>`:''}</div>${peerB(p.peer)}<div class="w4s">${words4(p.code).join(' · ')}</div>${t[3]?`<div class="st2">${FLAG[t[3]]||'⚽'} ${esc(t[3])} 스타일</div>`:''}<div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
+      <div class="cd c16">${lab16(p.code)}${p.late?'<span class="dup late">늦은 합류</span>':''}${(dt=diffTags(p))?`<span class="dup">같은 유형 ${dt.n}명</span>`:''}</div>${peerB(p.peer)}<div class="w4s">${words4(p.code).join(' · ')}</div>${t[3]?`<div class="st2">${FLAG[t[3]]||'⚽'} ${esc(t[3])} 스타일</div>`:''}<div class="ds">${t[2]}</div>${p.gk?'<span class="gkb">🧤 키퍼 가능</span>':''}
       ${dt?`<div class="diff">${dt.tags.length?dt.tags.map(x=>`<span>✦ ${x.txt}</span>`).join(''):'<span>✦ 같은 유형과 응답이 완전히 같아요</span>'}</div>`:''}
       ${miniBars(p.scores||{}, p.code)}${showName(p)?`<div class="real">👤 ${esc(p.name)}</div>`:''}
       ${taken?`<div class="tag ${TEAM_CLS[p.pick]}">${TEAM_LBL[p.pick]}</div>`:(myTurn?`<button class="pickbtn" onclick="event.stopPropagation();pick('${p.id}',${p.no})">이 선수 픽</button>`:'')}${p.ans?'<div class="more">평소 습관 18가지 보기 ›</div>':''}</div>`;

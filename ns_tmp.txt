@@ -158,9 +158,22 @@ function psSubmit_(e){
   var lock = LockService.getScriptLock(); lock.waitLock(10000);
   try{
     var d = psLoad_();
-    if(d && d.status !== 'idle') return psOut_({ok:false,msg:'draft_started'});
     var roster = psRoster_();
     if(roster.length && roster.indexOf(name) < 0) return psOut_({ok:false,msg:'not_roster'});
+    if(d && d.status !== 'idle'){
+      // 늦은 합류: 드래프트 진행 중(또는 다 뽑았지만 공개 전)이면 카드를 풀 맨 뒤에 추가하고 주장 차례를 한 번 늘림
+      if(d.revealed || !d.pool) return psOut_({ok:false,msg:'draft_started'});
+      if(d.captains.some(function(c){ return c.name === name; })) return psOut_({ok:false,msg:'captain'});
+      if(d.pool.some(function(x){ return x.name === name; })) return psOut_({ok:false,msg:'already'});
+      var gkL = p.gk==='1', scL = {}; try{ scL = JSON.parse(p.scores||'{}'); }catch(err){}
+      d.pool.push({ id: Utilities.getUuid().slice(0,8), no: d.pool.length+1, name:name, code:code, scores:scL, gk:gkL, ans:String(p.ans||''),
+                    peer: pvBadge_(pvTally_(), name), pick:null, pickNo:null, late:true });
+      d.order = psSnake_(d.pool.length, 3);   // 앞쪽 순서는 그대로, 맨 끝에 한 차례 추가
+      if(d.status === 'done') d.status = 'drafting';
+      psSave_(d);
+      psSheet_().appendRow([new Date(), name, code, String(p.scores||'{}'), gkL, String(p.ans||'')]);
+      return psOut_({ok:true, late:true});
+    }
     var sh = psSheet_(), v = sh.getDataRange().getValues(), row = -1;
     for(var i=1;i<v.length;i++){ if(String(v[i][1]).trim()===name){ row=i+1; break; } }
     if(row>0) return psOut_({ok:false,msg:'already'});   // 최초 1회만 (재검사는 운영자가 결과 삭제 후)
@@ -179,7 +192,7 @@ function psState_(e){
       names: admin ? entries.map(function(x){ return x.name+' ('+x.code+')'; }) : undefined });
   }
   var pool = d.pool.map(function(x){
-    var o = { id:x.id, no:x.no, code:x.code, scores:x.scores, gk:x.gk, ans:x.ans||'', pick:x.pick, pickNo:x.pickNo, peer:x.peer||'' };
+    var o = { id:x.id, no:x.no, code:x.code, scores:x.scores, gk:x.gk, ans:x.ans||'', pick:x.pick, pickNo:x.pickNo, peer:x.peer||'', late:!!x.late };
     if(d.revealed || admin) o.name = x.name;
     return o;
   });
