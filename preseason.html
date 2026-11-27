@@ -882,6 +882,8 @@ body.hasdock #v-draft{padding-bottom:84px;}
 .gc-n{margin-top:3px;text-align:center;font-size:13px;font-weight:900;color:#98a2b3;border-top:1px dashed #d0d5dd;padding-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tcard.gc.got .gc-n{color:#0b7a3e;}
 .gg-dock{flex:none;padding:8px 0 calc(12px + env(safe-area-inset-bottom));border-top:1px solid rgba(255,255,255,.14);}
+.gh-when{margin:10px auto 0;padding:7px 12px;border-radius:10px;background:rgba(125,255,180,.1);border:1px solid rgba(125,255,180,.35);font-size:12.5px;color:#cfe;text-align:center;line-height:1.5;} .gh-when b{color:#7dffb4;}
+#ggame .gh-when{margin:6px 0 4px;padding:4px 10px;font-size:11.5px;}
 .gg-hint{font-size:11.5px;opacity:.75;margin-bottom:7px;text-align:center;} .gg-hint b{color:#7dffb4;}
 #ggame .gchips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;max-height:30vh;overflow-y:auto;}
 #ggame .gchip{padding:8px 11px;border-radius:999px;background:#fff;color:#0b1f4b;font-size:14px;font-weight:800;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
@@ -1340,7 +1342,7 @@ function renderDraft(){
   const order = snake(D.total, 3);
   const nextUp = order.slice(D.pickCount+1, D.pickCount+5).map(i=>`<b class="${TEAM_CLS[i]}">${esc(D.captains[i])}</b>`).join(' → ');
   let h = '<div class="turnbar">' + (done
-    ? `<span class="tn">DRAFT COMPLETE</span><div class="who">🏁 드래프트 종료</div><div class="nx">${D.revealed?'결과 공개! 카드를 눌러 확인하세요':'운영자가 결과 확인을 누르면 카드가 뒤집혀요'}</div>`
+    ? `<span class="tn">DRAFT COMPLETE</span><div class="who">🏁 드래프트 종료</div><div class="nx">${D.revealed?'결과 공개! 카드를 눌러 확인하세요':(revealTxt()?`${revealTxt()}에 카드가 자동으로 뒤집혀요`:'운영자가 결과 확인을 누르면 카드가 뒤집혀요')}</div>`
     : `<span class="tn">NOW PICKING · ${D.pickCount+1} / ${D.total}</span><div class="who ${TEAM_CLS[turn]}">${esc(D.captains[turn])} <small>주장 차례</small></div>` +
       (myTurn ? '<div class="me">🎯 내 차례! 아래에서 선수를 고르세요</div>' : '') +
       (nextUp ? `<div class="nx">다음 → ${nextUp}</div>` : '')) + '</div>';
@@ -1632,6 +1634,23 @@ async function adminOp(op, ask){
 /* ── 🕵️ 이름 맞추기: 결과 공개 전, 이름을 카드로 끌어다 놓아 추측 (내 폰에만 저장) ── */
 let GUESS = (()=>{ try{ return JSON.parse(ls.get('ps_guess')||'{}'); }catch(e){ return {}; } })();
 let gSel = null;
+// 자동 공개 시각 안내 (서버 revealAt · KST)
+function revealTxt(){
+  if(!D || !D.revealAt) return '';
+  const k = new Date(D.revealAt + 9*3600000), h = k.getUTCHours();
+  return `${k.getUTCMonth()+1}월 ${k.getUTCDate()}일(${'일월화수목금토'[k.getUTCDay()]}) ${h<12?'오전':'오후'} ${h%12||12}시`;
+}
+function revealLeft(){
+  const ms = D && D.revealAt ? D.revealAt - Date.now() : 0;
+  if(ms <= 0) return '';
+  const m = Math.ceil(ms/60000), d = Math.floor(m/1440), hh = Math.floor(m%1440/60), mm = m%60;
+  return d ? `${d}일 ${hh}시간 남음` : hh ? `${hh}시간 ${mm}분 남음` : `${mm}분 남음`;
+}
+function revealNote(){
+  const t = revealTxt(); if(!t) return '';
+  const l = revealLeft();
+  return `<div class="gh-when">🔓 결과 공개 <b>${t}</b> 자동${l?` <span style="white-space:nowrap">· ${l}</span>`:''}</div>`;
+}
 function guessOn(){ return D && D.status==='done' && !D.revealed && Array.isArray(D.nameList); }
 function saveGuess(){ ls.set('ps_guess', JSON.stringify(GUESS)); }
 function guessHTML(){
@@ -1659,6 +1678,7 @@ function guessHTML(){
   return `<div class="ghero"><div class="gh-k">MY GUESS · 이름 맞추기 게임</div>
     <div class="gh-t">🕵️ 이 카드의 주인은 누구?</div>
     <div class="gh-s">드래프트 끝! 결과 공개 전에 카드 ${all}장의 주인을 맞혀 보세요.<br>공개되면 자동 채점돼 <b>MY GUESS 랭킹</b>에 올라가요.</div>
+    ${revealNote()}
     <div class="gh-bar"><i style="width:${Math.round(n/all*100)}%"></i></div><div class="gh-p">${n} / ${all} 추측함</div>
     <button class="gh-go" onclick="openGame()">${n ? (n>=all ? '✏️ 연결 다시 보기' : '▶ 이어서 맞추기') : '▶ 전체 화면으로 맞추기'}</button>
     ${n?'<button class="gh-clr" onclick="clearGuess()">추측 전부 지우기</button>':''}</div>`;
@@ -1708,7 +1728,7 @@ function renderGame(){
       <div class="gc-n">${GUESS[c.id] ? esc(GUESS[c.id]) : '?'}</div></div>`; }).join('');
   const keep = (g.querySelector('.gg-board')||{}).scrollTop || 0;
   g.innerHTML = `<div class="gg-top"><button onclick="closeGame()">✕</button><div><b>${done}</b> / ${cs.length} 연결</div><button class="gg-clr" onclick="if(confirm('추측을 전부 지울까요?')){GUESS={};saveGuess();renderGame();}">초기화</button></div>
-    <div class="gg-bar"><i style="width:${Math.round(done/cs.length*100)}%"></i></div>
+    <div class="gg-bar"><i style="width:${Math.round(done/cs.length*100)}%"></i></div>${revealNote()}
     <div class="gg-board">${[0,1,2].map(k=>`<div class="gg-col ${TEAM_CLS[k]}"><div class="gg-h">${esc(D.captains[k]||'')}<small>${TEAM_LBL[k]}</small></div>${col(k)}</div>`).join('')}</div>
     <div class="gg-dock"><div class="gg-hint">${gSel ? `<b>${esc(gSel)}</b> 선택됨 → 카드를 누르세요` : '이름을 <b>카드 위로 끌어다 놓으세요</b> · 카드를 누르면 <b>크게 보면서</b> 고를 수 있어요'}</div>
       <div class="gchips">${D.nameList.map(n=>`<span class="gchip ${used.has(n)?'used':''} ${gSel===n?'sel':''}" data-n="${esc(n)}">${esc(n)}</span>`).join('')}</div></div>`;
@@ -2156,7 +2176,7 @@ function go(v){
 }
 initTest();
 // 폰 브라우저가 예전 페이지를 붙잡고 있을 때: 서버의 최신 페이지와 버전이 다르면 한 번 새로 불러옴
-const PAGE_VER = '2026-11-26g';
+const PAGE_VER = '2026-11-27a';
 (async()=>{ try{
   const t = await fetch(location.pathname + '?vc=' + Date.now(), { cache:'no-store' }).then(r=>r.text());
   const m = t.match(/const PAGE_VER = '([^']+)'/);
